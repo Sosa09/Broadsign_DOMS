@@ -17,13 +17,28 @@ namespace Broadsign_DOMS.ViewModel
     {
         ICommand backButtonCommand;
         ICommand executeButtonCommand;
-
-        ObservableCollection<Domains> domainList;
+        IPageViewModel currentMenu;
+        private ObservableCollection<Domains> domainList;
+        public ObservableCollection<Domains> DomainList
+        {
+            get
+            {
+                if (domainList == null)
+                    domainList = new Domains().DomainList;
+                return domainList;
+            }
+            set
+            {
+                domainList = value;
+                OnPropertyChanged(nameof(DomainList));
+            }
+        }
         Domains selectedDomain;
+        
 
         public AdminViewModel()
         {
-      
+            CurrentMenu = new UserViewModel();
         }
 
         public ICommand BackButtonCommand 
@@ -34,30 +49,27 @@ namespace Broadsign_DOMS.ViewModel
             }
             
         }
-
         public ICommand ExecuteButtonCommand
         {
             get
             {
                 //request api return result
-                return executeButtonCommand ?? (new RelayCommand(x => MessageBox.Show("")));
+                return executeButtonCommand ?? (new RelayCommand(x => {
+                    if (SelectedDomain != null) MessageBox.Show(SelectedDomain.Token);
+                }));
             }
         }
-
-        public ObservableCollection<Domains> DomainList 
-        {
-            get
-            {
-                generateAllTokens();
-                return domainList;
-            }
+        public IPageViewModel CurrentMenu 
+        { 
+            get => currentMenu;
             set
             {
-                domainList = value;
-                OnPropertyChanged(nameof(DomainList));
+                currentMenu = value;
+                OnPropertyChanged(nameof(CurrentMenu));
             }
         }
 
+        
         public Domains SelectedDomain 
         {
             get
@@ -75,20 +87,8 @@ namespace Broadsign_DOMS.ViewModel
 
         }
 
-        private void generateAllTokens()
-        {
-            domainList = new ObservableCollection<Domains>();
-            using (StreamReader streamReader = new StreamReader(@"C:\Users\BECCO1SAR\source\repos\Broadsign_DOMS\Broadsign_DOMS\bin\Debug\net6.0-windows\api.csv"))
-            {
-                var line = streamReader;
-                while(line.ReadLine() != null)
-                {
-                    string[]? l = line.ReadLine().Split(',');
-                    domainList.Add(new Domains { Domain = l[0], UserName = l[1], Token = l[2] });
-                }
-                
-            }
-            
-        }
+        
+
+        
     }
 }

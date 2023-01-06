@@ -43,7 +43,10 @@ namespace Broadsign_DOMS.Model
         #region Get Method request Function
         public void getUser(int id = 0)
         {
-            if(id == 0)
+            string path = "/user/v13";
+            if (id != 0)
+                path += $"by_id?ids={id}";
+
         }
         #endregion
 
