@@ -7,4 +7,9 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="newtonsoft.json" Version="13.0.2" />
+    <PackageReference Include="Restsharp" Version="106.15.0" />
+  </ItemGroup>
+
 </Project>
