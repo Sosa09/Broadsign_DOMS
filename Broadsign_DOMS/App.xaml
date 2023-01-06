@@ -1,0 +1,22 @@
+﻿<Application x:Class="Broadsign_DOMS.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Broadsign_DOMS"
+             xmlns:v="clr-namespace:Broadsign_DOMS.View"
+             xmlns:vm="clr-namespace:Broadsign_DOMS.ViewModel"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <DataTemplate DataType="{x:Type vm:LoginViewModel}">
+            <v:LoginView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:HomeViewModel}">
+            <v:HomeView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:AdminViewModel}">
+            <v:AdminView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ProblemViewModel}">
+            <v:ProblemView/>
+        </DataTemplate>
+    </Application.Resources>
+</Application>

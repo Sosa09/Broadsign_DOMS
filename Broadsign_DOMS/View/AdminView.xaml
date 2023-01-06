@@ -1,0 +1,88 @@
+﻿<UserControl x:Class="Broadsign_DOMS.View.AdminView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Broadsign_DOMS.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <LinearGradientBrush x:Key="GradientBrush" StartPoint="1,1" EndPoint="0,0">
+            <GradientStop Color="#141E30" Offset="0.5" />
+            <GradientStop Color="#0e1521" Offset="-1" />
+        </LinearGradientBrush>
+        <Style x:Key="MenuButtonTheme" BasedOn="{StaticResource {x:Type ToggleButton}}" TargetType="{x:Type RadioButton}">
+            <Style.Setters>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="RadioButton">
+                            <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{TemplateBinding Background}">
+                                <TextBlock Text="{TemplateBinding Content}" VerticalAlignment="Center" Foreground="White" Margin="5,0,0,0"></TextBlock>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Height" Value="50"/>
+            </Style.Setters>
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Background" Value="#213251"></Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <DataTemplate DataType="{x:Type UserViewModel}">
+            <Grid x:Key="MyGrid">
+                
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid Background="{StaticResource GradientBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="5*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="5*"/>
+        </Grid.RowDefinitions>
+        
+        <!--Name holder-->
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock FontSize="20" FontWeight="Bold" Foreground="White">Soufiane</TextBlock>
+        </StackPanel>
+        
+        <!--Menu holder-->
+        <StackPanel Grid.Row="1">
+            <RadioButton Content="Users" Style="{StaticResource MenuButtonTheme}"/>
+            <RadioButton Content="Groups" Style="{StaticResource MenuButtonTheme}"/>
+            <RadioButton Content="Config profiles" Style="{StaticResource MenuButtonTheme}"/>
+            <RadioButton Content="Resource modifier" Style="{StaticResource MenuButtonTheme}"/>
+            <RadioButton Content="Opening hours modifier" Style="{StaticResource MenuButtonTheme}"/>
+            <RadioButton Content="Back" Command="{Binding BackButtonCommand}" Style="{StaticResource MenuButtonTheme}"/>
+        </StackPanel>
+        
+        <!--Result and content viewer-->
+        <!--xamlcode here-->
+        
+        <!--Request Headers holder-->
+        <DockPanel  Grid.Column="1" Grid.Row="0">
+            <ListView Background="Transparent" Foreground="White" VerticalAlignment="Center" BorderThickness="0" Margin="10">
+                <ListViewItem Content="GET"/>
+                <ListViewItem Content="PUT"/>
+                <ListViewItem Content="POST"/>
+            </ListView>
+            <Button Margin="10" HorizontalAlignment="Left" VerticalAlignment="Center">Execute</Button>
+
+        </DockPanel>
+        <DockPanel  Grid.Column="1" Grid.Row="0" HorizontalAlignment="Right">
+            
+            <Label Content="Domain" Foreground="White"/>
+            <ListView ItemsSource="{Binding DomainList, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Domain" SelectedItem="{Binding SelectedDomain, UpdateSourceTrigger=PropertyChanged}"></ListView>
+        </DockPanel>
+        <Grid></Grid>
+       
+
+    </Grid>
+</UserControl>
