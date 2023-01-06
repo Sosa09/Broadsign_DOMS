@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Broadsign_DOMS.View"
+             xmlns:vm="clr-namespace:Broadsign_DOMS.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -32,9 +33,12 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        <DataTemplate DataType="{x:Type UserViewModel}">
-            <Grid x:Key="MyGrid">
-                
+        
+        <DataTemplate DataType="{x:Type vm:UserViewModel}">
+            <Grid>
+                <DataGrid ItemsSource="{Binding UserLists}">
+                    
+                </DataGrid>
             </Grid>
         </DataTemplate>
     </UserControl.Resources>
@@ -73,7 +77,7 @@
                 <ListViewItem Content="PUT"/>
                 <ListViewItem Content="POST"/>
             </ListView>
-            <Button Margin="10" HorizontalAlignment="Left" VerticalAlignment="Center">Execute</Button>
+            <Button Template="{StaticResource MainButtons}" Width="70" Height="50" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Center">Execute</Button>
 
         </DockPanel>
         <DockPanel  Grid.Column="1" Grid.Row="0" HorizontalAlignment="Right">
