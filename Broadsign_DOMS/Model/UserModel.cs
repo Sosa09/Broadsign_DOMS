@@ -1,4 +1,6 @@
 ﻿using Broadsign_DOMS.Service;
+using RestSharp;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,11 +43,14 @@ namespace Broadsign_DOMS.Model
         #endregion
 
         #region Get Method request Function
-        public void getUser(int id = 0)
+        public static dynamic getUser(string token,int id = 0)
         {
             string path = "/user/v13";
             if (id != 0)
                 path += $"by_id?ids={id}";
+            
+            Requests.SendRequest(path, token, Method.GET);
+            return JsonConvert.DeserializeObject(Requests.Response.Content);
 
         }
         #endregion

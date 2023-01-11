@@ -1,6 +1,7 @@
 ﻿using Broadsign_DOMS.Model;
 using Broadsign_DOMS.Resource;
 using Broadsign_DOMS.Service;
+using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,6 +18,7 @@ namespace Broadsign_DOMS.ViewModel
     {
         ICommand backButtonCommand;
         ICommand executeButtonCommand;
+        ICommand viewClickedCommand;
         IPageViewModel currentMenu;
         private ObservableCollection<Domains> domainList;
         public ObservableCollection<Domains> DomainList
@@ -38,7 +40,7 @@ namespace Broadsign_DOMS.ViewModel
 
         public AdminViewModel()
         {
-            CurrentMenu = new UserViewModel();
+            
         }
 
         public ICommand BackButtonCommand 
@@ -55,7 +57,12 @@ namespace Broadsign_DOMS.ViewModel
             {
                 //request api return result
                 return executeButtonCommand ?? (new RelayCommand(x => {
-                    if (SelectedDomain != null) MessageBox.Show(SelectedDomain.Token);
+                    if (CurrentMenu == null || SelectedDomain == null)
+                    {
+                        MessageBox.Show("Please select a domain, and make sure a view menu is selected !");
+                        return;
+                    }
+                        _sendMsg(SelectedDomain);
                 }));
             }
         }
@@ -86,8 +93,21 @@ namespace Broadsign_DOMS.ViewModel
             }
 
         }
+        public ICommand ViewClickedCommand 
+        {
+            get
+            {
+                if (viewClickedCommand == null)
+                    viewClickedCommand = new RelayCommand(x => { CurrentMenu = new UserViewModel(); });
+                return viewClickedCommand;
+            }
+           
+        }
 
-        
+        private void _sendMsg(Domains d)
+        {
+            Messenger.Default.Send(d);
+        }
 
         
     }

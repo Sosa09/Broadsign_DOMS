@@ -6,6 +6,7 @@
              xmlns:vm="clr-namespace:Broadsign_DOMS.ViewModel"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
+        <!--bind view to viewmodels-->
         <DataTemplate DataType="{x:Type vm:LoginViewModel}">
             <v:LoginView/>
         </DataTemplate>
@@ -18,6 +19,7 @@
         <DataTemplate DataType="{x:Type vm:ProblemViewModel}">
             <v:ProblemView/>
         </DataTemplate>
+        <!--style buttons-->
         <Style x:Key="MyButtonStyles" TargetType="Button">
             <Setter Property="Foreground" Value="White"></Setter>
         </Style>
@@ -31,8 +33,5 @@
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
-     
-
-        
     </Application.Resources>
 </Application>

@@ -36,9 +36,18 @@
         
         <DataTemplate DataType="{x:Type vm:UserViewModel}">
             <Grid>
-                <DataGrid ItemsSource="{Binding UserLists}">
-                    
-                </DataGrid>
+                <TabControl>
+                    <TabItem Header="List" Name="ListUsers">
+                        <DataGrid ItemsSource="{Binding UserList}" >
+
+                        </DataGrid>
+                    </TabItem>
+                    <TabItem Header="Create" Name="CloneUsers">
+                        <Button Content="clone"/>
+                    </TabItem>
+
+                </TabControl>
+ 
             </Grid>
         </DataTemplate>
     </UserControl.Resources>
@@ -59,34 +68,34 @@
         
         <!--Menu holder-->
         <StackPanel Grid.Row="1">
-            <RadioButton Content="Users" Style="{StaticResource MenuButtonTheme}"/>
-            <RadioButton Content="Groups" Style="{StaticResource MenuButtonTheme}"/>
-            <RadioButton Content="Config profiles" Style="{StaticResource MenuButtonTheme}"/>
-            <RadioButton Content="Resource modifier" Style="{StaticResource MenuButtonTheme}"/>
-            <RadioButton Content="Opening hours modifier" Style="{StaticResource MenuButtonTheme}"/>
+            <RadioButton Content="Users" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}" CommandParameter="Users"/>
+            <RadioButton Content="Groups" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}"/>
+            <RadioButton Content="Config profiles" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}"/>
+            <RadioButton Content="Resource modifier" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}"/>
+            <RadioButton Content="Opening hours modifier" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1" VerticalAlignment="Bottom">
             <RadioButton Content="Back" Command="{Binding BackButtonCommand}" Style="{StaticResource MenuButtonTheme}"/>
         </StackPanel>
         
+ 
+        <DockPanel  Grid.Column="1" Grid.Row="0">
+            <!--Request Headers holder-->
+            <DockPanel  Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left">
+
+                <Label Content="Domain" Foreground="White"/>
+                <ListView ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding DomainList, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Domain" SelectedItem="{Binding SelectedDomain, UpdateSourceTrigger=PropertyChanged}" Background="Transparent" Foreground="White">
+                    
+                </ListView>
+            </DockPanel>
+
+            <Button HorizontalAlignment="Right" Style="{StaticResource MyButtonStyles}" Template="{StaticResource MainButtons}" Width="100" Height="50" Margin="10" VerticalAlignment="Center" Command="{Binding ExecuteButtonCommand}">Execute</Button>
+
+        </DockPanel>
+
+
         <!--Result and content viewer-->
         <ContentControl Grid.Row="1" Grid.Column="1" Content="{Binding CurrentMenu}"/>
-
-        <!--Request Headers holder-->
-        <DockPanel  Grid.Column="1" Grid.Row="0">
-            <ListView Background="Transparent" Foreground="White" VerticalAlignment="Center" BorderThickness="0" Margin="10">
-                <ListViewItem Content="GET"/>
-                <ListViewItem Content="PUT"/>
-                <ListViewItem Content="POST"/>
-            </ListView>
-            <Button Style="{StaticResource MyButtonStyles}" Template="{StaticResource MainButtons}" Width="70" Height="50" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Center" Command="{Binding ExecuteButtonCommand}">Execute</Button>
-
-        </DockPanel>
-        <DockPanel  Grid.Column="1" Grid.Row="0" HorizontalAlignment="Right">
-            
-            <Label Content="Domain" Foreground="White"/>
-            <ListView ItemsSource="{Binding DomainList, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Domain" SelectedItem="{Binding SelectedDomain, UpdateSourceTrigger=PropertyChanged}"></ListView>
-        </DockPanel>
-        
-       
 
     </Grid>
 </UserControl>
