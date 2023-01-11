@@ -38,12 +38,27 @@
             <Grid>
                 <TabControl>
                     <TabItem Header="List" Name="ListUsers">
-                        <DataGrid ItemsSource="{Binding UserList}" >
+                        <DataGrid ItemsSource="{Binding UserList}" SelectedItem="{Binding SelectedModelUser}" >
 
                         </DataGrid>
                     </TabItem>
                     <TabItem Header="Create" Name="CloneUsers">
-                        <Button Content="clone"/>
+                        <StackPanel>
+                            <CheckBox Content="Base on selected model user in tab List" Command="{Binding CloneUser}"/>
+                            <Label>E-Mail</Label>
+                            <TextBox Text="{Binding UserName}"/>
+                            <Label>E-Mail</Label>
+                            <TextBox Text="{Binding FullName}"/>
+                            <Label>Domain ID</Label>
+                            <TextBox Text="{Binding DomainID}"/>
+                            <Label>Container ID</Label>
+                            <TextBox Text="{Binding ContainerID}"/>
+                       
+         
+                            
+                            <Button VerticalAlignment="Bottom" Content="clone" Template="{StaticResource MainButtons}" Command="{Binding PushUser}" />
+
+                        </StackPanel>
                     </TabItem>
 
                 </TabControl>
@@ -78,15 +93,13 @@
             <RadioButton Content="Back" Command="{Binding BackButtonCommand}" Style="{StaticResource MenuButtonTheme}"/>
         </StackPanel>
         
- 
         <DockPanel  Grid.Column="1" Grid.Row="0">
             <!--Request Headers holder-->
             <DockPanel  Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left">
-
                 <Label Content="Domain" Foreground="White"/>
-                <ListView ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding DomainList, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Domain" SelectedItem="{Binding SelectedDomain, UpdateSourceTrigger=PropertyChanged}" Background="Transparent" Foreground="White">
-                    
-                </ListView>
+                <ListView ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding DomainList, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Domain" SelectedItem="{Binding SelectedDomain, UpdateSourceTrigger=PropertyChanged}" Background="Transparent" Foreground="White"/>
+
+
             </DockPanel>
 
             <Button HorizontalAlignment="Right" Style="{StaticResource MyButtonStyles}" Template="{StaticResource MainButtons}" Width="100" Height="50" Margin="10" VerticalAlignment="Center" Command="{Binding ExecuteButtonCommand}">Execute</Button>

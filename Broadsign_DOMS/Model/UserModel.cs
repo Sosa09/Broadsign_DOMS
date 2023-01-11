@@ -1,11 +1,6 @@
 ﻿using Broadsign_DOMS.Service;
 using RestSharp;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Broadsign_DOMS.Model
 {
@@ -17,7 +12,7 @@ namespace Broadsign_DOMS.Model
         private int     container_id;
         private int     domain_id;
         private string  email;
-        private bool    has_auth_token;
+        private object  has_auth_token;
         private int     id;
         private string  name;
         private string  passwd;
@@ -32,7 +27,7 @@ namespace Broadsign_DOMS.Model
         public int Container_id { get => container_id; set => container_id = value; }
         public int Domain_id { get => domain_id; set => domain_id = value; }
         public string Email { get => email; set => email = value; }
-        public bool Has_auth_token { get => has_auth_token; set => has_auth_token = value; }
+        public object Has_auth_token { get => has_auth_token; set => has_auth_token = value; }
         public int Id { get => id; set => id = value; }
         public string Name { get => name; set => name = value; }
         public string Passwd { get => passwd; set => passwd = value; }
