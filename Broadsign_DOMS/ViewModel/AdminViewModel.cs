@@ -56,9 +56,14 @@ namespace Broadsign_DOMS.ViewModel
                         MessageBox.Show("Please select a domain, and make sure a view menu is selected !");
                         return;
                     }
-                        _sendMsg(SelectedDomain);
+                    _sendMsg(SelectedDomain);
+
                 }));
             }
+        }
+        private void _myCommandParam(string cmdParam)
+        {
+            MessageBox.Show(cmdParam);
         }
         public IPageViewModel CurrentMenu 
         { 
@@ -92,7 +97,7 @@ namespace Broadsign_DOMS.ViewModel
             get
             {
                 if (viewClickedCommand == null)
-                    viewClickedCommand = new RelayCommand(x => { CurrentMenu = new UserViewModel(); });
+                    viewClickedCommand = new RelayCommand<string>(_myCommandParam);
                 return viewClickedCommand;
             }
            
@@ -101,6 +106,7 @@ namespace Broadsign_DOMS.ViewModel
         private void _sendMsg(Domains d)
         {
             Messenger.Default.Send(d);
+
         }
 
         

@@ -33,38 +33,44 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        
+
         <DataTemplate DataType="{x:Type vm:UserViewModel}">
             <Grid>
-                <TabControl>
-                    <TabItem Header="List" Name="ListUsers">
-                        <DataGrid ItemsSource="{Binding UserList}" SelectedItem="{Binding SelectedModelUser}" >
+                <StackPanel>
+                    <TabControl>
+                        <TabItem Header="List" Name="ListUsers">
+                            <DataGrid ItemsSource="{Binding UserList}" SelectedItem="{Binding SelectedModelUser}" >
 
-                        </DataGrid>
-                    </TabItem>
-                    <TabItem Header="Create" Name="CloneUsers">
-                        <StackPanel>
-                            <CheckBox Content="Base on selected model user in tab List" Command="{Binding CloneUser}"/>
-                            <Label>E-Mail</Label>
-                            <TextBox Text="{Binding UserName}"/>
-                            <Label>E-Mail</Label>
-                            <TextBox Text="{Binding FullName}"/>
-                            <Label>Domain ID</Label>
-                            <TextBox Text="{Binding DomainID}"/>
-                            <Label>Container ID</Label>
-                            <TextBox Text="{Binding ContainerID}"/>
-                       
-         
-                            
-                            <Button VerticalAlignment="Bottom" Content="clone" Template="{StaticResource MainButtons}" Command="{Binding PushUser}" />
+                            </DataGrid>
+                        </TabItem>
+                        <TabItem Header="Create" Name="CloneUsers">
+                            <StackPanel>
+                                <CheckBox Content="Base on selected model user in tab List" Command="{Binding CloneUser}"/>
+                                <Label>E-Mail</Label>
+                                <TextBox Text="{Binding UserName}"/>
+                                <Label>E-Mail</Label>
+                                <TextBox Text="{Binding FullName}"/>
+                                <Label>Domain ID</Label>
+                                <TextBox Text="{Binding DomainID}"/>
+                                <Label>Container ID</Label>
+                                <TextBox Text="{Binding ContainerID}"/>
 
-                        </StackPanel>
-                    </TabItem>
 
-                </TabControl>
- 
+
+                                <Button VerticalAlignment="Bottom" Content="clone" Template="{StaticResource MainButtons}" Command="{Binding PushUser}" />
+
+                            </StackPanel>
+                        </TabItem>
+
+                    </TabControl>
+                    <TextBlock Text="{Binding SelectedModelUser.Name}"/>
+                    <DataGrid ItemsSource="{Binding CloneUserModel, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="True"></DataGrid>
+                </StackPanel>
+     
+
             </Grid>
         </DataTemplate>
+
     </UserControl.Resources>
     <Grid Background="{StaticResource GradientBrush}">
         <Grid.ColumnDefinitions>
@@ -97,12 +103,12 @@
             <!--Request Headers holder-->
             <DockPanel  Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left">
                 <Label Content="Domain" Foreground="White"/>
-                <ListView ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding DomainList, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Domain" SelectedItem="{Binding SelectedDomain, UpdateSourceTrigger=PropertyChanged}" Background="Transparent" Foreground="White"/>
-
-
+                <ListView ScrollViewer.VerticalScrollBarVisibility="Visible" MaxHeight="250" ItemsSource="{Binding DomainList, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Domain" SelectedItem="{Binding SelectedDomain, UpdateSourceTrigger=PropertyChanged}" Background="Transparent" Foreground="White"/>
             </DockPanel>
-
-            <Button HorizontalAlignment="Right" Style="{StaticResource MyButtonStyles}" Template="{StaticResource MainButtons}" Width="100" Height="50" Margin="10" VerticalAlignment="Center" Command="{Binding ExecuteButtonCommand}">Execute</Button>
+            
+            <TextBlock Text="{Binding Test_name}"/>
+            <DataGrid ItemsSource="{Binding CloneUserModel, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="True"></DataGrid>
+            <Button HorizontalAlignment="Right" Style="{StaticResource MyButtonStyles}" Template="{StaticResource MainButtons}" Width="100" Height="50" Margin="10" VerticalAlignment="Center" Command="{Binding ExecuteButtonCommand}" >Execute</Button>
 
         </DockPanel>
 
