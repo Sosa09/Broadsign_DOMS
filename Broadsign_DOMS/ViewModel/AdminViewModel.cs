@@ -10,11 +10,24 @@ namespace Broadsign_DOMS.ViewModel
 {
     public class AdminViewModel : ObservableObject, IPageViewModel
     {
+        #region Fields
         ICommand backButtonCommand;
         ICommand executeButtonCommand;
         ICommand viewClickedCommand;
         IPageViewModel currentMenu;
-        private ObservableCollection<Domains> domainList;
+        Domains selectedDomain;
+        ObservableCollection<Domains> domainList;
+        CloneUserModel viewSelectedItem;
+        #endregion
+        #region Contructors
+        public AdminViewModel()
+        {
+
+            Messenger.Default.Register<CloneUserModel>(this, "AdminViewModel", message => ViewSelectedItem = message, true);
+        
+        }
+        #endregion
+        #region Properties
         public ObservableCollection<Domains> DomainList
         {
             get
@@ -29,19 +42,15 @@ namespace Broadsign_DOMS.ViewModel
                 OnPropertyChanged(nameof(DomainList));
             }
         }
-        Domains selectedDomain;
-        
-
-        public AdminViewModel()
-        {
-            
-        }
-
         public ICommand BackButtonCommand 
         {
             get
             {
-                return backButtonCommand ?? (new RelayCommand(x => Mediator.Notify("HomeViewModel", "")));
+                return backButtonCommand ?? (new RelayCommand(x =>
+                {
+                    
+                    Mediator.Notify("HomeViewModel", "");
+                }));
             }
             
         }
@@ -61,10 +70,6 @@ namespace Broadsign_DOMS.ViewModel
                 }));
             }
         }
-        private void _myCommandParam(string cmdParam)
-        {
-            MessageBox.Show(cmdParam);
-        }
         public IPageViewModel CurrentMenu 
         { 
             get => currentMenu;
@@ -74,8 +79,6 @@ namespace Broadsign_DOMS.ViewModel
                 OnPropertyChanged(nameof(CurrentMenu));
             }
         }
-
-        
         public Domains SelectedDomain 
         {
             get
@@ -97,18 +100,52 @@ namespace Broadsign_DOMS.ViewModel
             get
             {
                 if (viewClickedCommand == null)
-                    viewClickedCommand = new RelayCommand<string>(_myCommandParam);
+                    viewClickedCommand = new RelayCommand<string>(_selectedViewModel);
                 return viewClickedCommand;
             }
            
         }
 
-        private void _sendMsg(Domains d)
+        public CloneUserModel ViewSelectedItem 
         {
-            Messenger.Default.Send(d);
+            get
+            {
+         
+                return viewSelectedItem;
+            }
+            set
+            {
+                viewSelectedItem = value;
+                OnPropertyChanged(nameof(ViewSelectedItem));
+              
+            }
+        }
+        #endregion
+        #region Methods
+        private void _selectedViewModel(string cmdParam)
+        {
+            if (cmdParam.ToLower() == "user")
+                CurrentMenu = new UserViewModel();
+            else if (cmdParam.ToLower() == "group")
+                CurrentMenu = new GroupViewModel();
+            else if (cmdParam.ToLower() == "cp")
+                CurrentMenu = new ConfigProfileViewModel();
+            else if (cmdParam.ToLower() == "rm")
+                CurrentMenu = new ResourceViewModel();
+            else if (cmdParam.ToLower() == "ohm")
+                CurrentMenu = new UserViewModel();
+            else
+                MessageBox.Show("Problem");
+
 
         }
+        private void _sendMsg(Domains d)
+        {
+            Messenger.Default.Send(d, "UserViewModel");
 
-        
+        }
+        #endregion
+
+
     }
 }

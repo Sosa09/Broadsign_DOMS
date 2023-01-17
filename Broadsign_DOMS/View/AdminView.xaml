@@ -31,29 +31,50 @@
                 <Trigger Property="IsChecked" Value="True">
                     <Setter Property="Background" Value="#213251"></Setter>
                 </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background"  Value="#213251"/>
+                </Trigger>
             </Style.Triggers>
         </Style>
 
         <DataTemplate DataType="{x:Type vm:UserViewModel}">
             <Grid>
                 <StackPanel>
+
+
                     <TabControl>
                         <TabItem Header="List" Name="ListUsers">
-                            <DataGrid ItemsSource="{Binding UserList}" SelectedItem="{Binding SelectedModelUser}" >
+                            <DataGrid ItemsSource="{Binding UserList}" VerticalScrollBarVisibility="Auto" Height="400"  SelectedItem="{Binding SelectedModelUser}" >
+
 
                             </DataGrid>
                         </TabItem>
                         <TabItem Header="Create" Name="CloneUsers">
                             <StackPanel>
                                 <CheckBox Content="Base on selected model user in tab List" Command="{Binding CloneUser}"/>
-                                <Label>E-Mail</Label>
+                                <CheckBox Content="Clone in all domains" Command="{Binding CloneUserInAllDomains}"/>
+                                <Label>Username</Label>
                                 <TextBox Text="{Binding UserName}"/>
-                                <Label>E-Mail</Label>
+                                <Label>Name</Label>
                                 <TextBox Text="{Binding FullName}"/>
                                 <Label>Domain ID</Label>
                                 <TextBox Text="{Binding DomainID}"/>
                                 <Label>Container ID</Label>
                                 <TextBox Text="{Binding ContainerID}"/>
+                                <Label>Sub Elements</Label>
+                                <ListBox>
+                                    <ListBoxItem Content="Hello world"></ListBoxItem>
+                                    <ListBoxItem Content="Hello world"></ListBoxItem>
+                                    <ListBoxItem Content="Hello world"></ListBoxItem>
+                                    <ListBoxItem Content="Hello world"></ListBoxItem>
+                                </ListBox>
+                                <Label>Groups</Label>
+                                <ListBox>
+                                    <ListBoxItem Content="Hello world"></ListBoxItem>
+                                    <ListBoxItem Content="Hello world"></ListBoxItem>
+                                    <ListBoxItem Content="Hello world"></ListBoxItem>
+                                    <ListBoxItem Content="Hello world"></ListBoxItem>
+                                </ListBox>
 
 
 
@@ -63,8 +84,8 @@
                         </TabItem>
 
                     </TabControl>
-                    <TextBlock Text="{Binding SelectedModelUser.Name}"/>
-                    <DataGrid ItemsSource="{Binding CloneUserModel, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="True"></DataGrid>
+   
+                
                 </StackPanel>
      
 
@@ -72,6 +93,7 @@
         </DataTemplate>
 
     </UserControl.Resources>
+    
     <Grid Background="{StaticResource GradientBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
@@ -89,11 +111,11 @@
         
         <!--Menu holder-->
         <StackPanel Grid.Row="1">
-            <RadioButton Content="Users" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}" CommandParameter="Users"/>
-            <RadioButton Content="Groups" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}"/>
-            <RadioButton Content="Config profiles" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}"/>
-            <RadioButton Content="Resource modifier" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}"/>
-            <RadioButton Content="Opening hours modifier" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}"/>
+            <RadioButton Content="Users" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}" CommandParameter="User"/>
+            <RadioButton Content="Groups" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}" CommandParameter="Group"/>
+            <RadioButton Content="Config profiles" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}" CommandParameter="Cp"/>
+            <RadioButton Content="Resource modifier" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}" CommandParameter="Rm"/>
+            <RadioButton Content="Opening hours modifier" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}" CommandParameter="Ohm"/>
         </StackPanel>
         <StackPanel Grid.Row="1" VerticalAlignment="Bottom">
             <RadioButton Content="Back" Command="{Binding BackButtonCommand}" Style="{StaticResource MenuButtonTheme}"/>
@@ -107,7 +129,45 @@
             </DockPanel>
             
             <TextBlock Text="{Binding Test_name}"/>
-            <DataGrid ItemsSource="{Binding CloneUserModel, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="True"></DataGrid>
+            
+            <!--show selected resource-->
+            <DockPanel Margin="5">
+                <DockPanel>
+                    <StackPanel >
+                        <StackPanel Orientation="Horizontal">
+                            <Label Foreground="White" FontWeight="ExtraBold">Name:</Label>
+                            <TextBlock Text="{Binding ViewSelectedItem.Name}" Foreground="White" HorizontalAlignment="Right"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Foreground="White" FontWeight="ExtraBold">Id:</Label>
+                            <TextBlock Text="{Binding ViewSelectedItem.Id}" Foreground="White" HorizontalAlignment="Right"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Foreground="White" FontWeight="ExtraBold">Username:</Label>
+                            <TextBlock Text="{Binding ViewSelectedItem.Username}" Foreground="White" HorizontalAlignment="Right"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Foreground="White" FontWeight="ExtraBold">User Container ID:</Label>
+                            <TextBlock Text="{Binding ViewSelectedItem.UserContainer_id}" Foreground="White" HorizontalAlignment="Right"/>
+                        </StackPanel>
+
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Margin="15,0,0,0">
+                    <StackPanel>
+                        <Label Foreground="White" FontWeight="ExtraBold">Groups</Label>
+                        <ListBox ItemsSource="{Binding ViewSelectedItem.Group_ids}" DisplayMemberPath="Parent_id"/>
+
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Margin="15,0,0,0">
+                    <StackPanel>
+                        <Label Foreground="White" FontWeight="ExtraBold">Scope</Label>
+                        <ListBox ItemsSource="{Binding ViewSelectedItem.ScopingRelation_ids}" DisplayMemberPath="Scope_resource_type"/>
+                    </StackPanel>
+                </DockPanel>
+            </DockPanel>
+            
             <Button HorizontalAlignment="Right" Style="{StaticResource MyButtonStyles}" Template="{StaticResource MainButtons}" Width="100" Height="50" Margin="10" VerticalAlignment="Center" Command="{Binding ExecuteButtonCommand}" >Execute</Button>
 
         </DockPanel>

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Broadsign_DOMS.Model
 {
-    public class ContainerScopeRelation : ObservableObject
+    public class ContainerScopeRelationModel : ObservableObject
     {
         private bool active;
         private int domain_id;

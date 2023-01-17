@@ -3,6 +3,7 @@ using Broadsign_DOMS.Service;
 using GalaSoft.MvvmLight.Messaging;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Broadsign_DOMS.ViewModel
 {
@@ -10,13 +11,17 @@ namespace Broadsign_DOMS.ViewModel
     {
         private Domains domain;
         private ObservableCollection<UserModel> userList;
-        private List<int> groupids;
+        private ObservableCollection<ContainerScopeRelationModel> containerScopeRelations;
+        private ObservableCollection<ContainerScopeModel> containerScopes;
+        private ObservableCollection<ContainerModel> containers;
         private UserModel selectedModelUser;
-        private ObservableCollection<CloneUserModel> cloneUserModel;
-        private string test_name;
+        private CloneUserModel cloneUserModel = new CloneUserModel();
+    
         public UserViewModel()
         {
-            Messenger.Default.Register<Domains>(this, message => Domain = message);
+            
+            Messenger.Default.Register<Domains>(this, "UserViewModel", message => Domain = message);
+            
         }
 
         public Domains Domain 
@@ -28,6 +33,7 @@ namespace Broadsign_DOMS.ViewModel
                 domain = value;
                 OnPropertyChanged(nameof(domain));
                 _generateList();
+                _loadAdditionalResources();
             }
         }
 
@@ -35,8 +41,8 @@ namespace Broadsign_DOMS.ViewModel
         {
             get
             {
-                if (userList == null)
-                    userList = new ObservableCollection<UserModel>();
+                
+                userList = new ObservableCollection<UserModel>();
                 return userList;
             }
             set
@@ -53,17 +59,15 @@ namespace Broadsign_DOMS.ViewModel
             {
                 selectedModelUser = value;
                 OnPropertyChanged(nameof(SelectedModelUser));
-                _loadRelations();
+                _searchRelation();
             }
         }
 
-        public ObservableCollection<CloneUserModel> CloneUserModel 
+        public CloneUserModel CloneUserModel 
         {
             get
             {
-                if (cloneUserModel == null)
-                    cloneUserModel = new ObservableCollection<CloneUserModel>();
-               return cloneUserModel;
+                return cloneUserModel;
             }
             set
             {
@@ -72,50 +76,124 @@ namespace Broadsign_DOMS.ViewModel
             }
         }
 
-        public string Test_name 
-        { 
-            get => test_name;
+        public ObservableCollection<ContainerScopeRelationModel> ContainerScopeRelations 
+        {
+            get
+            {
+                if (containerScopeRelations == null)
+                    containerScopeRelations = new ObservableCollection<ContainerScopeRelationModel>();
+                return containerScopeRelations;
+            }
             set
             {
-                test_name = value;
-                OnPropertyChanged(nameof(Test_name));
+                containerScopeRelations = value;
+                OnPropertyChanged(nameof(ContainerScopeRelations));
+            }
+        }
+        public ObservableCollection<ContainerScopeModel> ContainerScopes 
+        {
+            get
+            {
+                if (containerScopes == null)
+                    containerScopes = new ObservableCollection<ContainerScopeModel>();
+                return containerScopes;
+            }
+            set
+            {
+                containerScopes = value;
+                OnPropertyChanged(nameof(ContainerScopes));
+            }
+
+        }
+
+        public ObservableCollection<ContainerModel> Containers 
+        {
+            get
+            {
+                return containers ?? new ObservableCollection<ContainerModel>();
+            }
+            set
+            {
+                containers = value;
+                OnPropertyChanged(nameof(ContainerModel));
             }
         }
 
-        private void _loadRelations()
+        private void _searchRelation()
         {
-            dynamic user_groups = UserGroupModel.GetUserGroups(Domain.Token, SelectedModelUser.Id);
-            foreach(var ugroup in user_groups["user_group"])
+            ////TODO Convert foreach into linqreturns 0
+            List<ContainerScopeRelationModel> groupids = ContainerScopeRelations.Where(x => x.User_id == SelectedModelUser.Id).ToList();
+            List<ContainerScopeModel> scopeids = ContainerScopes.Where(x => x.Parent_id == SelectedModelUser.Id).ToList();
+     
+
+            CloneUserModel.Group_ids = groupids;
+            CloneUserModel.ScopingRelation_ids = scopeids;
+            CloneUserModel.Id = SelectedModelUser.Id;
+            CloneUserModel.Name = SelectedModelUser.Name;
+            CloneUserModel.Username = SelectedModelUser.Username;
+            CloneUserModel.UserContainer_id = SelectedModelUser.Container_id;
+
+
+            Messenger.Default.Send(CloneUserModel, "AdminViewModel");
+        }
+        private void _loadAdditionalResources()
+        {
+            //get all containers for all resources store them even for the other menu items of admin view (in case you need to check or modify something for the same domain)
+            //getting all relations between users and user groups
+            //then extract all assigned container scope and find the relations by the parent id of this item (parent id can be a user or a user group in this case)
+            dynamic api_containers = ContainerModel.GetContainers(Domain.Token);
+            dynamic api_user_group_scoping_relation = ContainerScopeRelationModel.GetScopingRelation(Domain.Token);
+            dynamic api_container_scope = ContainerScopeModel.GetContainerScopes(Domain.Token);
+            foreach (var ugsRelation in api_user_group_scoping_relation["container_scope_relationship"])
             {
-                if(ugroup.active == true)
+                if (ugsRelation.active == true)
                 {
-                    groupids = new List<int>
+                    ContainerScopeRelations.Add(new ContainerScopeRelationModel
                     {
-                        
-                         (int)ugroup.group_id
-                    };
+                        Active = ugsRelation.active,
+                        Domain_id = ugsRelation.domain_id,
+                        Id = ugsRelation.id,
+                        Parent_id = ugsRelation.parent_id,
+                        User_id = ugsRelation.user_id
+                    });
                 }
             }
-            CloneUserModel.Add(
-                new Model.CloneUserModel 
-                { 
-                    Group_ids = groupids, 
-                    Id = SelectedModelUser.Id, 
-                    Name = SelectedModelUser.Name, 
-                    Username = SelectedModelUser.Username, 
-                    UserContainer_id = SelectedModelUser.Container_id 
+            foreach(var container_scope in api_container_scope["container_scope"])
+            {
+                if (container_scope.active == true)
+                {
+                    ContainerScopes.Add(new ContainerScopeModel
+                    {
+                        Active = container_scope.active,
+                        Can_see_above = container_scope.can_see_above,
+                        Domain_id = container_scope.domain_id,
+                        Id = container_scope.id,
+                        Parent_id = container_scope.parent_id,
+                        Scope_container_group_id = container_scope.scope_container_group_id,
+                        Scope_container_id = container_scope.scope_container_id,
+                        Scope_resource_type = container_scope.scope_resource_type,
+                    });
                 }
-           );
+            }
+            foreach(var container in api_containers["container"])
+            {
+                if(container.active == true)
+                {
+                    Containers.Add(new ContainerModel
+                    {
+                        Active = container.active,
+                        Container_id = container.container_id,
+                        Domain_id = container.domain_id,
+                        Group_id = container.group_id,
+                        Id = container.id,
+                        Name = container.name,
+                        Parent_id = container.parent_id,
+                        Parent_resource_type = container.parent_resource_type
+                       
+                    });
+                }
+            }
 
-            
-            //dynamic user_group_scoping_relation = ContainerScopeRelation.GetScopingRelation(Domain.Token);
-            //foreach (var ugsRelation in user_group_scoping_relation["container_scope_relationship"])
-            //{
-            //    if (ugsRelation.active == true)
-            //    {
-                    
-            //    }
-            //}
         }
 
         private void _generateList()
@@ -123,6 +201,8 @@ namespace Broadsign_DOMS.ViewModel
             dynamic users = UserModel.getUser(Domain.Token);
             if(users != null)
             {
+                if (userList.Count > 0)
+                    userList.Clear();
                 foreach(var user in users["user"])
                 {
                     if (user.active == true)
