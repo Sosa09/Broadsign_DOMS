@@ -18,13 +18,15 @@ namespace Broadsign_DOMS.ViewModel
         Domains selectedDomain;
         ObservableCollection<Domains> domainList;
         CloneUserModel viewSelectedItem;
+    
         #endregion
         #region Contructors
         public AdminViewModel()
         {
 
             Messenger.Default.Register<CloneUserModel>(this, "AdminViewModel", message => ViewSelectedItem = message, true);
-        
+     
+
         }
         #endregion
         #region Properties
@@ -60,12 +62,14 @@ namespace Broadsign_DOMS.ViewModel
             {
                 //request api return result
                 return executeButtonCommand ?? (new RelayCommand(x => {
-                    if (CurrentMenu == null || SelectedDomain == null)
+                    if (CurrentMenu == null)
                     {
                         MessageBox.Show("Please select a domain, and make sure a view menu is selected !");
                         return;
                     }
                     _sendMsg(SelectedDomain);
+                    
+             
 
                 }));
             }

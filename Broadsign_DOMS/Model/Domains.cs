@@ -64,7 +64,7 @@ namespace Broadsign_DOMS.Model
         private void generateAllTokens()
         {
             domainList = new ObservableCollection<Domains>();
-            using (StreamReader streamReader = new StreamReader(@"api_backup.csv"))
+            using (StreamReader streamReader = new StreamReader(@"api.csv"))
             {
                 var line = streamReader;
                 while (line.ReadLine() != null)

@@ -1,31 +1,34 @@
 ﻿using Broadsign_DOMS.Model;
+using Broadsign_DOMS.Resource;
 using Broadsign_DOMS.Service;
 using GalaSoft.MvvmLight.Messaging;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
+using System.Windows.Input;
 
 namespace Broadsign_DOMS.ViewModel
 {
     public class UserViewModel : ObservableObject, IPageViewModel
     {
+        #region Fields
         private Domains domain;
         private ObservableCollection<UserModel> userList;
         private ObservableCollection<ContainerScopeRelationModel> containerScopeRelations;
         private ObservableCollection<ContainerScopeModel> containerScopes;
         private ObservableCollection<ContainerModel> containers;
         private UserModel selectedModelUser;
+        private string userName;
+        private string fullName;
+        private int domain_Id;
+        private int container_Id;
         private CloneUserModel cloneUserModel = new CloneUserModel();
-    
-        public UserViewModel()
+        private ICommand pushUser;
+        #endregion
+        #region Properties
+        public Domains Domain
         {
-            
-            Messenger.Default.Register<Domains>(this, "UserViewModel", message => Domain = message);
-            
-        }
-
-        public Domains Domain 
-        { 
 
             get => domain;
             set
@@ -33,16 +36,16 @@ namespace Broadsign_DOMS.ViewModel
                 domain = value;
                 OnPropertyChanged(nameof(domain));
                 _generateList();
-                _loadAdditionalResources();
+
             }
         }
 
-        public ObservableCollection<UserModel> UserList 
+        public ObservableCollection<UserModel> UserList
         {
             get
             {
-                
-                userList = new ObservableCollection<UserModel>();
+                if (userList == null)
+                    userList = new ObservableCollection<UserModel>();
                 return userList;
             }
             set
@@ -52,8 +55,8 @@ namespace Broadsign_DOMS.ViewModel
             }
         }
 
-        public UserModel SelectedModelUser 
-        { 
+        public UserModel SelectedModelUser
+        {
             get => selectedModelUser;
             set
             {
@@ -63,7 +66,7 @@ namespace Broadsign_DOMS.ViewModel
             }
         }
 
-        public CloneUserModel CloneUserModel 
+        public CloneUserModel CloneUserModel
         {
             get
             {
@@ -76,7 +79,7 @@ namespace Broadsign_DOMS.ViewModel
             }
         }
 
-        public ObservableCollection<ContainerScopeRelationModel> ContainerScopeRelations 
+        public ObservableCollection<ContainerScopeRelationModel> ContainerScopeRelations
         {
             get
             {
@@ -90,7 +93,7 @@ namespace Broadsign_DOMS.ViewModel
                 OnPropertyChanged(nameof(ContainerScopeRelations));
             }
         }
-        public ObservableCollection<ContainerScopeModel> ContainerScopes 
+        public ObservableCollection<ContainerScopeModel> ContainerScopes
         {
             get
             {
@@ -106,7 +109,7 @@ namespace Broadsign_DOMS.ViewModel
 
         }
 
-        public ObservableCollection<ContainerModel> Containers 
+        public ObservableCollection<ContainerModel> Containers
         {
             get
             {
@@ -119,117 +122,137 @@ namespace Broadsign_DOMS.ViewModel
             }
         }
 
+        public ICommand PushUser
+        {
+            get
+            {
+
+                if (pushUser == null)
+                {
+                    pushUser = new RelayCommand(x => pushUserApi());
+                }
+                return pushUser;
+            }
+        }
+
+        public string UserName 
+        { 
+            get => userName;
+            set
+            {
+                userName = value;
+                OnPropertyChanged(UserName);
+            } 
+        }
+        public string FullName 
+        { 
+            get => fullName;
+            set
+            {
+                fullName = value;
+                OnPropertyChanged(FullName);
+            }
+        }
+        public int DomainId 
+        { 
+            get => domain_Id;
+            set
+            {
+                domain_Id = value;
+                OnPropertyChanged(nameof(DomainId));
+            }
+        }
+        public int ContainerId 
+        { 
+            get => container_Id;
+            set
+            {
+                container_Id = value;
+                OnPropertyChanged(nameof(ContainerId));
+                    
+            }
+        }
+        #endregion
+
+        #region Constructors
+        public UserViewModel()
+        {
+            
+            Messenger.Default.Register<Domains>(this, "UserViewModel", message => Domain = message);
+
+
+        }
+        #endregion
+
+        #region Methods
         private void _searchRelation()
         {
             ////TODO Convert foreach into linqreturns 0
-            List<ContainerScopeRelationModel> groupids = ContainerScopeRelations.Where(x => x.User_id == SelectedModelUser.Id).ToList();
-            List<ContainerScopeModel> scopeids = ContainerScopes.Where(x => x.Parent_id == SelectedModelUser.Id).ToList();
-     
-
-            CloneUserModel.Group_ids = groupids;
-            CloneUserModel.ScopingRelation_ids = scopeids;
-            CloneUserModel.Id = SelectedModelUser.Id;
-            CloneUserModel.Name = SelectedModelUser.Name;
-            CloneUserModel.Username = SelectedModelUser.Username;
-            CloneUserModel.UserContainer_id = SelectedModelUser.Container_id;
-
-
-            Messenger.Default.Send(CloneUserModel, "AdminViewModel");
-        }
-        private void _loadAdditionalResources()
-        {
-            //get all containers for all resources store them even for the other menu items of admin view (in case you need to check or modify something for the same domain)
-            //getting all relations between users and user groups
-            //then extract all assigned container scope and find the relations by the parent id of this item (parent id can be a user or a user group in this case)
-            dynamic api_containers = ContainerModel.GetContainers(Domain.Token);
-            dynamic api_user_group_scoping_relation = ContainerScopeRelationModel.GetScopingRelation(Domain.Token);
-            dynamic api_container_scope = ContainerScopeModel.GetContainerScopes(Domain.Token);
-            foreach (var ugsRelation in api_user_group_scoping_relation["container_scope_relationship"])
+            ///
+            if(SelectedModelUser != null)
             {
-                if (ugsRelation.active == true)
-                {
-                    ContainerScopeRelations.Add(new ContainerScopeRelationModel
-                    {
-                        Active = ugsRelation.active,
-                        Domain_id = ugsRelation.domain_id,
-                        Id = ugsRelation.id,
-                        Parent_id = ugsRelation.parent_id,
-                        User_id = ugsRelation.user_id
-                    });
-                }
-            }
-            foreach(var container_scope in api_container_scope["container_scope"])
-            {
-                if (container_scope.active == true)
-                {
-                    ContainerScopes.Add(new ContainerScopeModel
-                    {
-                        Active = container_scope.active,
-                        Can_see_above = container_scope.can_see_above,
-                        Domain_id = container_scope.domain_id,
-                        Id = container_scope.id,
-                        Parent_id = container_scope.parent_id,
-                        Scope_container_group_id = container_scope.scope_container_group_id,
-                        Scope_container_id = container_scope.scope_container_id,
-                        Scope_resource_type = container_scope.scope_resource_type,
-                    });
-                }
-            }
-            foreach(var container in api_containers["container"])
-            {
-                if(container.active == true)
-                {
-                    Containers.Add(new ContainerModel
-                    {
-                        Active = container.active,
-                        Container_id = container.container_id,
-                        Domain_id = container.domain_id,
-                        Group_id = container.group_id,
-                        Id = container.id,
-                        Name = container.name,
-                        Parent_id = container.parent_id,
-                        Parent_resource_type = container.parent_resource_type
-                       
-                    });
-                }
-            }
+                List<ContainerScopeRelationModel> groupids = CommonResources.Container_scope_relation.Where(x => x.User_id == SelectedModelUser.Id).ToList();
+                List<ContainerScopeModel> scopeids = CommonResources.Container_scope.Where(x => x.Parent_id == SelectedModelUser.Id).ToList();
 
+
+                CloneUserModel.Group_ids = groupids;
+                CloneUserModel.ScopingRelation_ids = scopeids;
+                CloneUserModel.Id = SelectedModelUser.Id;
+                CloneUserModel.Name = SelectedModelUser.Name;
+                CloneUserModel.Username = SelectedModelUser.Username;
+                CloneUserModel.UserContainer_id = SelectedModelUser.Container_id;
+
+
+                Messenger.Default.Send(CloneUserModel, "AdminViewModel");
+            }
+         
         }
 
         private void _generateList()
         {
-            dynamic users = UserModel.getUser(Domain.Token);
-            if(users != null)
+            var users = CommonResources.User;
+            if (Domain != null)
+                //assign abstract user model list to users and assing it to the local userlist 
+                users = new ObservableCollection<UserModel>(users.Where(d => d.Domain_name == Domain.Domain));
+            if (users != null)
             {
-                if (userList.Count > 0)
-                    userList.Clear();
-                foreach(var user in users["user"])
+                if (UserList.Count > 0)
+                    UserList.Clear();
+                foreach (var user in users)
                 {
-                    if (user.active == true)
+                    if (user.Active == true)
                     {
-                        userList.Add(new UserModel
+                        UserList.Add(new UserModel
                         {
-                            Active = user.active,
-                            Allow_auth_token = user.allow_auth_token,
-                            Container_id = user.container_id,
-                            Domain_id = user.domain_id,
-                            Email = user.email,
-                            Has_auth_token = user.has_auth_token,
-                            Id = user.id,
-                            Name = user.name,
-                            Passwd = user.password,
-                            Pending_single_sign_on_email = user.pending_single_sign_on_email,
-                            Public_key_fingerprint = user.public_key_fingerprint,
-                            Single_sign_on_id = user.single_sign_on_id,
-                            Username = user.username
+                            Active = user.Active,
+                            Allow_auth_token = user.Allow_auth_token,
+                            Container_id = user.Container_id,
+                            Domain_name = user.Domain_name,
+                            Email = user.Email,
+                            Has_auth_token = user.Has_auth_token,
+                            Id = user.Id,
+                            Name = user.Name,
+                            Passwd = user.Passwd,
+                            Pending_single_sign_on_email = user.Pending_single_sign_on_email,
+                            Public_key_fingerprint = user.Public_key_fingerprint,
+                            Single_sign_on_id = user.Single_sign_on_id,
+                            Username = user.Username
                         });
                     }
 
- 
+
                 }
             }
+           
         }
 
+        private void pushUserApi()
+        {
+            UserModel modeluser = new UserModel { Name = FullName, Username = UserName, Domain_id = this.DomainId, Container_id = this.ContainerId };
+            UserModel.AddUsers(Domain.Token, modeluser);
+
+        }
+        #endregion
 
     }
 }

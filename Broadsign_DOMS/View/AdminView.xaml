@@ -50,7 +50,7 @@
                             </DataGrid>
                         </TabItem>
                         <TabItem Header="Create" Name="CloneUsers">
-                            <StackPanel>
+                              <StackPanel>
                                 <CheckBox Content="Base on selected model user in tab List" Command="{Binding CloneUser}"/>
                                 <CheckBox Content="Clone in all domains" Command="{Binding CloneUserInAllDomains}"/>
                                 <Label>Username</Label>
@@ -63,17 +63,11 @@
                                 <TextBox Text="{Binding ContainerID}"/>
                                 <Label>Sub Elements</Label>
                                 <ListBox>
-                                    <ListBoxItem Content="Hello world"></ListBoxItem>
-                                    <ListBoxItem Content="Hello world"></ListBoxItem>
-                                    <ListBoxItem Content="Hello world"></ListBoxItem>
-                                    <ListBoxItem Content="Hello world"></ListBoxItem>
+                      
                                 </ListBox>
                                 <Label>Groups</Label>
                                 <ListBox>
-                                    <ListBoxItem Content="Hello world"></ListBoxItem>
-                                    <ListBoxItem Content="Hello world"></ListBoxItem>
-                                    <ListBoxItem Content="Hello world"></ListBoxItem>
-                                    <ListBoxItem Content="Hello world"></ListBoxItem>
+   
                                 </ListBox>
 
 
@@ -89,6 +83,14 @@
                 </StackPanel>
      
 
+            </Grid>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ResourceViewModel}">
+            <Grid>
+                
+                <DataGrid>
+                    
+                </DataGrid>
             </Grid>
         </DataTemplate>
 
