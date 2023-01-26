@@ -191,8 +191,8 @@ namespace Broadsign_DOMS.ViewModel
             ///
             if(SelectedModelUser != null)
             {
-                List<ContainerScopeRelationModel> groupids = CommonResources.Container_scope_relation.Where(x => x.User_id == SelectedModelUser.Id).ToList();
-                List<ContainerScopeModel> scopeids = CommonResources.Container_scope.Where(x => x.Parent_id == SelectedModelUser.Id).ToList();
+                List<ContainerScopeRelationModel> groupids = CommonResources.Container_Scope_Relation.Where(x => x.User_id == SelectedModelUser.Id).ToList();
+                List<ContainerScopeModel> scopeids = CommonResources.Container_Scope.Where(x => x.Parent_id == SelectedModelUser.Id).ToList();
 
 
                 CloneUserModel.Group_ids = groupids;

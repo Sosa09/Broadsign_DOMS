@@ -61,18 +61,24 @@ namespace Broadsign_DOMS.ViewModel
         public HomeViewModel()
         {
 
-
+            //instantiate all observableobject from tyhe commonresources class to store the api results
             CommonResources.User = new ObservableCollection<UserModel>();
+            CommonResources.Groups = new ObservableCollection<GroupModel>();
             CommonResources.Container = new ObservableCollection<ContainerModel>();
-            CommonResources.Container_scope = new ObservableCollection<ContainerScopeModel>();
-            CommonResources.Container_scope_relation = new ObservableCollection<ContainerScopeRelationModel>();
+            CommonResources.Container_Scope = new ObservableCollection<ContainerScopeModel>();
+            CommonResources.Container_Scope_Relation = new ObservableCollection<ContainerScopeRelationModel>();
+
+            //Go through all domains to get all resources
             foreach (var token in DomainList)
             {
-            
+                //get all apis from all domains resource Users, UserGroups, Players, Containers, Players, Frames(Skin), Day_Parts,
                 dynamic users = UserModel.GetUsers(token.Token);
+                dynamic groups = GroupModel.GetGroups(token.Token);
                 dynamic containers = ContainerModel.GetContainers(token.Token);
                 dynamic scopes = ContainerScopeModel.GetContainerScopes(token.Token);
                 dynamic relation_users_containers = ContainerScopeRelationModel.GetScopingRelation(token.Token);
+
+                //extract users from json variable and store then in Commonresources.User
                 if (users != null)
                 {
 
@@ -103,6 +109,26 @@ namespace Broadsign_DOMS.ViewModel
 
                     }
                 }
+
+                //extract userGroups from json variable and store then in Commonresources.UserGroups
+                if(groups != null)
+                {
+                    foreach(var group in groups["group"])
+                    {
+                        CommonResources.Groups.Add(new GroupModel
+                        {
+                            Active = group.active,
+                            Domain_id = group.domain_id,
+                            Container_id = group.container_id,
+                            Id = group.id,
+                            Name = group.name
+
+
+                        });
+                    }
+ 
+                }
+                //extract containers from json variable and store then in Commonresources.User
                 if (containers != null)
                 {
                     foreach (var container in containers["container"])
@@ -124,13 +150,15 @@ namespace Broadsign_DOMS.ViewModel
                         }
                     }
                 }
-                if(scopes != null) 
+
+                //extract users from json variable and store then in Commonresources.User
+                if (scopes != null) 
                 {
                     foreach (var container_scope in scopes["container_scope"])
                     {
                         if (container_scope.active == true)
                         {
-                            CommonResources.Container_scope.Add(new ContainerScopeModel
+                            CommonResources.Container_Scope.Add(new ContainerScopeModel
                             {
                                 Active = container_scope.active,
                                 Can_see_above = container_scope.can_see_above,
@@ -144,13 +172,15 @@ namespace Broadsign_DOMS.ViewModel
                         }
                     }
                 }
+
+                //extract users from json variable and store then in Commonresources.User
                 if (relation_users_containers != null)
                 {
                     foreach (var ugsRelation in relation_users_containers["container_scope_relationship"])
                     {
                         if (ugsRelation.active == true)
                         {
-                            CommonResources.Container_scope_relation.Add(new ContainerScopeRelationModel
+                            CommonResources.Container_Scope_Relation.Add(new ContainerScopeRelationModel
                             {
                                 Active = ugsRelation.active,
                                 Domain_id = ugsRelation.domain_id,

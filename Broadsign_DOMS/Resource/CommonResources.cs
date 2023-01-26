@@ -12,8 +12,9 @@ namespace Broadsign_DOMS.Resource
     public abstract class CommonResources
     {
         public static ObservableCollection<ContainerModel> Container { get; set; }
-        public static ObservableCollection<ContainerScopeModel> Container_scope { get; set; }
-        public static ObservableCollection<ContainerScopeRelationModel> Container_scope_relation { get; set; }
+        public static ObservableCollection<ContainerScopeModel> Container_Scope { get; set; }
+        public static ObservableCollection<ContainerScopeRelationModel> Container_Scope_Relation { get; set; }
         public static ObservableCollection<UserModel> User { get; set; }
+        public static ObservableCollection<GroupModel> Groups { get; set; }
     }
 }
