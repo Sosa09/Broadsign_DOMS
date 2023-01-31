@@ -70,7 +70,7 @@ namespace Broadsign_DOMS.Model
                 while (line.ReadLine() != null)
                 {
                     string[]? l = line.ReadLine().Split(',');
-                    domainList.Add(new Domains { Domain = l[0], UserName = l[1], Token = l[2] });
+                    domainList.Add(new Domains { Domain = l[0], Token = l[1] });
                 }
 
             }
