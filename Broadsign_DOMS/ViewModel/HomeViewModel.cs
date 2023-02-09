@@ -19,6 +19,8 @@ namespace Broadsign_DOMS.ViewModel
         ICommand adminView;
         ObservableCollection<Domains> domainList;
         CommonResources cr;
+        private bool _successFullLogin;
+
         public ICommand ProblemView
         {
             get
@@ -58,9 +60,28 @@ namespace Broadsign_DOMS.ViewModel
             }
         }
 
+        public bool _SuccessFullLogin 
+        { 
+            get => _successFullLogin;
+            set
+            {
+                _successFullLogin = value;
+                OnPropertyChanged(nameof(_SuccessFullLogin));
+                if (value == true)
+                    _loadAllBaseResources();
+            }
+        }
+
         public HomeViewModel()
         {
+       
+            Messenger.Default.Register<bool>(this,"HomeViewModel", x => _SuccessFullLogin = x, true);
+   
 
+        }
+
+        private void _loadAllBaseResources()
+        {
             //instantiate all observableobject from tyhe commonresources class to store the api results
             CommonResources.User = new ObservableCollection<UserModel>();
             CommonResources.Groups = new ObservableCollection<GroupModel>();
@@ -111,9 +132,9 @@ namespace Broadsign_DOMS.ViewModel
                 }
 
                 //extract userGroups from json variable and store then in Commonresources.UserGroups
-                if(groups != null)
+                if (groups != null)
                 {
-                    foreach(var group in groups["group"])
+                    foreach (var group in groups["group"])
                     {
                         CommonResources.Groups.Add(new GroupModel
                         {
@@ -126,7 +147,7 @@ namespace Broadsign_DOMS.ViewModel
 
                         });
                     }
- 
+
                 }
                 //extract containers from json variable and store then in Commonresources.User
                 if (containers != null)
@@ -152,7 +173,7 @@ namespace Broadsign_DOMS.ViewModel
                 }
 
                 //extract users from json variable and store then in Commonresources.User
-                if (scopes != null) 
+                if (scopes != null)
                 {
                     foreach (var container_scope in scopes["container_scope"])
                     {
@@ -193,8 +214,6 @@ namespace Broadsign_DOMS.ViewModel
                 }
 
             }
-
-
         }
     }
 }

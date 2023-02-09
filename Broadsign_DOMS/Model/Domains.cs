@@ -69,7 +69,7 @@ namespace Broadsign_DOMS.Model
                 var line = streamReader;
                 while (line.ReadLine() != null)
                 {
-                    string[]? l = line.ReadLine().Split(',');
+                    string[]? l = line.ReadLine().Split(',', ';');
                     domainList.Add(new Domains { Domain = l[0], Token = l[1] });
                 }
 

@@ -1,5 +1,6 @@
 ﻿using Broadsign_DOMS.Resource;
 using Broadsign_DOMS.Service;
+using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,11 @@ namespace Broadsign_DOMS.ViewModel
         {
             get
             {
-                return loginButtonCommand ?? (new RelayCommand(x => Mediator.Notify("HomeViewModel", "")));
+                return loginButtonCommand ?? (new RelayCommand(x =>
+                {
+                    Mediator.Notify("HomeViewModel", "");
+                    Messenger.Default.Send(true,"HomeViewModel");
+                })); 
             }
         }
     }
