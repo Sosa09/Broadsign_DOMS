@@ -15,6 +15,7 @@ namespace Broadsign_DOMS.ViewModel
         #region Fields
         private Domains domain;
         private ObservableCollection<UserModel> userList;
+        private ObservableCollection<GroupModel> groupList;
         private ObservableCollection<ContainerScopeRelationModel> containerScopeRelations;
         private ObservableCollection<ContainerScopeModel> containerScopes;
         private ObservableCollection<ContainerModel> containers;
@@ -172,6 +173,21 @@ namespace Broadsign_DOMS.ViewModel
                     
             }
         }
+
+        public ObservableCollection<GroupModel> GroupList 
+        {
+            get
+            {
+                if(groupList == null)
+                    groupList = new ObservableCollection<GroupModel>();
+                return groupList;
+            }
+            set
+            {
+                groupList = value;
+                OnPropertyChanged(nameof(GroupList));
+            } 
+        }
         #endregion
 
         #region Constructors
@@ -201,6 +217,12 @@ namespace Broadsign_DOMS.ViewModel
                 CloneUserModel.Name = SelectedModelUser.Name;
                 CloneUserModel.Username = SelectedModelUser.Username;
                 CloneUserModel.UserContainer_id = SelectedModelUser.Container_id;
+                CloneUserModel.Groups = new List<GroupModel>();
+                foreach (var groupid in groupids)
+                {
+                    CloneUserModel.Groups.Add(CommonResources.Groups.Where(x => x.Id == groupid.Parent_id).First());
+                }
+                    
 
 
                 Messenger.Default.Send(CloneUserModel, "AdminViewModel");
@@ -210,40 +232,24 @@ namespace Broadsign_DOMS.ViewModel
 
         private void _generateList()
         {
-            var users = CommonResources.User;
+          
+                
+            //var users = CommonResources.User;
             if (Domain != null)
-                //assign abstract user model list to users and assing it to the local userlist 
-                users = new ObservableCollection<UserModel>(users.Where(d => d.Domain_name == Domain.Domain));
-            if (users != null)
             {
-                if (UserList.Count > 0)
-                    UserList.Clear();
-                foreach (var user in users)
-                {
-                    if (user.Active == true)
-                    {
-                        UserList.Add(new UserModel
-                        {
-                            Active = user.Active,
-                            Allow_auth_token = user.Allow_auth_token,
-                            Container_id = user.Container_id,
-                            Domain_name = user.Domain_name,
-                            Email = user.Email,
-                            Has_auth_token = user.Has_auth_token,
-                            Id = user.Id,
-                            Name = user.Name,
-                            Passwd = user.Passwd,
-                            Pending_single_sign_on_email = user.Pending_single_sign_on_email,
-                            Public_key_fingerprint = user.Public_key_fingerprint,
-                            Single_sign_on_id = user.Single_sign_on_id,
-                            Username = user.Username
-                        });
-                    }
-
-
-                }
+                //assign abstract user model list to users and assing it to the local userlist 
+                var userList = CommonResources.User.Where(d => d.Domain_name == Domain.Domain).ToList();
+                var groupList = CommonResources.Groups.Where(d => d.Domain_name == Domain.Domain).ToList();
+                UserList = new ObservableCollection<UserModel>(userList);
+                GroupList = new ObservableCollection<GroupModel>(groupList);
             }
-           
+            else
+            {
+                UserList = CommonResources.User;
+                GroupList = CommonResources.Groups;
+            }
+
+
         }
 
         private void pushUserApi()

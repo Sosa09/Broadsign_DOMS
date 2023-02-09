@@ -16,9 +16,11 @@ namespace Broadsign_DOMS.Model
         private List<ContainerScopeModel> _scopingRelation_ids;
         private string name;
         private int userContainer_id;
+        private List<GroupModel> _group_names;
 
         public string Username { get => _username; set => _username = value; }
         public int Id { get => _id; set => _id = value; }
+        public List<GroupModel> Groups { get => _group_names; set => _group_names = value; }
         public List<ContainerScopeRelationModel> Group_ids { get => _group_ids; set => _group_ids = value; }
         public List<ContainerScopeModel> ScopingRelation_ids { get => _scopingRelation_ids; set => _scopingRelation_ids = value; }
         public string Name { get => name; set => name = value; }

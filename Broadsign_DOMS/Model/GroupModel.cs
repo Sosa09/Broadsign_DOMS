@@ -21,6 +21,8 @@ namespace Broadsign_DOMS.Model
         public int Container_id { get => _container_id; set => _container_id = value; }
         public int Id { get => _id; set => _id = value; }
         public string Name { get => _name; set => _name = value; }
+        public string Domain_name { get; set; }
+
 
         public static dynamic GetGroups(string token, int user_id = 0, int domain_id = 0, int usergroup_id = 0)
         {

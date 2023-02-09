@@ -82,6 +82,7 @@ namespace Broadsign_DOMS.ViewModel
 
         private void _loadAllBaseResources()
         {
+
             //instantiate all observableobject from tyhe commonresources class to store the api results
             CommonResources.User = new ObservableCollection<UserModel>();
             CommonResources.Groups = new ObservableCollection<GroupModel>();
@@ -142,7 +143,8 @@ namespace Broadsign_DOMS.ViewModel
                             Domain_id = group.domain_id,
                             Container_id = group.container_id,
                             Id = group.id,
-                            Name = group.name
+                            Name = group.name,
+                            Domain_name = token.Domain
 
 
                         });

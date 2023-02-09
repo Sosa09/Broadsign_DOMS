@@ -158,7 +158,7 @@
                 <DockPanel Margin="15,0,0,0">
                     <StackPanel>
                         <Label Foreground="White" FontWeight="ExtraBold">Groups</Label>
-                        <ListBox ItemsSource="{Binding ViewSelectedItem.Group_ids}" DisplayMemberPath="Parent_id"/>
+                        <ListBox ItemsSource="{Binding ViewSelectedItem.Groups}" DisplayMemberPath="Name"/>
 
                     </StackPanel>
                 </DockPanel>
