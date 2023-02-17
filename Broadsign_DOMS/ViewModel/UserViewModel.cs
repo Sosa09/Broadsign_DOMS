@@ -207,8 +207,8 @@ namespace Broadsign_DOMS.ViewModel
             ///
             if(SelectedModelUser != null)
             {
-                List<ContainerScopeRelationModel> groupids = CommonResources.Container_Scope_Relation.Where(x => x.User_id == SelectedModelUser.Id).ToList();
-                List<ContainerScopeModel> scopeids = CommonResources.Container_Scope.Where(x => x.Parent_id == SelectedModelUser.Id).ToList();
+                List<ContainerScopeRelationModel> groupids = CommonResources.Container_Scope_Relations.Where(x => x.User_id == SelectedModelUser.Id).ToList();
+                List<ContainerScopeModel> scopeids = CommonResources.Container_Scopes.Where(x => x.Parent_id == SelectedModelUser.Id).ToList();
 
 
                 CloneUserModel.Group_ids = groupids;
@@ -238,14 +238,14 @@ namespace Broadsign_DOMS.ViewModel
             if (Domain != null)
             {
                 //assign abstract user model list to users and assing it to the local userlist 
-                var userList = CommonResources.User.Where(d => d.Domain_name == Domain.Domain).ToList();
+                var userList = CommonResources.Users.Where(d => d.Domain_name == Domain.Domain).ToList();
                 var groupList = CommonResources.Groups.Where(d => d.Domain_name == Domain.Domain).ToList();
                 UserList = new ObservableCollection<UserModel>(userList);
                 GroupList = new ObservableCollection<GroupModel>(groupList);
             }
             else
             {
-                UserList = CommonResources.User;
+                UserList = CommonResources.Users;
                 GroupList = CommonResources.Groups;
             }
 

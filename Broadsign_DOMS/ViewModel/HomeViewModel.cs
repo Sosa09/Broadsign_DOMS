@@ -84,11 +84,12 @@ namespace Broadsign_DOMS.ViewModel
         {
 
             //instantiate all observableobject from tyhe commonresources class to store the api results
-            CommonResources.User = new ObservableCollection<UserModel>();
+            CommonResources.Users = new ObservableCollection<UserModel>();
             CommonResources.Groups = new ObservableCollection<GroupModel>();
-            CommonResources.Container = new ObservableCollection<ContainerModel>();
-            CommonResources.Container_Scope = new ObservableCollection<ContainerScopeModel>();
-            CommonResources.Container_Scope_Relation = new ObservableCollection<ContainerScopeRelationModel>();
+            CommonResources.Containers = new ObservableCollection<ContainerModel>();
+            CommonResources.Container_Scopes = new ObservableCollection<ContainerScopeModel>();
+            CommonResources.Container_Scope_Relations = new ObservableCollection<ContainerScopeRelationModel>();
+            
 
             //Go through all domains to get all resources
             foreach (var token in DomainList)
@@ -108,7 +109,7 @@ namespace Broadsign_DOMS.ViewModel
                     {
                         if (user.active == true)
                         {
-                            CommonResources.User.Add(new UserModel
+                            CommonResources.Users.Add(new UserModel
                             {
                                 Active = user.active,
                                 Allow_auth_token = user.allow_auth_token,
@@ -158,7 +159,7 @@ namespace Broadsign_DOMS.ViewModel
                     {
                         if (container.active == true)
                         {
-                            CommonResources.Container.Add(new ContainerModel
+                            CommonResources.Containers.Add(new ContainerModel
                             {
                                 Active = container.active,
                                 Container_id = container.container_id,
@@ -181,7 +182,7 @@ namespace Broadsign_DOMS.ViewModel
                     {
                         if (container_scope.active == true)
                         {
-                            CommonResources.Container_Scope.Add(new ContainerScopeModel
+                            CommonResources.Container_Scopes.Add(new ContainerScopeModel
                             {
                                 Active = container_scope.active,
                                 Can_see_above = container_scope.can_see_above,
@@ -203,7 +204,7 @@ namespace Broadsign_DOMS.ViewModel
                     {
                         if (ugsRelation.active == true)
                         {
-                            CommonResources.Container_Scope_Relation.Add(new ContainerScopeRelationModel
+                            CommonResources.Container_Scope_Relations.Add(new ContainerScopeRelationModel
                             {
                                 Active = ugsRelation.active,
                                 Domain_id = ugsRelation.domain_id,

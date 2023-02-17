@@ -133,6 +133,7 @@
             <TextBlock Text="{Binding Test_name}"/>
             
             <!--show selected resource-->
+            <!--ADD VARIABLE CURRENT TOP MENU TODO CHANGE TO CONTENT CONTROL ! and assign resource dictionnary !-->
             <DockPanel Margin="5">
                 <DockPanel>
                     <StackPanel >
