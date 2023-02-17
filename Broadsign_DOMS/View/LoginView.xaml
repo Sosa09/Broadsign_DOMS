@@ -6,6 +6,12 @@
              xmlns:local="clr-namespace:Broadsign_DOMS.View"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Style x:Key="MyButton" TargetType="Button">
+            <Setter Property="Background" Value="Black"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
@@ -18,10 +24,8 @@
             </DockPanel>
         </StackPanel>
         <StackPanel Grid.Row="1" Margin="0,5,0,0">
-            
-            <Button Content="Login" HorizontalAlignment="Center" Width="390" Height="50" Command="{Binding LoginButtonCommand}">
-                
-            </Button>
+
+            <Button Content="Login"  Style="{StaticResource MyButton}" Template="{StaticResource MainButtons}" HorizontalAlignment="Center" Width="390" Height="50" Command="{Binding LoginButtonCommand}"></Button>
         </StackPanel>
     </Grid>
 </UserControl>
