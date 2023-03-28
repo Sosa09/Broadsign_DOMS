@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Broadsign_DOMS.Model
 {
-    public class GroupModel : ObservableObject
+    public class GroupModel : BroadsignAPIModel
     {
         private bool _active;
         private int _domain_id;

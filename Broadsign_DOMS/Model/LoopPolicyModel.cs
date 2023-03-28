@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace Broadsign_DOMS.Model
 {
-    public class LoopPolicyModel
+    public class LoopPolicyModel : BroadsignAPIModel
     {
-        public bool Active { get; set; }
-        public string Name { get; set; }
-        public int Id { get; set; }
+        
+       
+        
         public string Attribute { get; set; }
-        public int Container_id { get; set; }
+        
         public int Default_slot_duration { get; set; }
         public int Domain_id { get; set; }
         public int Filler_maximum_unique_content { get; set; }

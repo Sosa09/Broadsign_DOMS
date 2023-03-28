@@ -8,7 +8,7 @@ namespace Broadsign_DOMS.Model
 {
     public class ContentModel
     {
-        public bool Active { get; set; }
+        
         public int Approval_status { get; set; }
         public int Approved_by_user_id { get; set; }
         public string Approved_on_utc { get; set; }
@@ -20,17 +20,17 @@ namespace Broadsign_DOMS.Model
         public int Bmb_host_id { get; set; }
         public string Checksum2 { get; set; }
         public int Checksum2_type { get; set; }
-        public int Container_id { get; set; }
+        
         public string Creation_tm { get; set; }
         public int Creation_user_id { get; set; }
         public int Domain_id { get; set; }
         public int External_id { get; set; }
         public string Feeds { get; set; }
-        public int Id { get; set; }
+        
         public string Mime { get; set; }
-        public string Name { get; set; }
+       
         public string Originalfilename { get; set; }
-        public int Parent_id { get; set; }
+        
         public int Size { get; set; }
     }
 }

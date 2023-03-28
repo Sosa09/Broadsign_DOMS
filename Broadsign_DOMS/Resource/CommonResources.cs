@@ -15,6 +15,7 @@ namespace Broadsign_DOMS.Resource
         public static ObservableCollection<ContainerScopeModel> Container_Scopes { get; set; }
         public static ObservableCollection<ContainerScopeRelationModel> Container_Scope_Relations { get; set; }
         public static ObservableCollection<UserModel> Users { get; set; }
+        public static ObservableCollection<GroupModel> Groups { get; set; }
         public static ObservableCollection<BundleModel> Bundles { get; set; }
         public static ObservableCollection<CampaignModel> Campaigns { get; set; }
         public static ObservableCollection<ConfigProfileModel> ConfigProfiles { get; set; }

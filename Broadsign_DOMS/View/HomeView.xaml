@@ -8,22 +8,90 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
       
-        <LinearGradientBrush x:Key="GradientBrushBG" StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Color="black" Offset="0" />
-            <GradientStop Color="#353535" Offset="5" />
+        <LinearGradientBrush x:Key="GradientBrushBG" StartPoint="1,1" EndPoint="0,0">
+           
+            <GradientStop Color="#FF11101D" Offset="0" />
+            <GradientStop Color="#FF0C0B17" Offset="0" />
+
         </LinearGradientBrush>
         <LinearGradientBrush x:Key="GradientBrushGB" StartPoint="1,1" EndPoint="0,0">
-            <GradientStop Color="black" Offset="0" />
-            <GradientStop Color="#353535" Offset="5" />
-        </LinearGradientBrush>
+            <GradientStop Color="#FF0C0B17" Offset="0" />
+            <GradientStop Color="#FF11101D" Offset="0" />
 
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="GradientBrushGBox" StartPoint="0,1" EndPoint="0,0" Opacity="1">
+            <GradientStop Color="#FF0C0B17" Offset="0" />
+            <GradientStop Color="#FF11101D" Offset="0" />
+
+        </LinearGradientBrush>
+   
+        <ControlTemplate TargetType="Button" x:Key="BtnStyle">
+            <Border BorderBrush="White" BorderThickness="2" CornerRadius="5" Margin="5">
+                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+        </ControlTemplate>
     </UserControl.Resources>
-    <Grid>
+    <Grid Background="{StaticResource GradientBrushGBox}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="3*"/>
+            
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <Button Content="Troubleshooting" FontSize="48" Command="{Binding ProblemView}" Background="{StaticResource GradientBrushBG}" Foreground="white"></Button>
-        <Button Grid.Row="1" Content="Administration" FontSize="48" Command="{Binding AdminView}" Background="{StaticResource GradientBrushGB}" Foreground="white"></Button>
+
+        <Button Content="Problem Assistant" FontSize="23" Command="{Binding ProblemView}" Template="{DynamicResource BtnStyle}" Background="{StaticResource GradientBrushBG}" Foreground="white"/>
+        <Button Grid.Row="1" Content="BS Administration" FontSize="23" Template="{DynamicResource BtnStyle}" Command="{Binding AdminView}" Background="{StaticResource GradientBrushGB}" Foreground="white"/>
+
+        <GroupBox Grid.Column="1" Header="Network Status"  Grid.RowSpan="2" Foreground="White" Background="Transparent" Margin="5" Panel.ZIndex="1">
+            <!--this is just a demo-->
+            <DockPanel>
+                <Border BorderBrush="White" BorderThickness="1" Margin="5" CornerRadius="100" Width="75" Height="75">
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock Text="UK"/>
+                        <TextBlock Text="100/100"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="White" BorderThickness="1"  Margin="5">
+                    <StackPanel>
+                        <TextBlock Text="Belgium"/>
+                        <TextBlock Text="100/100"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="White" BorderThickness="1"  Margin="5">
+                    <StackPanel>
+                        <TextBlock Text="Country"/>
+                        <TextBlock Text="100/100"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="White" BorderThickness="1"  Margin="5">
+                    <StackPanel>
+                        <TextBlock Text="Country"/>
+                        <TextBlock Text="100/100"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="White" BorderThickness="1"  Margin="5">
+                    <StackPanel>
+                        <TextBlock Text="Country"/>
+                        <TextBlock Text="100/100"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="White" BorderThickness="1"  Margin="5">
+                    <StackPanel>
+                        <TextBlock Text="Country"/>
+                        <TextBlock Text="100/100"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="White" BorderThickness="1"  Margin="5">
+                    <StackPanel>
+                        <TextBlock Text="Country"/>
+                        <TextBlock Text="100/100"/>
+                    </StackPanel>
+                </Border>
+            </DockPanel>
+
+        </GroupBox>
     </Grid>
 </UserControl>

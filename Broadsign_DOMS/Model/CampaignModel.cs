@@ -9,16 +9,16 @@ namespace Broadsign_DOMS.Model
 {
     public class CampaignModel
     {
-        public bool Active { get; set; }
+        
         public bool Auto_synchronize_bundles { get; set; }
         public bool Contract_fields_read_only { get; set; }
         public bool Default_fullscreen { get; set; }
         public bool Has_goal { get; set; }
-        public int Id { get; set; }
+        
         public int State { get; set; }
         public int Bmb_host_id { get; set; }
         public int Booking_state { get; set; }
-        public int Container_id { get; set; }
+        
         public int Creation_user_id { get; set; }
         public int Day_of_week_mask { get; set; }
         public int Default_bundle_weight { get; set; }
@@ -36,10 +36,10 @@ namespace Broadsign_DOMS.Model
         public int Media_package_id { get; set; }
         public int Pacing_period { get; set; }
         public int Pacing_target { get; set; }
-        public int Parent_id { get; set; }
+        
         public int Promoter_user_id { get; set; }
         public int Saturation { get; set; }
-        public string Name { get; set; }
+       
         public string Booking_state_calculated_on { get; set; }
         public string Contract_id { get; set; }
         public string Creation_tm { get; set; }

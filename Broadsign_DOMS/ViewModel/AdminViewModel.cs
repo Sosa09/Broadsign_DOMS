@@ -20,6 +20,7 @@ namespace Broadsign_DOMS.ViewModel
         CloneUserModel viewSelectedItem;
     
         #endregion
+
         #region Contructors
         public AdminViewModel()
         {
@@ -29,6 +30,7 @@ namespace Broadsign_DOMS.ViewModel
 
         }
         #endregion
+
         #region Properties
         public ObservableCollection<Domains> DomainList
         {
@@ -125,6 +127,7 @@ namespace Broadsign_DOMS.ViewModel
             }
         }
         #endregion
+
         #region Methods
         private void _selectedViewModel(string cmdParam)
         {
@@ -149,7 +152,5 @@ namespace Broadsign_DOMS.ViewModel
 
         }
         #endregion
-
-
     }
 }

@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Broadsign_DOMS.Model
 {
-    public class MonitorPollModel
+    public class MonitorPollModel : BroadsignAPIModel
     {
         public int Client_resource_id { get; set; }
-        public int Id { get; set; }
+        
         public int Domain_id { get; set; }
         public int Monitor_status { get; set; }
         public string Poll_last_utc { get; set; }
