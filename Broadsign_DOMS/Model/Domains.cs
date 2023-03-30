@@ -1,7 +1,6 @@
 ﻿using Broadsign_DOMS.Service;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Windows;
 
 namespace Broadsign_DOMS.Model
 {

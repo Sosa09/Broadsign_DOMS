@@ -27,7 +27,7 @@
    
         <ControlTemplate TargetType="Button" x:Key="BtnStyle">
             <Border BorderBrush="White" BorderThickness="2" CornerRadius="5" Margin="5">
-                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="1" OpacityMask="White"/>
             </Border>
         </ControlTemplate>
     </UserControl.Resources>

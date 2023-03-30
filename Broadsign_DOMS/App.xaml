@@ -7,8 +7,8 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <!--bind view to viewmodels-->
-        <DataTemplate DataType="{x:Type vm:LoginViewModel}">
-            <v:LoginView/>
+        <DataTemplate DataType="{x:Type vm:StartViewModel}">
+            <v:StartView/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:HomeViewModel}">
             <v:HomeView/>
@@ -19,7 +19,11 @@
         <DataTemplate DataType="{x:Type vm:ProblemViewModel}">
             <v:ProblemView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:LoadingViewModel}">
+            <v:LoadingView/>
+        </DataTemplate>
         <!--style buttons-->
+        
         <Style x:Key="MyButtonStyles" TargetType="Button">
             <Setter Property="Foreground" Value="White"></Setter>
         </Style>

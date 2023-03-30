@@ -28,7 +28,7 @@ namespace Broadsign_DOMS.ViewModel
                 OnPropertyChanged(Username);
             }
         }
-
+        //Add login form
         public ICommand LoginButtonCommand 
         {
             get

@@ -33,7 +33,7 @@ namespace Broadsign_DOMS.ViewModel
 
         public MainViewModel()
         {
-            ListPageViewModel.Add(new LoginViewModel());
+            ListPageViewModel.Add(new StartViewModel());
             ListPageViewModel.Add(new HomeViewModel());
             ListPageViewModel.Add(new AdminViewModel());
             ListPageViewModel.Add(new ProblemViewModel());
