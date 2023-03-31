@@ -21,7 +21,7 @@
             </Grid>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:LoadingViewModel}">
-            
+            <Button Content="Close"/>
         </DataTemplate>
     </UserControl.Resources>
     <Grid>

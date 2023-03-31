@@ -13,29 +13,29 @@ namespace Broadsign_DOMS.ViewModel
     public class UserViewModel : ObservableObject, IPageViewModel
     {
         #region Fields
-        private Domains domain;
-        private ObservableCollection<UserModel> userList;
-        private ObservableCollection<GroupModel> groupList;
-        private ObservableCollection<ContainerScopeRelationModel> containerScopeRelations;
-        private ObservableCollection<ContainerScopeModel> containerScopes;
-        private ObservableCollection<ContainerModel> containers;
-        private UserModel selectedModelUser;
-        private string userName;
-        private string fullName;
-        private int domain_Id;
-        private int container_Id;
-        private CloneUserModel cloneUserModel = new CloneUserModel();
-        private ICommand pushUser;
+        private Domains _domain;
+        private ObservableCollection<UserModel> _userList;
+        private ObservableCollection<GroupModel> _groupList;
+        private ObservableCollection<ContainerScopeRelationModel> _containerScopeRelations;
+        private ObservableCollection<ContainerScopeModel> _containerScopes;
+        private ObservableCollection<ContainerModel> _containers;
+        private UserModel _selectedModelUser;
+        private string _userName;
+        private string _fullName;
+        private int _domain_Id;
+        private int _container_Id;
+        private CloneUserModel _cloneUserModel = new CloneUserModel();
+        private ICommand _pushUser;
         #endregion
         #region Properties
         public Domains Domain
         {
 
-            get => domain;
+            get => _domain;
             set
             {
-                domain = value;
-                OnPropertyChanged(nameof(domain));
+                _domain = value;
+                OnPropertyChanged(nameof(_domain));
                 _generateList();
 
             }
@@ -45,23 +45,23 @@ namespace Broadsign_DOMS.ViewModel
         {
             get
             {
-                if (userList == null)
-                    userList = new ObservableCollection<UserModel>();
-                return userList;
+                if (_userList == null)
+                    _userList = new ObservableCollection<UserModel>();
+                return _userList;
             }
             set
             {
-                userList = value;
+                _userList = value;
                 OnPropertyChanged(nameof(UserList));
             }
         }
 
         public UserModel SelectedModelUser
         {
-            get => selectedModelUser;
+            get => _selectedModelUser;
             set
             {
-                selectedModelUser = value;
+                _selectedModelUser = value;
                 OnPropertyChanged(nameof(SelectedModelUser));
                 _searchRelation();
             }
@@ -71,11 +71,11 @@ namespace Broadsign_DOMS.ViewModel
         {
             get
             {
-                return cloneUserModel;
+                return _cloneUserModel;
             }
             set
             {
-                cloneUserModel = value;
+                _cloneUserModel = value;
                 OnPropertyChanged(nameof(CloneUserModel));
             }
         }
@@ -84,13 +84,13 @@ namespace Broadsign_DOMS.ViewModel
         {
             get
             {
-                if (containerScopeRelations == null)
-                    containerScopeRelations = new ObservableCollection<ContainerScopeRelationModel>();
-                return containerScopeRelations;
+                if (_containerScopeRelations == null)
+                    _containerScopeRelations = new ObservableCollection<ContainerScopeRelationModel>();
+                return _containerScopeRelations;
             }
             set
             {
-                containerScopeRelations = value;
+                _containerScopeRelations = value;
                 OnPropertyChanged(nameof(ContainerScopeRelations));
             }
         }
@@ -98,13 +98,13 @@ namespace Broadsign_DOMS.ViewModel
         {
             get
             {
-                if (containerScopes == null)
-                    containerScopes = new ObservableCollection<ContainerScopeModel>();
-                return containerScopes;
+                if (_containerScopes == null)
+                    _containerScopes = new ObservableCollection<ContainerScopeModel>();
+                return _containerScopes;
             }
             set
             {
-                containerScopes = value;
+                _containerScopes = value;
                 OnPropertyChanged(nameof(ContainerScopes));
             }
 
@@ -114,11 +114,11 @@ namespace Broadsign_DOMS.ViewModel
         {
             get
             {
-                return containers ?? new ObservableCollection<ContainerModel>();
+                return _containers ?? new ObservableCollection<ContainerModel>();
             }
             set
             {
-                containers = value;
+                _containers = value;
                 OnPropertyChanged(nameof(ContainerModel));
             }
         }
@@ -128,47 +128,47 @@ namespace Broadsign_DOMS.ViewModel
             get
             {
 
-                if (pushUser == null)
+                if (_pushUser == null)
                 {
-                    pushUser = new RelayCommand(x => pushUserApi());
+                    _pushUser = new RelayCommand(x => pushUserApi());
                 }
-                return pushUser;
+                return _pushUser;
             }
         }
 
         public string UserName 
         { 
-            get => userName;
+            get => _userName;
             set
             {
-                userName = value;
+                _userName = value;
                 OnPropertyChanged(UserName);
             } 
         }
         public string FullName 
         { 
-            get => fullName;
+            get => _fullName;
             set
             {
-                fullName = value;
+                _fullName = value;
                 OnPropertyChanged(FullName);
             }
         }
         public int DomainId 
         { 
-            get => domain_Id;
+            get => _domain_Id;
             set
             {
-                domain_Id = value;
+                _domain_Id = value;
                 OnPropertyChanged(nameof(DomainId));
             }
         }
         public int ContainerId 
         { 
-            get => container_Id;
+            get => _container_Id;
             set
             {
-                container_Id = value;
+                _container_Id = value;
                 OnPropertyChanged(nameof(ContainerId));
                     
             }
@@ -178,18 +178,17 @@ namespace Broadsign_DOMS.ViewModel
         {
             get
             {
-                if(groupList == null)
-                    groupList = new ObservableCollection<GroupModel>();
-                return groupList;
+                if(_groupList == null)
+                    _groupList = new ObservableCollection<GroupModel>();
+                return _groupList;
             }
             set
             {
-                groupList = value;
+                _groupList = value;
                 OnPropertyChanged(nameof(GroupList));
             } 
         }
         #endregion
-
         #region Constructors
         public UserViewModel()
         {
@@ -199,7 +198,6 @@ namespace Broadsign_DOMS.ViewModel
 
         }
         #endregion
-
         #region Methods
         private void _searchRelation()
         {
@@ -259,6 +257,5 @@ namespace Broadsign_DOMS.ViewModel
 
         }
         #endregion
-
     }
 }

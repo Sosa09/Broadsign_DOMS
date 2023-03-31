@@ -1,6 +1,7 @@
 ﻿using Broadsign_DOMS.Model;
 using Broadsign_DOMS.Resource;
 using Broadsign_DOMS.Service;
+using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,15 +13,33 @@ namespace Broadsign_DOMS.ViewModel
 {
     public class LoadingViewModel : ObservableObject, IPageViewModel
     {
+        private ObservableCollection<Domains> _listDomains;
+        private List<string> _loaded = new List<string>();
+        private Task<bool> _loading;
 
         public LoadingViewModel()
         {
-
-        }     
-
-        private void _loadAllBaseResources()
+           
+           
+        }
+        public ObservableCollection<Domains> ListDomains 
         {
-
+            get
+            {
+                if (_listDomains == null)
+                {
+                    _listDomains = new ObservableCollection<Domains>();
+                }
+                return _listDomains;
+            }
+            set
+            {
+                _listDomains = value;
+                OnPropertyChanged(nameof(ListDomains));
+            }
+        }
+        private void _getApiRequests()
+        {
             //instantiate all observableobject from tyhe commonresources class to store the api results
             CommonResources.Users = new ObservableCollection<UserModel>();
             CommonResources.Groups = new ObservableCollection<GroupModel>();
@@ -29,8 +48,11 @@ namespace Broadsign_DOMS.ViewModel
             CommonResources.Container_Scope_Relations = new ObservableCollection<ContainerScopeRelationModel>();
 
 
+        }
+        private Task<bool> _loadAllBaseResources()
+        {
             //Go through all domains to get all resources
-            foreach (var token in DomainList)
+            foreach (var token in ListDomains)
             {
                 //get all apis from all domains resource Users, UserGroups, Players, Containers, Players, Frames(Skin), Day_Parts,
                 dynamic users = UserModel.GetUsers(token.Token);
@@ -42,6 +64,7 @@ namespace Broadsign_DOMS.ViewModel
                 //extract users from json variable and store then in Commonresources.User
                 if (users != null)
                 {
+                    //show message loading resource for country ...
 
                     foreach (var user in users["user"])
                     {
@@ -74,6 +97,7 @@ namespace Broadsign_DOMS.ViewModel
                 //extract userGroups from json variable and store then in Commonresources.UserGroups
                 if (groups != null)
                 {
+                    //show message loading resource for country ...
                     foreach (var group in groups["group"])
                     {
                         CommonResources.Groups.Add(new GroupModel
@@ -93,6 +117,7 @@ namespace Broadsign_DOMS.ViewModel
                 {
                     foreach (var container in containers["container"])
                     {
+                        //show message loading resource for country ...
                         if (container.active == true)
                         {
                             CommonResources.Containers.Add(new ContainerModel
@@ -153,7 +178,18 @@ namespace Broadsign_DOMS.ViewModel
                 }
 
             }
+;
+            return _loading;
         }
 
+        private void _loadingBar()
+        {
+            while(_loading)
+            {
+                
+            }
+
+            return 
+        }
     }
 }

@@ -13,44 +13,54 @@ namespace Broadsign_DOMS.ViewModel
     public class StartViewModel : ObservableObject, IPageViewModel
     {
         #region Fields
-        private IPageViewModel currentTemplate;
-
-        private ObservableCollection<Domains> listDomains;
+        private IPageViewModel _currentTemplate;
+        private ObservableCollection<Domains> _listDomains;
+        private bool _successfullLogin;
         #endregion
+
         #region Constructors
         public StartViewModel()
-        {
-            
+        {            
             CurrentTemplate = new LoginViewModel();
-
-            
+            Messenger.Default.Register<bool>(this, "StartViewModel",b => SuccessfullLogin = b, true);            
         }
         #endregion
+
         #region Properties
         public IPageViewModel CurrentTemplate
         {
-            get => currentTemplate;
+            get => _currentTemplate;
             set
             {
-                currentTemplate = value;
+                _currentTemplate = value;
                 OnPropertyChanged(nameof(CurrentTemplate));
             }
         }
-
         public ObservableCollection<Domains> ListDomains 
         { 
             get
             {
-                return listDomains == null ? listDomains = Domains.
+                if (_listDomains == null )
+                    _listDomains = new Domains().DomainList;
+                return _listDomains;
             }
             set
             {
-                listDomains = value;
+                _listDomains = value;
                 OnPropertyChanged(nameof(ListDomains));
             }
         }
+        public bool SuccessfullLogin 
+        { 
+            get => _successfullLogin;
+            set
+            {
+                _successfullLogin = value;
+                OnPropertyChanged(nameof(SuccessfullLogin));
+                CurrentTemplate = new LoadingViewModel();
+            }
 
-
+        }
         #endregion
     }
 }

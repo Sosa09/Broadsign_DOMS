@@ -34,9 +34,8 @@ namespace Broadsign_DOMS.ViewModel
             get
             {
                 return loginButtonCommand ?? (new RelayCommand(x =>
-                {
-                    Mediator.Notify("HomeViewModel", "");
-                    Messenger.Default.Send(true,"HomeViewModel");
+                {                   
+                    Messenger.Default.Send(true,"StartViewModel");
                 })); 
             }
         }

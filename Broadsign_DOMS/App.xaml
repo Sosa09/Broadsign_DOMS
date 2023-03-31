@@ -19,9 +19,7 @@
         <DataTemplate DataType="{x:Type vm:ProblemViewModel}">
             <v:ProblemView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:LoadingViewModel}">
-            <v:LoadingView/>
-        </DataTemplate>
+
         <!--style buttons-->
         
         <Style x:Key="MyButtonStyles" TargetType="Button">
