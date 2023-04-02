@@ -8,27 +8,29 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Broadsign_DOMS.ViewModel
 {
     public class LoadingViewModel : ObservableObject, IPageViewModel
     {
         private ObservableCollection<Domains> _listDomains;
+        private Domains domains = new Domains();
         private List<string> _loaded = new List<string>();
-        private Task<bool> _loading;
+        private string _loadingMessage;
 
         public LoadingViewModel()
         {
-           
-           
+            generateObsColl();
+            _loadingSync();
         }
-        public ObservableCollection<Domains> ListDomains 
+        public ObservableCollection<Domains> ListDomains
         {
             get
             {
                 if (_listDomains == null)
                 {
-                    _listDomains = new ObservableCollection<Domains>();
+                    _listDomains = domains.DomainList;
                 }
                 return _listDomains;
             }
@@ -38,30 +40,49 @@ namespace Broadsign_DOMS.ViewModel
                 OnPropertyChanged(nameof(ListDomains));
             }
         }
-        private void _getApiRequests()
+
+        public string LoadingMessage 
+        {
+            get
+            {
+                return _loadingMessage;
+            }
+            set
+            {
+                _loadingMessage = value;
+                OnPropertyChanged(nameof(LoadingMessage));
+            }
+        }
+
+        private void generateObsColl()
         {
             //instantiate all observableobject from tyhe commonresources class to store the api results
+
+            CommonResources.Players = new ObservableCollection<PlayerModel>();
+            CommonResources.DisplayUnits = new ObservableCollection<DisplayUnitModel>();
+            CommonResources.Frames = new ObservableCollection<FrameModel>();
+            CommonResources.DayParts = new ObservableCollection<DayPartModel>();
             CommonResources.Users = new ObservableCollection<UserModel>();
-            CommonResources.Groups = new ObservableCollection<GroupModel>();
             CommonResources.Containers = new ObservableCollection<ContainerModel>();
+            CommonResources.Groups = new ObservableCollection<GroupModel>();
             CommonResources.Container_Scopes = new ObservableCollection<ContainerScopeModel>();
             CommonResources.Container_Scope_Relations = new ObservableCollection<ContainerScopeRelationModel>();
 
 
         }
-        private Task<bool> _loadAllBaseResources()
+        private async Task _loadAllBaseResources(Domains domain)
         {
-            //Go through all domains to get all resources
-            foreach (var token in ListDomains)
-            {
-                //get all apis from all domains resource Users, UserGroups, Players, Containers, Players, Frames(Skin), Day_Parts,
-                dynamic users = UserModel.GetUsers(token.Token);
-                dynamic groups = GroupModel.GetGroups(token.Token);
-                dynamic containers = ContainerModel.GetContainers(token.Token);
-                dynamic scopes = ContainerScopeModel.GetContainerScopes(token.Token);
-                dynamic relation_users_containers = ContainerScopeRelationModel.GetScopingRelation(token.Token);
+       
+            LoadingMessage += $"\nLoading broadsign 'PLAYERS' for domain {domain.Domain}";
+            await PlayerModel.GeneratePlayers(domain.Token);
+            LoadingMessage += $"\n{CommonResources.Players.Count} 'PLAYERS' for domain {domain.Domain} loaded";
 
-                //extract users from json variable and store then in Commonresources.User
+
+            LoadingMessage += $"\nLoading broadsign 'USER' for domain {domain.Domain}";
+            try
+            {
+                dynamic users = UserModel.GetUsers(domain.Token);
+                //extract users
                 if (users != null)
                 {
                     //show message loading resource for country ...
@@ -85,7 +106,7 @@ namespace Broadsign_DOMS.ViewModel
                                 Public_key_fingerprint = user.public_key_fingerprint,
                                 Single_sign_on_id = user.single_sign_on_id,
                                 Username = user.username,
-                                Domain_name = token.Domain
+                                Domain_name = domain.Domain
 
                             });
                         }
@@ -94,7 +115,22 @@ namespace Broadsign_DOMS.ViewModel
                     }
                 }
 
-                //extract userGroups from json variable and store then in Commonresources.UserGroups
+            }catch(Exception e)
+            {
+                LoadingMessage += $"REQUEST FAILURE: {domain.Domain} Failed to get user's api request";
+            }
+            finally
+            {
+                await Task.Delay(1);
+                LoadingMessage += $"\n{CommonResources.Users.Count} 'GROUPS' for domain {domain.Domain} loaded";
+            }
+
+            await Task.Delay(1);
+            //extract userGroups
+            LoadingMessage += $"\n Loading broadsign 'GROUP' resources for domain {domain.Domain}";
+            try
+            {
+                dynamic groups = GroupModel.GetGroups(domain.Token);
                 if (groups != null)
                 {
                     //show message loading resource for country ...
@@ -107,12 +143,31 @@ namespace Broadsign_DOMS.ViewModel
                             Container_id = group.container_id,
                             Id = group.id,
                             Name = group.name,
-                            Domain_name = token.Domain
+                            Domain_name = domain.Domain
                         });
                     }
 
                 }
-                //extract containers from json variable and store then in Commonresources.User
+
+            }
+            catch (Exception e)
+            {
+                await Task.Delay(1);
+                LoadingMessage += $"REQUEST FAILURE: {domain.Domain} Failed to get group's api request";
+            }
+            finally
+            {
+                await Task.Delay(1);
+                LoadingMessage += $"\n{CommonResources.Groups.Count} 'Groups' for domain {domain.Domain} loaded";
+
+            }
+
+            //extract containers
+            await Task.Delay(1);
+            LoadingMessage += $"\nLoading broadsign 'CONTAINERS' for Domain: {domain.Domain}";
+            try
+            {
+                dynamic containers = ContainerModel.GetContainers(domain.Token);
                 if (containers != null)
                 {
                     foreach (var container in containers["container"])
@@ -135,8 +190,27 @@ namespace Broadsign_DOMS.ViewModel
                         }
                     }
                 }
+            }catch(Exception e)
+            {
+                await Task.Delay(1);
+                LoadingMessage += $"REQUEST FAILURE: {domain.Domain} Failed to get Container's api request";
+            }
+            finally
+            {
+                await Task.Delay(1);
+                LoadingMessage += $"\n{CommonResources.Groups.Count} 'CONTAINERS' Loaded for domain {domain.Domain}";
+            }
 
-                //extract users from json variable and store then in Commonresources.User
+            
+
+            //extract container scope
+            await Task.Delay(1);
+            
+            LoadingMessage += $"\n Loading broadsdign 'CONTAINER SCOPE' for domain {domain.Domain}";
+            try
+            {
+                dynamic scopes = ContainerScopeModel.GetContainerScopes(domain.Token);
+
                 if (scopes != null)
                 {
                     foreach (var container_scope in scopes["container_scope"])
@@ -157,8 +231,26 @@ namespace Broadsign_DOMS.ViewModel
                         }
                     }
                 }
+            }catch (Exception e)
+            {
+                await Task.Delay(1);
+                LoadingMessage += $"REQUEST FAILURE: {domain.Domain} Failed to get container_scope's api request";
+            }
+            finally
+            {
+                await Task.Delay(1);
+                LoadingMessage += $"\n'CONTAINER SCOPE' for domain {domain.Domain} Successfully loaded";
+            }
 
-                //extract users from json variable and store then in Commonresources.User
+
+
+            //extract CONTAINER SCOPE RELATIONS
+            await Task.Delay(1);
+            LoadingMessage += $"\n Loading broadsdign 'CONTAINER SCOPE RELATIONS' for domain {domain.Domain}";
+            try
+            {
+                dynamic relation_users_containers = ContainerScopeRelationModel.GetScopingRelation(domain.Token);
+
                 if (relation_users_containers != null)
                 {
                     foreach (var ugsRelation in relation_users_containers["container_scope_relationship"])
@@ -176,20 +268,41 @@ namespace Broadsign_DOMS.ViewModel
                         }
                     }
                 }
-
             }
-;
-            return _loading;
+            catch (Exception e)
+            {
+                await Task.Delay(1);
+                LoadingMessage += $"REQUEST FAILURE: {domain.Domain} Failed to get container_scope's api request";
+            }
+            finally
+            {
+                await Task.Delay(1);
+                LoadingMessage += $"\n'CONTAINER SCOPE RELATIONS' for domain {domain.Domain} Successfully loaded" +
+                    $"\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
+            }
+
+
+
+            
+            
+
         }
 
-        private void _loadingBar()
-        {
-            while(_loading)
-            {
-                
-            }
 
-            return 
+
+        private async Task _loadingSync()
+        {
+            List<Task> tasks = new List<Task>();
+
+            LoadingMessage += "START LOADING BS RESOURCES";
+            //Go through all domains to get all resources
+            foreach (var domain in ListDomains)
+                await _loadAllBaseResources(domain);
+           
+            await Task.WhenAll(tasks);
+            Mediator.Notify("HomeViewModel", "");
+            Messenger.Default.Send(ListDomains, "HomeViewModel");
+            
         }
     }
 }

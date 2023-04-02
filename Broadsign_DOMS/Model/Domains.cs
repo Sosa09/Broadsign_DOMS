@@ -15,7 +15,7 @@ namespace Broadsign_DOMS.Model
         {
             get
             {
-                generateAllTokens();
+                _generateAllTokens();
                 return domainList;
             }
             set
@@ -62,7 +62,7 @@ namespace Broadsign_DOMS.Model
             }
         }
 
-        private void generateAllTokens()
+        private void _generateAllTokens()
         {
             domainList = new ObservableCollection<Domains>();
 

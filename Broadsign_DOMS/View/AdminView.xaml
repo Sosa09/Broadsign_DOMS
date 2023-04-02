@@ -7,10 +7,12 @@
              xmlns:vm="clr-namespace:Broadsign_DOMS.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    
     <UserControl.Resources>
+        
         <LinearGradientBrush x:Key="GradientBrush" StartPoint="1,1" EndPoint="0,0">
             <GradientStop Color="#141E30" Offset="0.5" />
-            <GradientStop Color="#0e1521" Offset="-1" />
+            <GradientStop Color="#0e1521" Offset="0" />
         </LinearGradientBrush>
         <Style x:Key="MenuButtonTheme" BasedOn="{StaticResource {x:Type ToggleButton}}" TargetType="{x:Type RadioButton}">
             <Style.Setters>
@@ -36,7 +38,21 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-
+        <Style x:Key="radioStyle" TargetType="RadioButton">
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="BorderBrush" Value="White"/>
+            <Setter Property="BorderThickness" Value="5"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="white"/>
+            <Setter Property="Command" Value="{Binding CheckedRadioButton}"/>
+            <Style.Triggers>
+                
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource GradientBrush}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
         <DataTemplate DataType="{x:Type vm:UserViewModel}">
             <Grid>
                 <StackPanel>
@@ -86,9 +102,23 @@
             </Grid>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:ResourceViewModel}">
-            <Grid>
+            <Grid Background="#213251">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="5*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel VerticalAlignment="Stretch">
+                    <RadioButton Style="{StaticResource radioStyle}" CommandParameter="0" Content="Frame"/>
+                    <RadioButton Style="{StaticResource radioStyle}" CommandParameter="1" Content="Display Units"/>
+                    <RadioButton Style="{StaticResource radioStyle}" CommandParameter="2" Content="Player"/>
+                 
+                </StackPanel>
+                <StackPanel VerticalAlignment="Bottom" Margin="5">
+                    <Button Content="Select CSV" Command="{Binding SelectCsvFile}"/>
+                    <Button Content="Rename Resource" Command="{Binding CheckedRadioButton}" />
+                </StackPanel>
                 
-                <DataGrid>
+                <DataGrid Grid.Column="1" Margin="5">
                     
                 </DataGrid>
             </Grid>

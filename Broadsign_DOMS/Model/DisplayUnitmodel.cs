@@ -1,34 +1,40 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Broadsign_DOMS.Model
 {
-    public class DisplayUnitmodel
+    public class DisplayUnitModel
     {
         
-        public string Address { get; set; }
-        public int Bmb_host_id { get; set; }
-        
-        public int Display_unit_type_id { get; set; }
-        public int Domain_id { get; set; }
-        public bool Enforce_day_parts { get; set; }
-        public bool Enforce_screen_controls { get; set; }
-        public bool Export_enabled { get; set; }
-        public int Export_first_enabled_by_user_id { get; set; }
-        public string Export_first_enabled_tm { get; set; }
-        public int Export_retired_by_user_id { get; set; }
-        public string Export_retired_on_tm { get; set; }
-        public string External_id { get; set; }
-        public string Geolocation { get; set; }
-        public int Host_screen_count { get; set; }
-        
-       
-        public string Timezone { get; set; }
-        public int Virtual_host_screen_count { get; set; }
-        public string Virtual_id { get; set; }
-        public string Zipcode { get; set; }
+        public string address { get; set; }
+        public int bmb_host_id { get; set; }
+        public int display_unit_type_id { get; set; }
+        public int domain_id { get; set; }
+        public bool enforce_day_parts { get; set; }
+        public bool enforce_screen_controls { get; set; }
+        public bool export_enabled { get; set; }
+        public int export_first_enabled_by_user_id { get; set; }
+        public string export_first_enabled_tm { get; set; }
+        public int export_retired_by_user_id { get; set; }
+        public string export_retired_on_tm { get; set; }
+        public string external_id { get; set; }
+        public string geolocation { get; set; }
+        public int host_screen_count { get; set; }
+        public string timezone { get; set; }
+        public int virtual_host_screen_count { get; set; }
+        public string virtual_id { get; set; }
+        public string zipcode { get; set; }
+
+        public static dynamic GetDisplayUnits(string token, int id = 0)
+        {
+            string path = "display_unit/v12";
+            Requests.SendRequest(path, token, RestSharp.Method.GET);
+            return JsonConvert.DeserializeObject<ObservableCollection<DisplayUnitModel>>(Requests.Response.Content);
+        }
     }
 }

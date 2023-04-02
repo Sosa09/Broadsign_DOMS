@@ -9,29 +9,31 @@
     <UserControl.Resources>
       
         <LinearGradientBrush x:Key="GradientBrushBG" StartPoint="1,1" EndPoint="0,0">
-           
-            <GradientStop Color="#FF11101D" Offset="0" />
-            <GradientStop Color="#FF0C0B17" Offset="0" />
+
+            <GradientStop Color="#FF0C0B17" Offset="10" />
+            <GradientStop Color="DarkGray" Offset="10" />
 
         </LinearGradientBrush>
         <LinearGradientBrush x:Key="GradientBrushGB" StartPoint="1,1" EndPoint="0,0">
             <GradientStop Color="#FF0C0B17" Offset="0" />
-            <GradientStop Color="#FF11101D" Offset="0" />
+            <GradientStop Color="White" Offset="5" />
 
         </LinearGradientBrush>
-        <LinearGradientBrush x:Key="GradientBrushGBox" StartPoint="0,1" EndPoint="0,0" Opacity="1">
-            <GradientStop Color="#FF0C0B17" Offset="0" />
-            <GradientStop Color="#FF11101D" Offset="0" />
+        <LinearGradientBrush x:Key="GradientBrushGBox" StartPoint="5,1" EndPoint="1,5">
+            <GradientStop Color="#FF0C0B17" Offset="10" />
+            <GradientStop Color="Gray" Offset="0" />
 
         </LinearGradientBrush>
    
         <ControlTemplate TargetType="Button" x:Key="BtnStyle">
-            <Border BorderBrush="White" BorderThickness="2" CornerRadius="5" Margin="5">
-                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="1" OpacityMask="White"/>
+            <Border Background="{StaticResource GradientBrushGB}" BorderThickness="2" CornerRadius="5" Margin="5">
+                <ContentPresenter Name="MyBtn" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="1"  Margin="5"/>
             </Border>
+            
+            
         </ControlTemplate>
     </UserControl.Resources>
-    <Grid Background="{StaticResource GradientBrushGBox}">
+    <Grid Background="{StaticResource GradientBrushBG}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="3*"/>
@@ -42,10 +44,10 @@
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
 
-        <Button Content="Problem Assistant" FontSize="23" Command="{Binding ProblemView}" Template="{DynamicResource BtnStyle}" Background="{StaticResource GradientBrushBG}" Foreground="white"/>
-        <Button Grid.Row="1" Content="BS Administration" FontSize="23" Template="{DynamicResource BtnStyle}" Command="{Binding AdminView}" Background="{StaticResource GradientBrushGB}" Foreground="white"/>
+        <Button Content="Problem Assistant" Command="{Binding ProblemView}" Template="{DynamicResource BtnStyle}" Foreground="white"/>
+        <Button Grid.Row="1" Content="BS Administration" Template="{DynamicResource BtnStyle}" Command="{Binding AdminView}" Foreground="white"/>
 
-        <GroupBox Grid.Column="1" Header="Network Status"  Grid.RowSpan="2" Foreground="White" Background="Transparent" Margin="5" Panel.ZIndex="1">
+        <GroupBox Background="{StaticResource GradientBrushGB}" Grid.Column="1" Header="Network Status" BorderThickness="0" Grid.RowSpan="2" Foreground="White" Margin="5">
             <!--this is just a demo-->
             <DockPanel>
                 <Border BorderBrush="White" BorderThickness="1" Margin="5" CornerRadius="100" Width="75" Height="75">

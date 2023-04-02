@@ -21,7 +21,13 @@
             </Grid>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:LoadingViewModel}">
-            <Button Content="Close"/>
+            <Border Margin="10" BorderBrush="black" BorderThickness="5">
+                <ScrollViewer>
+                    
+                    <TextBlock Margin="10" Text="{Binding LoadingMessage}"/>
+                </ScrollViewer>
+            </Border>
+       
         </DataTemplate>
     </UserControl.Resources>
     <Grid>
