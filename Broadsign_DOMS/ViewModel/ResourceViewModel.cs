@@ -75,7 +75,7 @@ namespace Broadsign_DOMS.ViewModel
         {
             get
             {
-                return _domain;
+                return _domain ?? new Domains();
             } 
             set
             {
@@ -116,7 +116,14 @@ namespace Broadsign_DOMS.ViewModel
             {
                  var line = sr.ReadLine().Split(',', ';');                
                 if (_nameCheckedRadioButton == "0")
-                    throw new ArgumentNullException();
+                {
+                    var frameObject = CommonResources.Frames.Where(x => x.Id == Convert.ToInt32(line[0]));
+                    if (frameObject.Count() > 0)
+                    {
+                        frameObject.First().NewName = $"{line[1]} {frameObject.First().Name}";
+                        ResourceList.Add(frameObject.First());
+                    }
+                }
                 else if (_nameCheckedRadioButton == "1")
                     throw new ArgumentNullException();
                 else

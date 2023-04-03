@@ -40,18 +40,5 @@ namespace Broadsign_DOMS
                       
         }
 
-        //Considering deleting this part
-        //static public void updateRequest(string req, dynamic list, string newToken)
-        //{
-        //    client = new RestClient();
-        //    client.Timeout = -1;
-        //    request = new RestRequest(Method.PUT);
-        //    client.BaseUrl = new Uri(r_Url + req);
-        //    request.AddHeader("Authorization", newToken);
-        //    request.AddJsonBody(list);
-        //    response = client.Execute(request);
-
-        //}
-
     }
 }

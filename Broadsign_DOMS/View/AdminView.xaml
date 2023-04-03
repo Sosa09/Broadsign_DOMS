@@ -151,7 +151,7 @@
             <RadioButton Content="Users" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}" CommandParameter="UserViewModel"/>
             <RadioButton Content="Groups" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}" CommandParameter="GroupModel"/>
             <RadioButton Content="Config profiles" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}" CommandParameter="ConfigProfileModel"/>
-            <RadioButton Content="Resource modifier" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}" CommandParameter="ResourceModel"/>
+            <RadioButton Content="Resource modifier" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}" CommandParameter="ResourceViewModel"/>
             <RadioButton Content="Opening hours modifier" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}" CommandParameter="OpeningHoursModel"/>
         </StackPanel>
         <StackPanel Grid.Row="1" VerticalAlignment="Bottom">

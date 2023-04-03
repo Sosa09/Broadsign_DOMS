@@ -46,26 +46,47 @@ namespace Broadsign_DOMS.Model
                 MessageBox.Show("No players select or found");
                 return;
             }
-            string path = "/host/v17/";
+            string path = "/host/v17";
             foreach (PlayerModel p in players)
             {
                 dynamic requestBody = @"{" +
                                     "\"config_profile_bag_id\":" + p.Config_profile_bag_id + "," +
                                     "\"container_id\": \"" + p.Container_id + "," +
-                                    "\"db_pickup_tm_utc\": \"" + p.Db_pickup_tm_utc + "," +
+                                    "\"db_pickup_tm_utc\": \"" + p.Db_pickup_tm_utc + "\"," +
                                     "\"discovery_status\":" + p.Discovery_status + "," +
                                     "\"display_unit_id\":" + p.Display_unit_id + "," +
                                     "\"domain_id\":" + p.Domain_id + "," +
-                                    "\"geolocation\":" + p.Geolocation + "," +
+                                    "\"geolocation\": \"" + p.Geolocation + "\"," +
                                     "\"id\":" + p.Id + "," +
-                                    "\"name\":" + p.NewName + "," +
+                                    "\"name\": \"" + p.NewName + "\"," +
                                     "\"nscreens\":" + p.Nscreens + "," +
-                                    "\"public_key_fingerprint\":" + p.Public_key_fingerprint + "," +
-                                    "\"remote_clear_db_tm_utc\":" + p.Remote_clear_db_tm_utc + "," +
-                                    "\"remote_reboot_tm_utc\":" + p.Remote_reboot_tm_utc + "," +
+                                    "\"public_key_fingerprint\": \"" + p.Public_key_fingerprint + "\"," +
+                                    "\"remote_clear_db_tm_utc\": \"" + p.Remote_clear_db_tm_utc + "\"," +
+                                    "\"remote_reboot_tm_utc\": \"" + p.Remote_reboot_tm_utc + "\"," +
                                     "\"volume\":" + p.Volume +
                                     "\"}";
-                Requests.SendRequest(path, token, Method.POST, requestBody);
+
+                var data = new
+                {
+                    config_profile_bag_id = p.Config_profile_bag_id,
+                    container_id = p.Container_id,
+                    db_pickup_tm_utc = p.Db_pickup_tm_utc,
+                    discovery_status = p.Discovery_status,
+                    display_unit_id = p.Display_unit_id,
+                    domain_id = p.Domain_id,
+                    geolocation = p.Geolocation,
+                    id = p.Id,
+                    name = p.NewName,
+                    nscreens = p.Nscreens,
+                    public_key_fingerprint = p.Public_key_fingerprint,
+                    remote_clear_db_tm_utc = p.Remote_clear_db_tm_utc,
+                    remote_reboot_tm_utc = p.Remote_reboot_tm_utc,
+                    volume = p.Volume
+                };
+
+                var body = JsonConvert.SerializeObject(data);
+
+                Requests.SendRequest(path, token, Method.POST, body);
                 MessageBox.Show(Requests.Response.ResponseStatus.ToString());
                 p.Name = p.NewName;
                 p.NewName = "";

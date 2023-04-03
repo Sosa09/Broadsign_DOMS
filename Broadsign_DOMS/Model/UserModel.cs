@@ -3,6 +3,8 @@ using RestSharp;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Windows;
+using System.Threading.Tasks;
+using Broadsign_DOMS.Resource;
 
 namespace Broadsign_DOMS.Model
 {
@@ -29,7 +31,7 @@ namespace Broadsign_DOMS.Model
         #endregion
 
         #region Get Method request Function
-        public static dynamic GetUsers(string token,int id = 0)
+        private static dynamic _getUsers(string token,int id = 0)
         {
             string path = "/user/v13";
             if (id != 0)
@@ -38,6 +40,45 @@ namespace Broadsign_DOMS.Model
             Requests.SendRequest(path, token, Method.GET);
             return JsonConvert.DeserializeObject(Requests.Response.Content);
 
+        }
+
+        public static async Task GenerateUsers(string t)
+        {
+            await Task.Delay(1);
+
+            dynamic users = UserModel._getUsers(t);
+            //extract users
+            if (users != null)
+            {
+                //show message loading resource for country ...
+
+                foreach (var user in users["user"])
+                {
+                    if (user.active == true)
+                    {
+                        CommonResources.Users.Add(new UserModel
+                        {
+                            Active = user.active,
+                            Allow_auth_token = user.allow_auth_token,
+                            Container_id = user.container_id,
+                            Domain_id = user.domain_id,
+                            Email = user.email,
+                            Has_auth_token = user.has_auth_token,
+                            Id = user.id,
+                            Name = user.name,
+                            Passwd = user.password,
+                            Pending_single_sign_on_email = user.pending_single_sign_on_email,
+                            Public_key_fingerprint = user.public_key_fingerprint,
+                            Single_sign_on_id = user.single_sign_on_id,
+                            Username = user.username,
+                            Domain_name = t
+
+                        });
+                    }
+
+
+                }
+            }
         }
 
         public static void AddUsers(string token,UserModel user = null, List<UserModel> users = null)

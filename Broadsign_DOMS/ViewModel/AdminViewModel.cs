@@ -140,7 +140,7 @@ namespace Broadsign_DOMS.ViewModel
                 CurrentMenu = new GroupViewModel();
             else if (cmdParam == "ConfigProfileModel")
                 CurrentMenu = new ConfigProfileViewModel();
-            else if (cmdParam == "ResourceModel")
+            else if (cmdParam == "ResourceViewModel")
                 CurrentMenu = new ResourceViewModel();
             else if (cmdParam == "OpeningHoursModel")
                 CurrentMenu = new UserViewModel();
