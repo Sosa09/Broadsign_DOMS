@@ -15,10 +15,12 @@ namespace Broadsign_DOMS.ViewModel
         ICommand executeButtonCommand;
         ICommand viewClickedCommand;
         IPageViewModel currentMenu;
+
         Domains selectedDomain;
         ObservableCollection<Domains> domainList;
         CloneUserModel viewSelectedItem;
-    
+
+        string currentView;
         #endregion
 
         #region Contructors
@@ -69,7 +71,7 @@ namespace Broadsign_DOMS.ViewModel
                         MessageBox.Show("Please select a domain, and make sure a view menu is selected !");
                         return;
                     }
-                    _sendMsg(SelectedDomain);
+                    
                     
              
 
@@ -95,9 +97,10 @@ namespace Broadsign_DOMS.ViewModel
             set
             {
                 selectedDomain = value;
-                OnPropertyChanged(nameof(SelectedDomain));
-            
-                
+                OnPropertyChanged(nameof(SelectedDomain)); 
+                _sendMsg(SelectedDomain);
+
+
             }
 
         }
@@ -131,24 +134,24 @@ namespace Broadsign_DOMS.ViewModel
         #region Methods
         private void _selectedViewModel(string cmdParam)
         {
-            if (cmdParam.ToLower() == "user")
+            if (cmdParam.ToLower() == "UserViewModel")
                 CurrentMenu = new UserViewModel();
-            else if (cmdParam.ToLower() == "group")
+            else if (cmdParam == "GroupModel")
                 CurrentMenu = new GroupViewModel();
-            else if (cmdParam.ToLower() == "cp")
+            else if (cmdParam == "ConfigProfileModel")
                 CurrentMenu = new ConfigProfileViewModel();
-            else if (cmdParam.ToLower() == "rm")
+            else if (cmdParam == "ResourceModel")
                 CurrentMenu = new ResourceViewModel();
-            else if (cmdParam.ToLower() == "ohm")
+            else if (cmdParam == "OpeningHoursModel")
                 CurrentMenu = new UserViewModel();
             else
                 MessageBox.Show("Problem");
-
+            currentView = cmdParam;
 
         }
         private void _sendMsg(Domains d)
         {
-            Messenger.Default.Send(d, "UserViewModel");
+            Messenger.Default.Send(d, currentView);
 
         }
         #endregion

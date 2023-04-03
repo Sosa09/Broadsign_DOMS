@@ -39,36 +39,41 @@ namespace Broadsign_DOMS.Model
             Requests.SendRequest(path, token, Method.GET);
             return JsonConvert.DeserializeObject(Requests.Response.Content);
         }
-        public static void UpdatePlayesr(string token, PlayerModel player = null, List<PlayerModel> players = null)
+        public static void UpdatePlayers(string token, PlayerModel player = null, ObservableCollection<object> players = null)
         {
             if(player == null && players == null)
             {
                 MessageBox.Show("No players select or found");
                 return;
             }
-
             string path = "/host/v17/";
-            dynamic requestBody = @"{" + 
-                "\"config_profile_bag_id\":" + player.Config_profile_bag_id + "," +
-                "\"container_id\": \"" + player.Container_id + "," +
-                "\"db_pickup_tm_utc\": \"" + player.Db_pickup_tm_utc + "," +
-                "\"discovery_status\":" + player.Discovery_status + "," +
-                "\"display_unit_id\":" + player.Display_unit_id + "," +
-                "\"domain_id\":" + player.Domain_id + "," +
-                "\"geolocation\":" + player.Geolocation + "," +
-                "\"id\":" + player.Id + "," +
-                "\"name\":" + player.NewName + "," +
-                "\"nscreens\":" + player.Nscreens + "," +
-                "\"public_key_fingerprint\":" + player.Public_key_fingerprint + "," +
-                "\"remote_clear_db_tm_utc\":" + player.Remote_clear_db_tm_utc + "," +
-                "\"remote_reboot_tm_utc\":" + player.Remote_reboot_tm_utc + "," +
-                "\"volume\":" + player.Volume +
-                "\"}";
-            Requests.SendRequest(path, token, RestSharp.Method.POST, requestBody);
-            MessageBox.Show(Requests.Response.ResponseStatus.ToString());
+            foreach (PlayerModel p in players)
+            {
+                dynamic requestBody = @"{" +
+                                    "\"config_profile_bag_id\":" + p.Config_profile_bag_id + "," +
+                                    "\"container_id\": \"" + p.Container_id + "," +
+                                    "\"db_pickup_tm_utc\": \"" + p.Db_pickup_tm_utc + "," +
+                                    "\"discovery_status\":" + p.Discovery_status + "," +
+                                    "\"display_unit_id\":" + p.Display_unit_id + "," +
+                                    "\"domain_id\":" + p.Domain_id + "," +
+                                    "\"geolocation\":" + p.Geolocation + "," +
+                                    "\"id\":" + p.Id + "," +
+                                    "\"name\":" + p.NewName + "," +
+                                    "\"nscreens\":" + p.Nscreens + "," +
+                                    "\"public_key_fingerprint\":" + p.Public_key_fingerprint + "," +
+                                    "\"remote_clear_db_tm_utc\":" + p.Remote_clear_db_tm_utc + "," +
+                                    "\"remote_reboot_tm_utc\":" + p.Remote_reboot_tm_utc + "," +
+                                    "\"volume\":" + p.Volume +
+                                    "\"}";
+                Requests.SendRequest(path, token, Method.POST, requestBody);
+                MessageBox.Show(Requests.Response.ResponseStatus.ToString());
+                p.Name = p.NewName;
+                p.NewName = "";
+            }
+            
 
-            player.Name = player.NewName;
-            player.NewName = "";
+
+        
             
 
         }

@@ -114,12 +114,17 @@
                  
                 </StackPanel>
                 <StackPanel VerticalAlignment="Bottom" Margin="5">
-                    <Button Content="Select CSV" Command="{Binding SelectCsvFile}"/>
-                    <Button Content="Rename Resource" Command="{Binding CheckedRadioButton}" />
+                    <Button Content="Select CSV" Command="{Binding SelectCsvFileCommand}"/>
+                    <Button Content="Rename Resource" Command="{Binding RenameResourceCommand}" />
                 </StackPanel>
-                
-                <DataGrid Grid.Column="1" Margin="5">
-                    
+
+                <DataGrid Grid.Column="1" Margin="5" ItemsSource="{Binding ResourceList, Mode=OneWay}" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding Path=Id}"/>
+                        <DataGridTextColumn Header="Current Name" Binding="{Binding Path=Name}"/>
+                        <DataGridTextColumn Header="Futur Name" Binding="{Binding Path=NewName}"/>
+                    </DataGrid.Columns>
+             
                 </DataGrid>
             </Grid>
         </DataTemplate>
@@ -143,25 +148,24 @@
         
         <!--Menu holder-->
         <StackPanel Grid.Row="1">
-            <RadioButton Content="Users" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}" CommandParameter="User"/>
-            <RadioButton Content="Groups" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}" CommandParameter="Group"/>
-            <RadioButton Content="Config profiles" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}" CommandParameter="Cp"/>
-            <RadioButton Content="Resource modifier" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}" CommandParameter="Rm"/>
-            <RadioButton Content="Opening hours modifier" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}" CommandParameter="Ohm"/>
+            <RadioButton Content="Users" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}" CommandParameter="UserViewModel"/>
+            <RadioButton Content="Groups" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}" CommandParameter="GroupModel"/>
+            <RadioButton Content="Config profiles" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}" CommandParameter="ConfigProfileModel"/>
+            <RadioButton Content="Resource modifier" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}" CommandParameter="ResourceModel"/>
+            <RadioButton Content="Opening hours modifier" Style="{StaticResource MenuButtonTheme}" Command="{Binding ViewClickedCommand}" CommandParameter="OpeningHoursModel"/>
         </StackPanel>
         <StackPanel Grid.Row="1" VerticalAlignment="Bottom">
             <RadioButton Content="Back" Command="{Binding BackButtonCommand}" Style="{StaticResource MenuButtonTheme}"/>
         </StackPanel>
-        
         <DockPanel  Grid.Column="1" Grid.Row="0">
             <!--Request Headers holder-->
             <DockPanel  Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left">
                 <Label Content="Domain" Foreground="White"/>
                 <ListView ScrollViewer.VerticalScrollBarVisibility="Visible" MaxHeight="250" ItemsSource="{Binding DomainList, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Domain" SelectedItem="{Binding SelectedDomain, UpdateSourceTrigger=PropertyChanged}" Background="Transparent" Foreground="White"/>
             </DockPanel>
-            
+
             <TextBlock Text="{Binding Test_name}"/>
-            
+
             <!--show selected resource-->
             <!--ADD VARIABLE CURRENT TOP MENU TODO CHANGE TO CONTENT CONTROL ! and assign resource dictionnary !-->
             <DockPanel Margin="5">
@@ -200,12 +204,10 @@
                     </StackPanel>
                 </DockPanel>
             </DockPanel>
-            
+
             <Button HorizontalAlignment="Right" Style="{StaticResource MyButtonStyles}" Template="{StaticResource MainButtons}" Width="100" Height="50" Margin="10" VerticalAlignment="Center" Command="{Binding ExecuteButtonCommand}" >Execute</Button>
 
         </DockPanel>
-
-
         <!--Result and content viewer-->
         <ContentControl Grid.Row="1" Grid.Column="1" Content="{Binding CurrentMenu}"/>
 

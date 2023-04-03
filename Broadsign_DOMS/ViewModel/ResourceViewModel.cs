@@ -1,30 +1,43 @@
-﻿using Broadsign_DOMS.Resource;
+﻿using Broadsign_DOMS.Model;
+using Broadsign_DOMS.Resource;
 using Broadsign_DOMS.Service;
+using GalaSoft.MvvmLight.Messaging;
 using Microsoft.Win32;
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Broadsign_DOMS.ViewModel
 {
     public class ResourceViewModel : ObservableObject, IPageViewModel
     {
-        private ICommand _selectCsvFile;
+        private ICommand _selectCsvFileCommand;
         private ICommand _checkedRadioButton;
-        private string _nameCheckedRadioButton;
+        private ICommand _renameResourceCommand;
 
-        public ICommand SelectCsvFile 
+        Domains _domain;
+        private string _nameCheckedRadioButton;
+        private ObservableCollection<object> _resourceList;
+
+        public ResourceViewModel()
+        {
+       
+            Messenger.Default.Register<Domains>(this, "ResourceViewModel", x => Domain = x, true);
+        }
+
+        public ICommand SelectCsvFileCommand 
         {
             get 
             { 
-                if(_selectCsvFile == null)
-                   _selectCsvFile = new RelayCommand(_readCsvContent);
-                return _selectCsvFile;
+                if(_selectCsvFileCommand == null)
+                   _selectCsvFileCommand = new RelayCommand(_readCsvContent);
+                return _selectCsvFileCommand;
             } 
         }
-
         public ICommand CheckedRadioButton
         {
             get
@@ -34,6 +47,57 @@ namespace Broadsign_DOMS.ViewModel
                 return _checkedRadioButton;
             }
         }
+        public ICommand RenameResourceCommand
+        {
+            get 
+            {
+                return _renameResourceCommand ?? (new RelayCommand(
+                    param => _renameResources()
+                    )) ;
+            }
+        }
+        public ObservableCollection<dynamic> ResourceList
+        {
+            get
+            {
+                if (_resourceList == null)
+                    _resourceList = new ObservableCollection<dynamic>();
+                return _resourceList;
+            }
+            set
+            {
+                _resourceList = value;
+                OnPropertyChanged(nameof(ResourceList));
+            }
+        }
+
+        public Domains Domain 
+        {
+            get
+            {
+                return _domain;
+            } 
+            set
+            {
+                _domain = value;
+                OnPropertyChanged(nameof(Domain));
+            }
+        }
+        private void _renameResources()
+        {
+            if (_nameCheckedRadioButton == "0")
+                //FrameModel.UpdateFrame();
+                MessageBox.Show("Frame");
+            else if (_nameCheckedRadioButton == "1")
+                //DisplayUnitModel.UpdateDisplayUnits();
+                MessageBox.Show("DU");
+            else
+                PlayerModel.UpdatePlayers(Domain.Token, null, ResourceList);
+
+        }
+
+
+
         private void _storecheckedButtonName(object obj)
         {
             _nameCheckedRadioButton = obj as string;
@@ -46,20 +110,25 @@ namespace Broadsign_DOMS.ViewModel
             file.ShowDialog();
             
             //TODO check file dialog and select file open file
+            //TDOO implement found increment to show to the end user how many resources were found
             StreamReader sr = new StreamReader(file.FileName);
             while (!sr.EndOfStream)
             {
-                 var line = sr.ReadLine().Split(',', ';');
+                 var line = sr.ReadLine().Split(',', ';');                
                 if (_nameCheckedRadioButton == "0")
                     throw new ArgumentNullException();
                 else if (_nameCheckedRadioButton == "1")
                     throw new ArgumentNullException();
                 else
                 {
-                    var player = CommonResources.Players.Where(x => x.Id == Convert.ToInt32(line[0])).First();
-                    player.NewName = line[1];
-                  
-
+                    var playerObject = CommonResources.Players.Where(x => x.Id == Convert.ToInt32(line[0]));
+                    if(playerObject.Count() > 0)
+                    {
+                        playerObject.First().NewName = $"{line[1]} {playerObject.First().Name}";
+                        ResourceList.Add(playerObject.First());
+                    }
+                    
+                        
                 }
             }
             
