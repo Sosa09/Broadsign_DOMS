@@ -79,30 +79,34 @@ namespace Broadsign_DOMS.ViewModel
             await PlayerModel.GeneratePlayers(domain.Token);
             LoadingMessage += $"\n{CommonResources.Players.Count} 'PLAYERS' for domain {domain.Domain} loaded";
 
-            //LoadingMessage += $"\n\nLoading broadsign 'FRAMES' for domain {domain.Domain}";
-            //await FrameModel.GenerateFrmaes(domain.Token);
-            //LoadingMessage += $"\n{CommonResources.Players.Count} 'FRAMES' for domain {domain.Domain} loaded";
+            LoadingMessage += $"\n\nLoading broadsign 'FRAMES' for domain {domain.Domain}";
+            await FrameModel.GenerateFrames(domain.Token);
+            LoadingMessage += $"\n{CommonResources.Frames.Count} 'FRAMES' for domain {domain.Domain} loaded";
 
-            //LoadingMessage += $"\n\nLoading broadsign 'USERS' for domain {domain.Domain}";
-            //await UserModel.GenerateUsers(domain.Token);
-            //LoadingMessage += $"\n{CommonResources.Users.Count} 'USERS' for domain {domain.Domain} loaded";
+            LoadingMessage += $"\n\nLoading broadsign 'DISPLAY UNITS' for domain {domain.Domain}";
+            await DisplayUnitModel.GenerateDisplayUnits(domain.Token);
+            LoadingMessage += $"\n{CommonResources.DisplayUnits.Count} 'DISPLAY UNITS' for domain {domain.Domain} loaded";
 
-            //LoadingMessage += $"\n\n Loading broadsign 'GROUPS' resources for domain {domain.Domain}";
-            //await GroupModel.GenerateGroups(domain.Token);
-            //LoadingMessage += $"\n{CommonResources.Groups.Count} 'GROUPS' for domain {domain.Domain} loaded";
+            LoadingMessage += $"\n\nLoading broadsign 'USERS' for domain {domain.Domain}";
+            await UserModel.GenerateUsers(domain.Token);
+            LoadingMessage += $"\n{CommonResources.Users.Count} 'USERS' for domain {domain.Domain} loaded";
 
-            //LoadingMessage += $"\n\nLoading broadsign 'CONTAINERS' for Domain: {domain.Domain}";
-            //await ContainerModel.GenerateContainers(domain.Token);
-            //LoadingMessage += $"\n{CommonResources.Groups.Count} 'CONTAINERS' Loaded for domain {domain.Domain}";
-            
-            //LoadingMessage += $"\n\nLoading broadsign 'CONTAINER SCOPE' for Domain: {domain.Domain}";
-            //await ContainerScopeModel.GeneratContainerScopes(domain.Token);
-            //LoadingMessage += $"\n'CONTAINER SCOPE' for domain {domain.Domain} Successfully loaded";
+            LoadingMessage += $"\n\n Loading broadsign 'GROUPS' resources for domain {domain.Domain}";
+            await GroupModel.GenerateGroups(domain.Token);
+            LoadingMessage += $"\n{CommonResources.Groups.Count} 'GROUPS' for domain {domain.Domain} loaded";
 
-            //LoadingMessage += $"\n Loading broadsdign 'CONTAINER SCOPE RELATIONS' for domain {domain.Domain}";
-            //await ContainerScopeRelationModel.GenerateScopingRelations(domain.Token);
-            //LoadingMessage += $"\n'CONTAINER SCOPE RELATIONS' for domain {domain.Domain} Successfully loaded" +
-            //                  $"\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
+            LoadingMessage += $"\n\nLoading broadsign 'CONTAINERS' for Domain: {domain.Domain}";
+            await ContainerModel.GenerateContainers(domain.Token);
+            LoadingMessage += $"\n{CommonResources.Groups.Count} 'CONTAINERS' Loaded for domain {domain.Domain}";
+
+            LoadingMessage += $"\n\nLoading broadsign 'CONTAINER SCOPE' for Domain: {domain.Domain}";
+            await ContainerScopeModel.GeneratContainerScopes(domain.Token);
+            LoadingMessage += $"\n'CONTAINER SCOPE' for domain {domain.Domain} Successfully loaded";
+
+            LoadingMessage += $"\n Loading broadsdign 'CONTAINER SCOPE RELATIONS' for domain {domain.Domain}";
+            await ContainerScopeRelationModel.GenerateScopingRelations(domain.Token);
+            LoadingMessage += $"\n'CONTAINER SCOPE RELATIONS' for domain {domain.Domain} Successfully loaded" +
+                              $"\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
 
 
 

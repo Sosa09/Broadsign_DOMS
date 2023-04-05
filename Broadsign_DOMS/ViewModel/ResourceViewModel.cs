@@ -23,11 +23,7 @@ namespace Broadsign_DOMS.ViewModel
         private string _nameCheckedRadioButton;
         private ObservableCollection<object> _resourceList;
 
-        public ResourceViewModel()
-        {
-       
-            Messenger.Default.Register<Domains>(this, "ResourceViewModel", x => Domain = x, true);
-        }
+        public ResourceViewModel() => Messenger.Default.Register<Domains>(this, "ResourceViewModel", x => Domain = x, true);
 
         public ICommand SelectCsvFileCommand 
         {
@@ -87,12 +83,12 @@ namespace Broadsign_DOMS.ViewModel
         {
             if (_nameCheckedRadioButton == "0")
                 //FrameModel.UpdateFrame();
-                MessageBox.Show("Frame");
+                FrameModel.UpdateRename(Domain.Token, ResourceList);
             else if (_nameCheckedRadioButton == "1")
-                //DisplayUnitModel.UpdateDisplayUnits();
-                MessageBox.Show("DU");
+                DisplayUnitModel.UpdateDisplayUnits(Domain.Token, ResourceList);
+
             else
-                PlayerModel.UpdatePlayers(Domain.Token, null, ResourceList);
+                PlayerModel.UpdatePlayers(Domain.Token, ResourceList);
 
         }
 
@@ -100,7 +96,7 @@ namespace Broadsign_DOMS.ViewModel
 
         private void _storecheckedButtonName(object obj)
         {
-            _nameCheckedRadioButton = obj as string;
+            _nameCheckedRadioButton = (string)obj;
         }
 
         private void _readCsvContent(object obj)
@@ -108,9 +104,11 @@ namespace Broadsign_DOMS.ViewModel
             //open file location
             var file = new OpenFileDialog();
             file.ShowDialog();
-            
+
             //TODO check file dialog and select file open file
             //TDOO implement found increment to show to the end user how many resources were found
+            if (file.FileName == "")
+                return;
             StreamReader sr = new StreamReader(file.FileName);
             while (!sr.EndOfStream)
             {

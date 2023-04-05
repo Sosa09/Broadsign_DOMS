@@ -24,15 +24,19 @@ namespace Broadsign_DOMS
         static public IRestResponse Response { get => response; set => response = value; }
         #endregion
 
-        static public void SendRequest(string p, string t,Method method, dynamic list = null)
+        static public void SendRequest(string p, string t,Method method, object list = null)
         {
             client = new RestClient();
             client.Timeout = -1;
             client.BaseUrl = new Uri(r_Url + p);
 
-            request = new RestRequest(method);            
-            request.AddHeader("Authorization", $"Bearer {t}");
-            if(list != null)
+            request = new RestRequest(method);   
+            
+            request.AddHeader("authorization", $"Bearer {t}");
+            request.AddHeader("accept", $"application/json");
+            request.AddHeader("content-type", $"application/json");
+
+            if (list != null)
                 request.AddJsonBody(list);
 
             response = client.Execute(request);

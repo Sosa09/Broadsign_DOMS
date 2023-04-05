@@ -134,7 +134,7 @@ namespace Broadsign_DOMS.ViewModel
         #region Methods
         private void _selectedViewModel(string cmdParam)
         {
-            if (cmdParam.ToLower() == "UserViewModel")
+            if (cmdParam == "UserViewModel")
                 CurrentMenu = new UserViewModel();
             else if (cmdParam == "GroupModel")
                 CurrentMenu = new GroupViewModel();

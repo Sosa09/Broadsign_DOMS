@@ -37,11 +37,11 @@ namespace Broadsign_DOMS.Model
         {
             string path = "/host/v17";
             Requests.SendRequest(path, token, Method.GET);
-            return JsonConvert.DeserializeObject(Requests.Response.Content);
+            return JsonConvert.DeserializeObject(Requests.Response.Content) ;
         }
-        public static void UpdatePlayers(string token, PlayerModel player = null, ObservableCollection<object> players = null)
+        public static void UpdatePlayers(string token, ObservableCollection<object> players = null)
         {
-            if(player == null && players == null)
+            if(players == null)
             {
                 MessageBox.Show("No players select or found");
                 return;
@@ -49,24 +49,8 @@ namespace Broadsign_DOMS.Model
             string path = "/host/v17";
             foreach (PlayerModel p in players)
             {
-                dynamic requestBody = @"{" +
-                                    "\"config_profile_bag_id\":" + p.Config_profile_bag_id + "," +
-                                    "\"container_id\": \"" + p.Container_id + "," +
-                                    "\"db_pickup_tm_utc\": \"" + p.Db_pickup_tm_utc + "\"," +
-                                    "\"discovery_status\":" + p.Discovery_status + "," +
-                                    "\"display_unit_id\":" + p.Display_unit_id + "," +
-                                    "\"domain_id\":" + p.Domain_id + "," +
-                                    "\"geolocation\": \"" + p.Geolocation + "\"," +
-                                    "\"id\":" + p.Id + "," +
-                                    "\"name\": \"" + p.NewName + "\"," +
-                                    "\"nscreens\":" + p.Nscreens + "," +
-                                    "\"public_key_fingerprint\": \"" + p.Public_key_fingerprint + "\"," +
-                                    "\"remote_clear_db_tm_utc\": \"" + p.Remote_clear_db_tm_utc + "\"," +
-                                    "\"remote_reboot_tm_utc\": \"" + p.Remote_reboot_tm_utc + "\"," +
-                                    "\"volume\":" + p.Volume +
-                                    "\"}";
 
-                var data = new
+                var requestBody =JsonConvert.SerializeObject(new
                 {
                     config_profile_bag_id = p.Config_profile_bag_id,
                     container_id = p.Container_id,
@@ -81,13 +65,12 @@ namespace Broadsign_DOMS.Model
                     public_key_fingerprint = p.Public_key_fingerprint,
                     remote_clear_db_tm_utc = p.Remote_clear_db_tm_utc,
                     remote_reboot_tm_utc = p.Remote_reboot_tm_utc,
+
                     volume = p.Volume
-                };
+                });
+  
 
-                var body = JsonConvert.SerializeObject(data);
-
-                Requests.SendRequest(path, token, Method.POST, body);
-                MessageBox.Show(Requests.Response.ResponseStatus.ToString());
+                Requests.SendRequest(path, token, Method.PUT, requestBody);
                 p.Name = p.NewName;
                 p.NewName = "";
             }

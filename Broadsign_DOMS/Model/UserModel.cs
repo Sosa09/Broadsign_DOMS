@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Threading.Tasks;
 using Broadsign_DOMS.Resource;
+using System.Diagnostics;
 
 namespace Broadsign_DOMS.Model
 {
@@ -38,6 +39,7 @@ namespace Broadsign_DOMS.Model
                 path += $"by_id?ids={id}";
             
             Requests.SendRequest(path, token, Method.GET);
+            
             return JsonConvert.DeserializeObject(Requests.Response.Content);
 
         }

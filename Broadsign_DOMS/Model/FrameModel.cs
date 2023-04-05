@@ -2,6 +2,7 @@
 using Broadsign_DOMS.Resource;
 using Newtonsoft.Json;
 using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -34,7 +35,7 @@ namespace Broadsign_DOMS.Model
             return JsonConvert.DeserializeObject(Requests.Response.Content);
         }
 
-        public async static Task GenerateFrmaes(string t)
+        public async static Task GenerateFrames(string t)
         {
             await Task.Delay(1);
             try
@@ -74,6 +75,44 @@ namespace Broadsign_DOMS.Model
             }
 
 
+        }
+
+        public static void UpdateRename(string token, ObservableCollection<object> frames = null)
+        {
+            //check if frames contains objects
+            if (frames == null)
+            {
+                MessageBox.Show("please select or upload frames before updating");
+                return;
+            }
+
+            string path = "/skin/v7";
+
+            foreach(FrameModel f in frames)
+            {
+                var requestBody = JsonConvert.SerializeObject(new
+                {
+                    active= f.Active,
+                    domain_id= f.Domain_id,
+                    geometry_type = f.Geometry_type,
+                    height = f.Height,
+                    id = f.Id,
+                    interactivity_timeout = f.Interactivity_timeout,
+                    interactivity_trigger_id = f.Interactivity_trigger_id,
+                    loop_policy_id = f.Loop_policy_id,
+                    name = f.NewName,
+                    parent_id= f.Parent_id,
+                    screen_no= f.Screen_no,
+                    width= f.Width,
+                    x= f.X,
+                    y= f.Y,
+                    z= f.Z
+                });
+
+                Requests.SendRequest(path, token, RestSharp.Method.PUT, requestBody);
+                f.Name = f.NewName;
+                f.NewName = "";
+            };
         }
     }
 }
