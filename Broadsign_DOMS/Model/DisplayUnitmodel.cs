@@ -39,7 +39,6 @@ namespace Broadsign_DOMS.Model
             Requests.SendRequest(path, token, RestSharp.Method.GET);
             return JsonConvert.DeserializeObject(Requests.Response.Content);
         }
-
         public static async Task GenerateDisplayUnits(string token)
         {
             await Task.Delay(1);
@@ -76,7 +75,6 @@ namespace Broadsign_DOMS.Model
 
             }
         }
-
         public static void UpdateDisplayUnits(string token, ObservableCollection<object> displayUnits)
         {
             if(displayUnits == null)
@@ -84,7 +82,7 @@ namespace Broadsign_DOMS.Model
                 MessageBox.Show("Please select or upload display units before updating");
             }
 
-            var path = "/display/v12";
+            var path = "/display_unit/v12";
 
             foreach(DisplayUnitModel du in displayUnits)
             {

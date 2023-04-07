@@ -92,8 +92,6 @@ namespace Broadsign_DOMS.ViewModel
 
         }
 
-
-
         private void _storecheckedButtonName(object obj)
         {
             _nameCheckedRadioButton = (string)obj;
@@ -109,10 +107,13 @@ namespace Broadsign_DOMS.ViewModel
             //TDOO implement found increment to show to the end user how many resources were found
             if (file.FileName == "")
                 return;
+            ResourceList.Clear();
             StreamReader sr = new StreamReader(file.FileName);
+
             while (!sr.EndOfStream)
             {
-                 var line = sr.ReadLine().Split(',', ';');                
+               
+                var line = sr.ReadLine().Split(',', ';');
                 if (_nameCheckedRadioButton == "0")
                 {
                     var frameObject = CommonResources.Frames.Where(x => x.Id == Convert.ToInt32(line[0]));
@@ -123,17 +124,27 @@ namespace Broadsign_DOMS.ViewModel
                     }
                 }
                 else if (_nameCheckedRadioButton == "1")
-                    throw new ArgumentNullException();
+                {
+                    var duObject = CommonResources.DisplayUnits.Where(x => x.Id == Convert.ToInt32(line[0]));
+                    if (duObject.Count() > 0)
+                    {
+                        duObject.First().NewName = $"{line[1]} {duObject.First().Name}";
+                        ResourceList.Add(duObject.First());
+                    }
+             
+                }
+                   
+                
                 else
                 {
                     var playerObject = CommonResources.Players.Where(x => x.Id == Convert.ToInt32(line[0]));
-                    if(playerObject.Count() > 0)
+                    if (playerObject.Count() > 0)
                     {
                         playerObject.First().NewName = $"{line[1]} {playerObject.First().Name}";
                         ResourceList.Add(playerObject.First());
                     }
-                    
-                        
+
+
                 }
             }
             

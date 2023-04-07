@@ -14,7 +14,7 @@
                 <StackPanel VerticalAlignment="Center">
                     <DockPanel LastChildFill="False" HorizontalAlignment="Center" VerticalAlignment="Bottom">
                         <Label Content="Username:       "/>
-                        <TextBox Text="{Binding Username}" Width="300"/>
+                        <TextBox x:Name="Hello" Text="{Binding Username}" Width="300"/>
                     </DockPanel>
                     <Button Margin="0,5,0,0" Content="Login" Template="{StaticResource MainButtons}" HorizontalAlignment="Center" Width="390" Height="50" Command="{Binding LoginButtonCommand}"/>
                 </StackPanel>
@@ -23,7 +23,6 @@
         <DataTemplate DataType="{x:Type vm:LoadingViewModel}">
             <Border Margin="10" BorderBrush="black" BorderThickness="5">
                 <ScrollViewer>
-                    
                     <TextBlock Margin="10" Text="{Binding LoadingMessage}"/>
                 </ScrollViewer>
             </Border>
