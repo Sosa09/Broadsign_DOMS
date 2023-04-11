@@ -9,19 +9,10 @@ using System.Threading.Tasks;
 
 namespace Broadsign_DOMS.Model
 {
-    public class ContainerScopeRelationModel : ObservableObject
+    public class ContainerScopeRelationModel : BroadsignAPIModel
     {
-        private bool active;
-        private int domain_id;
-        private int id;
-        private int parent_id;
-        private int user_id;
 
-        public bool Active { get => active; set => active = value; }
-        public int Domain_id { get => domain_id; set => domain_id = value; }
-        public int Id { get => id; set => id = value; }
-        public int Parent_id { get => parent_id; set => parent_id = value; }
-        public int User_id { get => user_id; set => user_id = value; }
+        public int User_id { get; set; }
 
         private static dynamic _getScopingRelation(string token)
         {
@@ -30,10 +21,10 @@ namespace Broadsign_DOMS.Model
             return JsonConvert.DeserializeObject(Requests.Response.Content);
         }
 
-        public static async Task GenerateScopingRelations(string t)
+        public static async Task GenerateScopingRelations(Domain domain)
         {
             await Task.Delay(1);
-            dynamic relation_users_containers = _getScopingRelation(t);
+            dynamic relation_users_containers = _getScopingRelation(domain.Token);
 
             if (relation_users_containers != null)
             {
@@ -47,7 +38,8 @@ namespace Broadsign_DOMS.Model
                             Domain_id = ugsRelation.domain_id,
                             Id = ugsRelation.id,
                             Parent_id = ugsRelation.parent_id,
-                            User_id = ugsRelation.user_id
+                            User_id = ugsRelation.user_id,
+                            Domain = domain
                         });
                     }
                 }

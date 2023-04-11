@@ -12,34 +12,44 @@
             <ColumnDefinition Width="5*"/>
         </Grid.ColumnDefinitions>
         <StackPanel>
-            
-            <TextBox Text="{Binding HostName, Mode=TwoWay, NotifyOnTargetUpdated=True}"/>
+            <StackPanel.Resources>
+                <Style TargetType="Button" x:Key="BtnCommands">
+                    <Setter Property="Command" Value="{Binding RemoteOptionsCommand}"/>
+                </Style>
+            </StackPanel.Resources>
+            <TextBox Text="{Binding HostName, UpdateSourceTrigger=PropertyChanged}"/>
            
             <Button Content="SSH Connection" Command="{Binding ConnectSshCommand}"/>
             <Button Content="Copy File(s)" Command="{Binding ConnectScpCommand}"/>
-            <Button Content="Xrandr Get" Command="{Binding RemoteOptionsCommand}" CommandParameter="xrandr get"/>
-            <Button Content="Xrandr Set" Command="{Binding RemoteOptionsCommand}" CommandParameter="xrandr set"/>
-            <Button Content="Remove Files" Command="{Binding RemoteOptionsCommand}" CommandParameter="rm"/>
-            <Button Content="Get Process" Command="{Binding RemoteOptionsCommand}" CommandParameter="process"/>
-            <Button Content="pull consul update" Command="{Binding RemoteOptionsCommand}" CommandParameter="consul"/>
-            <Button Content="Reboot" Command="{Binding RemoteOptionsCommand}" CommandParameter="reboot"/>
+
+            <Button Content="Xrandr Get" Style="{DynamicResource BtnCommands}" CommandParameter="xrandr get"/>
+            <Button Content="Xrandr Set" Style="{DynamicResource BtnCommands}" CommandParameter="xrandr set"/>
+            <Button Content="Remove Files" Style="{DynamicResource BtnCommands}" CommandParameter="rm"/>
+            <Button Content="Get Process" Style="{DynamicResource BtnCommands}" CommandParameter="process"/>
+            <Button Content="pull consul update" Style="{DynamicResource BtnCommands}" CommandParameter="consul"/>
+            <Button Content="Reboot" Style="{DynamicResource BtnCommands}" CommandParameter="reboot"/>
             
+        </StackPanel>
+        <StackPanel VerticalAlignment="Bottom">
+            <DataGrid ItemsSource="{Binding Players, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="True" Height="119" >
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                </DataGrid.Columns>
+            </DataGrid>
         </StackPanel>
         <StackPanel VerticalAlignment="Bottom">
             <TextBlock FontSize="8" TextWrapping="Wrap" Text="{Binding Status, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
         </StackPanel>
         <StackPanel Grid.Column="2">
             <TextBlock Margin="10" FontSize="16">Select a player or players</TextBlock>
-            <DataGrid ItemsSource="{Binding PlayerList}">
+            <ComboBox ItemsSource="{Binding DomainList}" SelectedItem="{Binding SelectedDomain, Mode=OneWayToSource}"></ComboBox>
+            <DataGrid ItemsSource="{Binding PlayerList}" SelectedItem="{Binding SelectedPlayer, Mode=TwoWay}" AutoGenerateColumns="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="ID" Binding="{Binding Id}"/>
                     <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
-                    <DataGridTextColumn Header="Hostname" Binding="{Binding Hostname}"/>
- 
-
                 </DataGrid.Columns>
             </DataGrid>
-            <TextBlock Text="{Binding Result, NotifyOnSourceUpdated=True}"></TextBlock>
+            <TextBlock Text="{Binding Result}"></TextBlock>
         </StackPanel>
 
     </Grid>

@@ -16,30 +16,25 @@ namespace Broadsign_DOMS.ViewModel
         ICommand viewClickedCommand;
         IPageViewModel currentMenu;
 
-        Domains selectedDomain;
-        ObservableCollection<Domains> domainList;
-        CloneUserModel viewSelectedItem;
+        Domain _selectedDomain;
+        ObservableCollection<Domain> domainList;
+
 
         string currentView;
+        string _search;
         #endregion
 
         #region Contructors
-        public AdminViewModel()
-        {
-
-            Messenger.Default.Register<CloneUserModel>(this, "AdminViewModel", message => ViewSelectedItem = message, true);
-     
-
-        }
+   
         #endregion
 
         #region Properties
-        public ObservableCollection<Domains> DomainList
+        public ObservableCollection<Domain> DomainList
         {
             get
             {
                 if (domainList == null)
-                    domainList = new Domains().DomainList;
+                    domainList = new Domain().DomainList;
                 return domainList;
             }
             set
@@ -87,18 +82,14 @@ namespace Broadsign_DOMS.ViewModel
                 OnPropertyChanged(nameof(CurrentMenu));
             }
         }
-        public Domains SelectedDomain 
+        public Domain SelectedDomain 
         {
-            get
-            {
-   
-                return selectedDomain;
-            }
+            get => _selectedDomain;
             set
             {
-                selectedDomain = value;
+                _selectedDomain = value;
                 OnPropertyChanged(nameof(SelectedDomain)); 
-                _sendMsg(SelectedDomain);
+                _sendMsg();
 
 
             }
@@ -115,19 +106,15 @@ namespace Broadsign_DOMS.ViewModel
            
         }
 
-        public CloneUserModel ViewSelectedItem 
-        {
-            get
-            {
-         
-                return viewSelectedItem;
-            }
+        public string Search 
+        { 
+            get => _search;
             set
             {
-                viewSelectedItem = value;
-                OnPropertyChanged(nameof(ViewSelectedItem));
-              
-            }
+                _search = value;
+                OnPropertyChanged("Search");
+                Messenger.Default.Send(_search, $"Search{currentView}");
+            } 
         }
         #endregion
 
@@ -148,11 +135,14 @@ namespace Broadsign_DOMS.ViewModel
                 MessageBox.Show("Problem");
             currentView = cmdParam;
 
-        }
-        private void _sendMsg(Domains d)
-        {
-            Messenger.Default.Send(d, currentView);
+            _sendMsg();
 
+        }
+        private void _sendMsg(string d = null)
+        {
+            if (SelectedDomain != null)
+                d = SelectedDomain.Name;
+            Messenger.Default.Send(d, $"Domain{currentView}");
         }
         #endregion
     }

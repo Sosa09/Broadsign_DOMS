@@ -9,11 +9,13 @@
              d:DesignHeight="450" d:DesignWidth="800">
     
     <UserControl.Resources>
-        
+
         <LinearGradientBrush x:Key="GradientBrush" StartPoint="1,1" EndPoint="0,0">
             <GradientStop Color="#141E30" Offset="0.5" />
             <GradientStop Color="#0e1521" Offset="0" />
         </LinearGradientBrush>
+        
+        <!--style for the main menu radiobutton-->
         <Style x:Key="MenuButtonTheme" BasedOn="{StaticResource {x:Type ToggleButton}}" TargetType="{x:Type RadioButton}">
             <Style.Setters>
                 <Setter Property="Template">
@@ -38,6 +40,8 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        
+        <!--Main Menu-->
         <Style x:Key="radioStyle" TargetType="RadioButton">
             <Setter Property="Height" Value="50"/>
             <Setter Property="BorderBrush" Value="White"/>
@@ -53,47 +57,63 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        
+        <!--User -Modifier-->
         <DataTemplate DataType="{x:Type vm:UserViewModel}">
             <Grid>
                 <StackPanel>
 
-
-                    <TabControl>
-                        <TabItem Header="List" Name="ListUsers">
-                            <DataGrid ItemsSource="{Binding UserList}" VerticalScrollBarVisibility="Auto" Height="400"  SelectedItem="{Binding SelectedModelUser}" >
-
-
-                            </DataGrid>
-                        </TabItem>
-                        <TabItem Header="Create" Name="CloneUsers">
-                              <StackPanel>
-                                <CheckBox Content="Base on selected model user in tab List" Command="{Binding CloneUser}"/>
-                                <CheckBox Content="Clone in all domains" Command="{Binding CloneUserInAllDomains}"/>
-                                <Label>Username</Label>
-                                <TextBox Text="{Binding UserName}"/>
-                                <Label>Name</Label>
-                                <TextBox Text="{Binding FullName}"/>
-                                <Label>Domain ID</Label>
-                                <TextBox Text="{Binding DomainID}"/>
-                                <Label>Container ID</Label>
-                                <TextBox Text="{Binding ContainerID}"/>
-                                <Label>Sub Elements</Label>
-                                <ListBox>
-                      
-                                </ListBox>
-                                <Label>Groups</Label>
-                                <ListBox>
-   
-                                </ListBox>
+                    <DockPanel>
+                        <TabControl>
+                            <TabItem Header="List" Name="ListUsers">
+                                <DataGrid ItemsSource="{Binding UserList}" VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False" Height="400"  SelectedItem="{Binding SelectedModelUser}" >
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Id" Binding="{Binding Id}"/>
+                                        <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                                        <DataGridTextColumn Header="Domain" Binding="{Binding Domain.Name}"/>
+                                    </DataGrid.Columns>
 
 
+                                </DataGrid>
+                            </TabItem>
+                            <TabItem Header="Create" Name="CloneUsers">
+                                <StackPanel>
+                                    <CheckBox Content="Base on selected model user in tab List" Command="{Binding CloneUser}"/>
+                                    <CheckBox Content="Clone in all domains" Command="{Binding CloneUserInAllDomains}"/>
+                                    <Label>Username</Label>
+                                    <TextBox Text="{Binding UserName}"/>
+                                    <Label>Name</Label>
+                                    <TextBox Text="{Binding FullName}"/>
+                                    <Label>Domain ID</Label>
+                                    <TextBox Text="{Binding DomainID}"/>
+                                    <Label>Container ID</Label>
+                                    <TextBox Text="{Binding ContainerID}"/>
+                                    <Label>Sub Elements</Label>
+                                    <ListBox>
 
-                                <Button VerticalAlignment="Bottom" Content="clone" Template="{StaticResource MainButtons}" Command="{Binding PushUser}" />
+                                    </ListBox>
+                                    <Label>Groups</Label>
+                                    <ListBox>
 
-                            </StackPanel>
-                        </TabItem>
+                                    </ListBox>
 
-                    </TabControl>
+
+
+                                    <Button VerticalAlignment="Bottom" Content="clone" Template="{StaticResource MainButtons}" Command="{Binding PushUser}" />
+
+                                </StackPanel>
+                            </TabItem>
+
+                        </TabControl>
+                        <StackPanel Margin="10, 20, 10,0" >
+                            <Label Content="Groups" Foreground="White" FontWeight="ExtraBold"/>
+                            <ListBox ItemsSource="{Binding SelectedModelUser.Groups, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" Margin="10"/>
+
+                            <Label Content="Permissions" Foreground="White" FontWeight="ExtraBold"/>
+                            <ListBox ItemsSource="{Binding SelectedModelUser.ScopingRelation, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Scope_resource_type" Margin="10"/>
+                        </StackPanel>
+
+                    </DockPanel>
    
                 
                 </StackPanel>
@@ -101,7 +121,19 @@
 
             </Grid>
         </DataTemplate>
+        
+        <!--Resource Modifier-->
         <DataTemplate DataType="{x:Type vm:ResourceViewModel}">
+            <DataTemplate.Resources>
+                <Style x:Key="Tbx" TargetType="TextBox">
+                    <Setter Property="Text" Value="Enter a name to search !"></Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter Property="Text" Value=""/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataTemplate.Resources>
             <Grid Background="#213251">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"/>
@@ -123,7 +155,7 @@
                         <DataGridTextColumn Header="ID" Binding="{Binding Path=Id}"/>
                         <DataGridTextColumn Header="Current Name" Binding="{Binding Path=Name}"/>
                         <DataGridTextColumn Header="Futur Name" Binding="{Binding Path=NewName}"/>
-                        <DataGridTextColumn Header="domain" Binding="{Binding Path=Domain_id}"/>
+                        <DataGridTextColumn Header="domain" Binding="{Binding Path=Domain.Name}"/>
                     </DataGrid.Columns>
              
                 </DataGrid>
@@ -131,7 +163,7 @@
         </DataTemplate>
 
     </UserControl.Resources>
-    
+    <!--Admin view model menu-->
     <Grid Background="{StaticResource GradientBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
@@ -144,7 +176,7 @@
         
         <!--Name holder-->
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock FontSize="20" FontWeight="Bold" Foreground="White">Soufiane</TextBlock>
+            <TextBlock FontSize="20" FontWeight="Bold" Foreground="White">USERNAME !</TextBlock>
         </StackPanel>
         
         <!--Menu holder-->
@@ -158,56 +190,17 @@
         <StackPanel Grid.Row="1" VerticalAlignment="Bottom">
             <RadioButton Content="Back" Command="{Binding BackButtonCommand}" Style="{StaticResource MenuButtonTheme}"/>
         </StackPanel>
-        <DockPanel  Grid.Column="1" Grid.Row="0">
-            <!--Request Headers holder-->
-            <DockPanel  Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left">
-                <Label Content="Domain" Foreground="White"/>
-                <ListView ScrollViewer.VerticalScrollBarVisibility="Visible" MaxHeight="250" ItemsSource="{Binding DomainList, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Domain" SelectedItem="{Binding SelectedDomain, UpdateSourceTrigger=PropertyChanged}" Background="Transparent" Foreground="White"/>
-            </DockPanel>
-
-            <TextBlock Text="{Binding Test_name}"/>
-
-            <!--show selected resource-->
-            <!--ADD VARIABLE CURRENT TOP MENU TODO CHANGE TO CONTENT CONTROL ! and assign resource dictionnary !-->
-            <DockPanel Margin="5">
-                <DockPanel>
-                    <StackPanel >
-                        <StackPanel Orientation="Horizontal">
-                            <Label Foreground="White" FontWeight="ExtraBold">Name:</Label>
-                            <TextBlock Text="{Binding ViewSelectedItem.Name}" Foreground="White" HorizontalAlignment="Right"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <Label Foreground="White" FontWeight="ExtraBold">Id:</Label>
-                            <TextBlock Text="{Binding ViewSelectedItem.Id}" Foreground="White" HorizontalAlignment="Right"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <Label Foreground="White" FontWeight="ExtraBold">Username:</Label>
-                            <TextBlock Text="{Binding ViewSelectedItem.Username}" Foreground="White" HorizontalAlignment="Right"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <Label Foreground="White" FontWeight="ExtraBold">User Container ID:</Label>
-                            <TextBlock Text="{Binding ViewSelectedItem.UserContainer_id}" Foreground="White" HorizontalAlignment="Right"/>
-                        </StackPanel>
-
-                    </StackPanel>
-                </DockPanel>
-                <DockPanel Margin="15,0,0,0">
-                    <StackPanel>
-                        <Label Foreground="White" FontWeight="ExtraBold">Groups</Label>
-                        <ListBox ItemsSource="{Binding ViewSelectedItem.Groups}" DisplayMemberPath="Name"/>
-
-                    </StackPanel>
-                </DockPanel>
-                <DockPanel Margin="15,0,0,0">
-                    <StackPanel>
-                        <Label Foreground="White" FontWeight="ExtraBold">Scope</Label>
-                        <ListBox ItemsSource="{Binding ViewSelectedItem.ScopingRelation_ids}" DisplayMemberPath="Scope_resource_type"/>
-                    </StackPanel>
-                </DockPanel>
-            </DockPanel>
-
-            <Button HorizontalAlignment="Right" Style="{StaticResource MyButtonStyles}" Template="{StaticResource MainButtons}" Width="100" Height="50" Margin="10" VerticalAlignment="Center" Command="{Binding ExecuteButtonCommand}" >Execute</Button>
-
+        
+        <DockPanel Grid.Column="1" Grid.Row="0">
+            <StackPanel Margin="5">
+                <Label Content="Select Domain or leave blank to select all" Foreground="White"/>
+                <ComboBox ItemsSource="{Binding DomainList}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedDomain, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+            <StackPanel Margin="5">
+                <Label Content="Search: (only Name !)" Foreground="White"/>
+                <TextBox Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+            <Button Content="Clear" Margin="20"/>
         </DockPanel>
         <!--Result and content viewer-->
         <ContentControl Grid.Row="1" Grid.Column="1" Content="{Binding CurrentMenu}"/>

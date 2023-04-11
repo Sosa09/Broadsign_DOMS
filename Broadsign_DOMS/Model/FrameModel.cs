@@ -35,12 +35,12 @@ namespace Broadsign_DOMS.Model
             return JsonConvert.DeserializeObject(Requests.Response.Content);
         }
 
-        public async static Task GenerateFrames(string t)
+        public async static Task GenerateFrames(Domain domain)
         {
             await Task.Delay(1);
             try
             {
-                dynamic frames = _getFrames(t);
+                dynamic frames = _getFrames(domain.Token);
                 if (frames != null)
                 {
                     foreach (var frame in frames["skin"])
@@ -63,8 +63,9 @@ namespace Broadsign_DOMS.Model
                                 Width = frame.width,
                                 X = frame.x,
                                 Y = frame.y,
-                                Z = frame.z
-                            });
+                                Z = frame.z,
+                                Domain = domain
+                            }) ;
                         }
 
                     }
@@ -77,7 +78,7 @@ namespace Broadsign_DOMS.Model
 
         }
 
-        public static void UpdateRename(string token, ObservableCollection<object> frames = null)
+        public static void UpdateRename(Domain domain, ObservableCollection<object> frames = null)
         {
             //check if frames contains objects
             if (frames == null)
@@ -107,9 +108,10 @@ namespace Broadsign_DOMS.Model
                     x= f.X,
                     y= f.Y,
                     z= f.Z
+                    
                 });
-
-                Requests.SendRequest(path, token, RestSharp.Method.PUT, requestBody);
+                
+                Requests.SendRequest(path, domain.Token, RestSharp.Method.PUT, requestBody);
                 f.Name = f.NewName;
                 f.NewName = "";
             };

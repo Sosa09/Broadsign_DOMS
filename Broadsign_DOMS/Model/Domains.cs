@@ -4,14 +4,14 @@ using System.IO;
 
 namespace Broadsign_DOMS.Model
 {
-    public class Domains : ObservableObject
+    public class Domain : ObservableObject
     {
-        private string domain;
+        private string _name;
         private string userName;
         private string token;
 
-        ObservableCollection<Domains> domainList;
-        public ObservableCollection<Domains> DomainList
+        ObservableCollection<Domain> domainList;
+        public ObservableCollection<Domain> DomainList
         {
             get
             {
@@ -25,16 +25,16 @@ namespace Broadsign_DOMS.Model
             }
         }
 
-        public string Domain 
+        public string Name 
         {
             get
             {
-                return domain;
+                return _name;
             }
             set
             {
-                domain = value;
-                OnPropertyChanged(Domain);
+                _name = value;
+                OnPropertyChanged(Name);
             }
         }
         public string UserName 
@@ -64,7 +64,7 @@ namespace Broadsign_DOMS.Model
 
         private void _generateAllTokens()
         {
-            domainList = new ObservableCollection<Domains>();
+            domainList = new ObservableCollection<Domain>();
 
             using (StreamReader streamReader = new StreamReader(@"api.csv"))
             {
@@ -72,7 +72,7 @@ namespace Broadsign_DOMS.Model
                 while (!line.EndOfStream)
                 {
                     string[]? l = line.ReadLine().Split(',', ';');
-                    domainList.Add(new Domains { Domain = l[0], Token = l[1] });
+                    domainList.Add(new Domain { Name = l[0], Token = l[1] });
                 }
 
             }

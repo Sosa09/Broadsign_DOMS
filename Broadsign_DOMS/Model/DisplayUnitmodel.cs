@@ -39,11 +39,11 @@ namespace Broadsign_DOMS.Model
             Requests.SendRequest(path, token, RestSharp.Method.GET);
             return JsonConvert.DeserializeObject(Requests.Response.Content);
         }
-        public static async Task GenerateDisplayUnits(string token)
+        public static async Task GenerateDisplayUnits(Domain domain)
         {
             await Task.Delay(1);
 
-            var dus = _getDisplayUnits(token);
+            var dus = _getDisplayUnits(domain.Token);
             foreach(var du in dus["display_unit"])
             {
                 CommonResources.DisplayUnits.Add(new DisplayUnitModel
@@ -70,12 +70,13 @@ namespace Broadsign_DOMS.Model
                     Timezone = du.timezone,
                     Virtual_host_screen_count = du.virtual_host_screen_count,
                     Virtual_id = du.virtual_id,
-                    Zipcode = du.zipcode
+                    Zipcode = du.zipcode,
+                    Domain = domain
                 });
 
             }
         }
-        public static void UpdateDisplayUnits(string token, ObservableCollection<object> displayUnits)
+        public static void UpdateDisplayUnits(Domain domain, ObservableCollection<object> displayUnits)
         {
             if(displayUnits == null)
             {
@@ -105,7 +106,7 @@ namespace Broadsign_DOMS.Model
                     virtual_id= du.Virtual_id,
                     zipcode = du.Zipcode
                 });
-                Requests.SendRequest(path, token, RestSharp.Method.PUT, requestBody);
+                Requests.SendRequest(path, domain.Token, RestSharp.Method.PUT, requestBody);
                 du.Name = du.NewName;
                 du.NewName = "";
             }

@@ -5,25 +5,11 @@ using System.Windows;
 
 namespace Broadsign_DOMS.Model
 {
-    public class ContainerModel
+    public class ContainerModel : BroadsignAPIModel
     {
-        private bool active;
-        private int container_id;
-        private int domain_id;
-        private int group_id;
-        private int id;
-        private string name;
-        private int parent_id;
-        private string parent_resource_type;
 
-        public bool Active { get => active; set => active = value; }
-        public int Container_id { get => container_id; set => container_id = value; }
-        public int Domain_id { get => domain_id; set => domain_id = value; }
-        public int Group_id { get => group_id; set => group_id = value; }
-        public int Id { get => id; set => id = value; }
-        public string Name { get => name; set => name = value; }
-        public int Parent_id { get => parent_id; set => parent_id = value; }
-        public string Parent_resource_type { get => parent_resource_type; set => parent_resource_type = value; }
+        public int Group_id { get; set; }
+        public string Parent_resource_type { get; set; }
 
 
         private static dynamic _getContainers(string token, int id = 0)
@@ -34,11 +20,11 @@ namespace Broadsign_DOMS.Model
             return JsonConvert.DeserializeObject(Requests.Response.Content);
         }
 
-        public static async Task GenerateContainers(string t)
+        public static async Task GenerateContainers(Domain domain)
         {
             await Task.Delay(1);
 
-            dynamic containers = ContainerModel._getContainers(t);
+            dynamic containers = ContainerModel._getContainers(domain.Token);
             if (containers != null)
             {
                 foreach (var container in containers["container"])
@@ -55,7 +41,8 @@ namespace Broadsign_DOMS.Model
                             Id = container.id,
                             Name = container.name,
                             Parent_id = container.parent_id,
-                            Parent_resource_type = container.parent_resource_type
+                            Parent_resource_type = container.parent_resource_type,
+                            Domain = domain
 
                         });
                     }

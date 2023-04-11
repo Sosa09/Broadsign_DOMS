@@ -11,7 +11,7 @@ namespace Broadsign_DOMS.ViewModel
     {
         ICommand problemView;
         ICommand adminView;
-        public ObservableCollection<Domains> ListDomains { get; set; }
+        public ObservableCollection<Domain> ListDomains { get; set; }
    
 
         public ICommand ProblemView
@@ -42,7 +42,7 @@ namespace Broadsign_DOMS.ViewModel
         public HomeViewModel()
         {
        
-            Messenger.Default.Register<ObservableCollection<Domains>>(this,"HomeViewModel", x => ListDomains = x, true);
+            Messenger.Default.Register<ObservableCollection<Domain>>(this,"HomeViewModel", x => ListDomains = x, true);
    
 
         }

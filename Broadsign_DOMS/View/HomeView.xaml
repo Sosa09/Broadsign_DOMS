@@ -50,43 +50,60 @@
         <GroupBox Background="{StaticResource GradientBrushGB}" Grid.Column="1" Header="Network Status" BorderThickness="0" Grid.RowSpan="2" Foreground="White" Margin="5">
             <!--this is just a demo-->
             <DockPanel>
-                <Border BorderBrush="White" BorderThickness="1" Margin="5" CornerRadius="100" Width="75" Height="75">
+                <DockPanel.Resources>
+                    <LinearGradientBrush x:Key="myBorder" StartPoint="5,1" EndPoint="0,0">
+                        <GradientStop Color="Green" Offset="0"/>
+                        <GradientStop Color="Transparent" Offset="1"/>
+                    </LinearGradientBrush>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="{StaticResource myBorder}"/>
+                        <Setter Property="VerticalAlignment" Value="Stretch"/>
+                        <Setter Property="Margin" Value="5"/>
+                        <Setter Property="Opacity" Value="1"/>
+                        <!--verify if it is possible to put a condition based on another element !-->
+                    </Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="Black"/>
+                        
+                    </Style>
+                </DockPanel.Resources>
+                <Border>
                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <TextBlock Text="UK"/>
-                        <TextBlock Text="100/100"/>
+                        <TextBlock Text="UK" Foreground="#FF0C0B17"/>
+                        <TextBlock Text="80/100" Foreground="#FF0C0B17"/>
                     </StackPanel>
                 </Border>
-                <Border BorderBrush="White" BorderThickness="1"  Margin="5">
+                <Border>
                     <StackPanel>
                         <TextBlock Text="Belgium"/>
                         <TextBlock Text="100/100"/>
                     </StackPanel>
                 </Border>
-                <Border BorderBrush="White" BorderThickness="1"  Margin="5">
+                <Border>
                     <StackPanel>
                         <TextBlock Text="Country"/>
                         <TextBlock Text="100/100"/>
                     </StackPanel>
                 </Border>
-                <Border BorderBrush="White" BorderThickness="1"  Margin="5">
+                <Border >
                     <StackPanel>
                         <TextBlock Text="Country"/>
                         <TextBlock Text="100/100"/>
                     </StackPanel>
                 </Border>
-                <Border BorderBrush="White" BorderThickness="1"  Margin="5">
+                <Border >
                     <StackPanel>
                         <TextBlock Text="Country"/>
                         <TextBlock Text="100/100"/>
                     </StackPanel>
                 </Border>
-                <Border BorderBrush="White" BorderThickness="1"  Margin="5">
+                <Border >
                     <StackPanel>
                         <TextBlock Text="Country"/>
                         <TextBlock Text="100/100"/>
                     </StackPanel>
                 </Border>
-                <Border BorderBrush="White" BorderThickness="1"  Margin="5">
+                <Border>
                     <StackPanel>
                         <TextBlock Text="Country"/>
                         <TextBlock Text="100/100"/>

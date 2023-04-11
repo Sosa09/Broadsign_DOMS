@@ -32,11 +32,11 @@ namespace Broadsign_DOMS.Model
             return JsonConvert.DeserializeObject(Requests.Response.Content);
         } 
 
-        public static async Task GenerateGroups(string t)
+        public static async Task GenerateGroups(Domain domain)
         {
             await Task.Delay(1);
 
-            dynamic groups = GroupModel._getGroups(t);
+            dynamic groups = GroupModel._getGroups(domain.Token);
             if (groups != null)
             {
                 //show message loading resource for country ...
@@ -49,7 +49,7 @@ namespace Broadsign_DOMS.Model
                         Container_id = group.container_id,
                         Id = group.id,
                         Name = group.name,
-
+                        Domain = domain
                     });
                 }
 

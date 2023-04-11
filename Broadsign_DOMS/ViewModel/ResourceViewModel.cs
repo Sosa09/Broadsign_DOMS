@@ -18,12 +18,16 @@ namespace Broadsign_DOMS.ViewModel
         private ICommand _selectCsvFileCommand;
         private ICommand _checkedRadioButton;
         private ICommand _renameResourceCommand;
-
-        Domains _domain;
+        private string _search;
+        Domain _domain;
         private string _nameCheckedRadioButton;
         private ObservableCollection<object> _resourceList;
 
-        public ResourceViewModel() => Messenger.Default.Register<Domains>(this, "ResourceViewModel", x => Domain = x, true);
+        public ResourceViewModel()
+        {
+            Messenger.Default.Register<Domain>(this, "DomainResourceViewModel", x => Domain = x, true);
+            Messenger.Default.Register<string>(this, "SearchResourceViewModel", x => Search = x, true);
+        }
 
         public ICommand SelectCsvFileCommand 
         {
@@ -52,12 +56,12 @@ namespace Broadsign_DOMS.ViewModel
                     )) ;
             }
         }
-        public ObservableCollection<dynamic> ResourceList
+        public ObservableCollection<object> ResourceList
         {
             get
             {
                 if (_resourceList == null)
-                    _resourceList = new ObservableCollection<dynamic>();
+                    _resourceList = new ObservableCollection<object>();
                 return _resourceList;
             }
             set
@@ -67,11 +71,11 @@ namespace Broadsign_DOMS.ViewModel
             }
         }
 
-        public Domains Domain 
+        public Domain Domain 
         {
             get
             {
-                return _domain ?? new Domains();
+                return _domain ?? new Domain();
             } 
             set
             {
@@ -79,13 +83,36 @@ namespace Broadsign_DOMS.ViewModel
                 OnPropertyChanged(nameof(Domain));
             }
         }
+
+        public string Search 
+        {
+            get { return _search; }
+            set
+            {
+                _search = value;
+                OnPropertyChanged("Search");
+                _searchByName(value);
+            } 
+        }
+
+        private void _searchByName(string value)
+        {
+            if (_nameCheckedRadioButton == "Frame")
+                ResourceList = new ObservableCollection<object>(CommonResources.Frames.Where(x => x.Name.Contains(value)));
+            else if (_nameCheckedRadioButton == "DisplayUnit")
+                ResourceList = new ObservableCollection<object>(CommonResources.DisplayUnits.Where(x => x.Name.Contains(value)));
+            else if (_nameCheckedRadioButton == "Player")
+                ResourceList = new ObservableCollection<object>(CommonResources.Players.Where(x => x.Name.Contains(value)));
+        }
+
         private void _renameResources()
         {
-            if (_nameCheckedRadioButton == "0")
+            if (_nameCheckedRadioButton == "Frame")
                 //FrameModel.UpdateFrame();
-                FrameModel.UpdateRename(Domain.Token, ResourceList);
-            else if (_nameCheckedRadioButton == "1")
-                DisplayUnitModel.UpdateDisplayUnits(Domain.Token, ResourceList);
+                FrameModel.UpdateRename(Domain, ResourceList);
+
+            else if (_nameCheckedRadioButton == "DisplayUnit")
+                DisplayUnitModel.UpdateDisplayUnits(Domain, ResourceList);
 
             else
                 PlayerModel.UpdatePlayers(Domain.Token, ResourceList);
@@ -94,7 +121,26 @@ namespace Broadsign_DOMS.ViewModel
 
         private void _storecheckedButtonName(object obj)
         {
-            _nameCheckedRadioButton = (string)obj;
+            ResourceList.Clear();
+            ObservableCollection<object> bsObjects = new ObservableCollection<object>();
+            if((string)obj == "0")
+            {
+                _nameCheckedRadioButton = "Frame";
+                bsObjects = new ObservableCollection<object>(CommonResources.Frames);
+            }
+            else if((string)obj == "1")
+            {
+                _nameCheckedRadioButton = "DisplayUnit";
+                bsObjects = new ObservableCollection<object>(CommonResources.DisplayUnits);
+            }
+            else
+            {
+                _nameCheckedRadioButton = "Player";
+                bsObjects = new ObservableCollection<object>(CommonResources.Players);
+            }
+
+
+            ResourceList = bsObjects;
         }
 
         private void _readCsvContent(object obj)

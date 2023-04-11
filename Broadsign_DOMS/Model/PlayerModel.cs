@@ -82,12 +82,13 @@ namespace Broadsign_DOMS.Model
 
         }
 
-        public static async Task GeneratePlayers(string token)
+        public static async Task GeneratePlayers(Domain domain)
         {
+        
             await Task.Delay(1);
             try
             {
-                dynamic players = GetPlayers(token);
+                dynamic players = GetPlayers(domain.Token);
                 if (players != null)
                 {
                     foreach (dynamic player in players.host)
@@ -113,7 +114,8 @@ namespace Broadsign_DOMS.Model
                                 Remote_clear_db_tm_utc = player.remote_clear_db_tm_utc,
                                 Remote_reboot_tm_utc = player.remote_reboot_tm_utc,
                                 Secondary_mac_address = player.secondary_mac_address,
-                                Volume = player.volume
+                                Volume = player.volume,
+                                Domain = domain
                             });
                         }
 

@@ -15,9 +15,10 @@ namespace Broadsign_DOMS.Service
         private string _jumpUsername = "ubuntu";
         private string _username = "ccplayer";
         private string _password = "test1234";
-        private PrivateKeyFile privateKeyFile = new PrivateKeyFile("C:\\Users\\BECCO1SAR\\.ssh\\id_rsa");
+        private PrivateKeyFile privateKeyFile;
         private ConnectionInfo _connectionInfo;
         private ForwardedPortLocal _forwardedPortLocal;
+        private ForwardedPortLocal _forwardedPortLocalVnc;
         ScpClient scpClient;
         SshClient sshClient;
         SshClient sshJump;
@@ -29,8 +30,17 @@ namespace Broadsign_DOMS.Service
         }
         public SshOptions()
         {
-            _connectionInfo = new ConnectionInfo(_jumpHost, 22, _jumpUsername, new PrivateKeyAuthenticationMethod(_jumpUsername, privateKeyFile));
-            sshJump = new SshClient(_connectionInfo);
+            try
+            {
+                privateKeyFile = new PrivateKeyFile("C:\\Users\\BECCO1SAR\\.ssh\\id_rsa");
+                _connectionInfo = new ConnectionInfo(_jumpHost, 22, _jumpUsername, new PrivateKeyAuthenticationMethod(_jumpUsername, privateKeyFile));
+                sshJump = new SshClient(_connectionInfo);
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+       
         }
         public void StartSshSession()
         {
@@ -145,7 +155,7 @@ namespace Broadsign_DOMS.Service
                 var sshJump = new SshClient(_connectionInfo);
                 sshJump.Connect();
                 //return jump connection true
-                var _forwardedPortLocal = new ForwardedPortLocal("localhost", 5999, Host, 5900);
+                _forwardedPortLocalVnc = new ForwardedPortLocal("localhost", 5999, Host, 5900);
                 sshJump.AddForwardedPort(_forwardedPortLocal);
                 _forwardedPortLocal.Start();
 
@@ -157,6 +167,11 @@ namespace Broadsign_DOMS.Service
             }
         }
 
+        public int GetVncPort()
+        {
+            //return vnc port (int)_forwardedPortLocalVnc.BoundPort;
+            return 5999;
 
+        }
     }
 }

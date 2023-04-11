@@ -15,8 +15,8 @@ namespace Broadsign_DOMS.ViewModel
 {
     public class LoadingViewModel : ObservableObject, IPageViewModel
     {
-        private ObservableCollection<Domains> _listDomains;
-        private Domains domains = new Domains();
+        private ObservableCollection<Domain> _listDomains;
+        private Domain domains = new Domain();
         private List<string> _loaded = new List<string>();
         private string _loadingMessage;
 
@@ -25,7 +25,7 @@ namespace Broadsign_DOMS.ViewModel
             generateObsColl();
             _loadingSync();
         }
-        public ObservableCollection<Domains> ListDomains
+        public ObservableCollection<Domain> ListDomains
         {
             get
             {
@@ -72,41 +72,43 @@ namespace Broadsign_DOMS.ViewModel
 
         }
 
-        private async Task _loadAllBaseResources(Domains domain)
+        private async Task _loadAllBaseResources(Domain domain)
         {
             //TODO check if not better to put this in tasks
-            //LoadingMessage += $"\n\nLoading broadsign 'PLAYERS' for domain {domain.Domain}";
-            //await PlayerModel.GeneratePlayers(domain.Token);
-            //LoadingMessage += $"\n{CommonResources.Players.Count} 'PLAYERS' for domain {domain.Domain} loaded";
+            LoadingMessage += $"\n\nLoading broadsign 'PLAYERS' for domain {domain.Name}";
+            await PlayerModel.GeneratePlayers(domain);
+            LoadingMessage += $"\n{CommonResources.Players.Count} 'PLAYERS' for domain {domain.Name} loaded";
 
-            //LoadingMessage += $"\n\nLoading broadsign 'FRAMES' for domain {domain.Domain}";
-            //await FrameModel.GenerateFrames(domain.Token);
-            //LoadingMessage += $"\n{CommonResources.Frames.Count} 'FRAMES' for domain {domain.Domain} loaded";
+            //LoadingMessage += $"\n\nLoading broadsign 'FRAMES' for domain {domain.Name}";
+            //await FrameModel.GenerateFrames(domain);
+            //LoadingMessage += $"\n{CommonResources.Frames.Count} 'FRAMES' for domain {domain.Name} loaded";
 
-            //LoadingMessage += $"\n\nLoading broadsign 'DISPLAY UNITS' for domain {domain.Domain}";
-            //await DisplayUnitModel.GenerateDisplayUnits(domain.Token);
-            //LoadingMessage += $"\n{CommonResources.DisplayUnits.Count} 'DISPLAY UNITS' for domain {domain.Domain} loaded";
+            //LoadingMessage += $"\n\nLoading broadsign 'DISPLAY UNITS' for domain {domain.Name}";
+            //await DisplayUnitModel.GenerateDisplayUnits(domain);
+            //LoadingMessage += $"\n{CommonResources.DisplayUnits.Count} 'DISPLAY UNITS' for domain {domain.Name} loaded";
 
-            //LoadingMessage += $"\n\nLoading broadsign 'USERS' for domain {domain.Domain}";
-            //await UserModel.GenerateUsers(domain.Token);
-            //LoadingMessage += $"\n{CommonResources.Users.Count} 'USERS' for domain {domain.Domain} loaded";
+  
 
-            //LoadingMessage += $"\n\n Loading broadsign 'GROUPS' resources for domain {domain.Domain}";
-            //await GroupModel.GenerateGroups(domain.Token);
-            //LoadingMessage += $"\n{CommonResources.Groups.Count} 'GROUPS' for domain {domain.Domain} loaded";
+            //LoadingMessage += $"\n\n Loading broadsign 'GROUPS' resources for domain {domain.Name}";
+            //await GroupModel.GenerateGroups(domain);
+            //LoadingMessage += $"\n{CommonResources.Groups.Count} 'GROUPS' for domain {domain.Name} loaded";
 
-            //LoadingMessage += $"\n\nLoading broadsign 'CONTAINERS' for Domain: {domain.Domain}";
-            //await ContainerModel.GenerateContainers(domain.Token);
-            //LoadingMessage += $"\n{CommonResources.Groups.Count} 'CONTAINERS' Loaded for domain {domain.Domain}";
+            //LoadingMessage += $"\n\nLoading broadsign 'CONTAINERS' for Domain: {domain.Name}";
+            //await ContainerModel.GenerateContainers(domain);
+            //LoadingMessage += $"\n{CommonResources.Groups.Count} 'CONTAINERS' Loaded for domain {domain.Name}";
 
-            //LoadingMessage += $"\n\nLoading broadsign 'CONTAINER SCOPE' for Domain: {domain.Domain}";
-            //await ContainerScopeModel.GeneratContainerScopes(domain.Token);
-            //LoadingMessage += $"\n'CONTAINER SCOPE' for domain {domain.Domain} Successfully loaded";
+            //LoadingMessage += $"\n\nLoading broadsign 'CONTAINER SCOPE' for Domain: {domain.Name}";
+            //await ContainerScopeModel.GeneratContainerScopes(domain);
+            //LoadingMessage += $"\n'CONTAINER SCOPE' for domain {domain.Name} Successfully loaded";
 
-            //LoadingMessage += $"\n Loading broadsdign 'CONTAINER SCOPE RELATIONS' for domain {domain.Domain}";
-            //await ContainerScopeRelationModel.GenerateScopingRelations(domain.Token);
-            //LoadingMessage += $"\n'CONTAINER SCOPE RELATIONS' for domain {domain.Domain} Successfully loaded" +
-            //                  $"\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
+            //LoadingMessage += $"\n Loading broadsdign 'CONTAINER SCOPE RELATIONS' for domain {domain.Name}";
+            //await ContainerScopeRelationModel.GenerateScopingRelations(domain);
+            //LoadingMessage += $"\n'CONTAINER SCOPE RELATIONS' for domain {domain.Name} Successfully loaded";
+
+            //LoadingMessage += $"\n\nLoading broadsign 'USERS' for domain {domain.Name}";
+            //await UserModel.GenerateUsers(domain);
+            //LoadingMessage += $"\n{CommonResources.Users.Count} 'USERS' for domain {domain.Name} loaded" +
+            //$"\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
 
         }
 

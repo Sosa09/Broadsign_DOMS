@@ -13,31 +13,42 @@ namespace Broadsign_DOMS.ViewModel
     public class UserViewModel : ObservableObject, IPageViewModel
     {
         #region Fields
-        private Domains _domain;
+        private string _domain;
         private ObservableCollection<UserModel> _userList;
         private ObservableCollection<GroupModel> _groupList;
-        private ObservableCollection<ContainerScopeRelationModel> _containerScopeRelations;
-        private ObservableCollection<ContainerScopeModel> _containerScopes;
-        private ObservableCollection<ContainerModel> _containers;
         private UserModel _selectedModelUser;
+
+
         private string _userName;
         private string _fullName;
+        private string _search;
         private int _domain_Id;
         private int _container_Id;
-        private CloneUserModel _cloneUserModel = new CloneUserModel();
+
         private ICommand _pushUser;
+
         #endregion
         #region Properties
-        public Domains Domain
+        public string Domain
         {
 
             get => _domain;
             set
             {
                 _domain = value;
-                OnPropertyChanged(nameof(_domain));
-                _generateList();
+                OnPropertyChanged("Domain");
+                _updateUserList();
 
+            }
+        }
+        public string Search
+        {
+            get => _search;
+            set
+            {
+                _search = value;
+                OnPropertyChanged("Search");
+                _updateUserList();
             }
         }
 
@@ -56,6 +67,7 @@ namespace Broadsign_DOMS.ViewModel
             }
         }
 
+
         public UserModel SelectedModelUser
         {
             get => _selectedModelUser;
@@ -63,65 +75,10 @@ namespace Broadsign_DOMS.ViewModel
             {
                 _selectedModelUser = value;
                 OnPropertyChanged(nameof(SelectedModelUser));
-                _searchRelation();
             }
         }
 
-        public CloneUserModel CloneUserModel
-        {
-            get
-            {
-                return _cloneUserModel;
-            }
-            set
-            {
-                _cloneUserModel = value;
-                OnPropertyChanged(nameof(CloneUserModel));
-            }
-        }
 
-        public ObservableCollection<ContainerScopeRelationModel> ContainerScopeRelations
-        {
-            get
-            {
-                if (_containerScopeRelations == null)
-                    _containerScopeRelations = new ObservableCollection<ContainerScopeRelationModel>();
-                return _containerScopeRelations;
-            }
-            set
-            {
-                _containerScopeRelations = value;
-                OnPropertyChanged(nameof(ContainerScopeRelations));
-            }
-        }
-        public ObservableCollection<ContainerScopeModel> ContainerScopes
-        {
-            get
-            {
-                if (_containerScopes == null)
-                    _containerScopes = new ObservableCollection<ContainerScopeModel>();
-                return _containerScopes;
-            }
-            set
-            {
-                _containerScopes = value;
-                OnPropertyChanged(nameof(ContainerScopes));
-            }
-
-        }
-
-        public ObservableCollection<ContainerModel> Containers
-        {
-            get
-            {
-                return _containers ?? new ObservableCollection<ContainerModel>();
-            }
-            set
-            {
-                _containers = value;
-                OnPropertyChanged(nameof(ContainerModel));
-            }
-        }
 
         public ICommand PushUser
         {
@@ -174,78 +131,28 @@ namespace Broadsign_DOMS.ViewModel
             }
         }
 
-        public ObservableCollection<GroupModel> GroupList 
-        {
-            get
-            {
-                if(_groupList == null)
-                    _groupList = new ObservableCollection<GroupModel>();
-                return _groupList;
-            }
-            set
-            {
-                _groupList = value;
-                OnPropertyChanged(nameof(GroupList));
-            } 
-        }
         #endregion
         #region Constructors
         public UserViewModel()
         {
             
-            Messenger.Default.Register<Domains>(this, "UserViewModel", message => Domain = message);
+            Messenger.Default.Register<string>(this, "DomainUserViewModel", message => Domain = message);
+            Messenger.Default.Register<string>(this, "SearchUserViewModel", message => Search= message);
 
 
         }
         #endregion
         #region Methods
-        private void _searchRelation()
+        private void _updateUserList()
         {
-            ////TODO Convert foreach into linqreturns 0
-            ///
-            if(SelectedModelUser != null)
-            {
-                List<ContainerScopeRelationModel> groupids = CommonResources.Container_Scope_Relations.Where(x => x.User_id == SelectedModelUser.Id).ToList();
-                List<ContainerScopeModel> scopeids = CommonResources.Container_Scopes.Where(x => x.Parent_id == SelectedModelUser.Id).ToList();
-
-
-                CloneUserModel.Group_ids = groupids;
-                CloneUserModel.ScopingRelation_ids = scopeids;
-                CloneUserModel.Id = SelectedModelUser.Id;
-                CloneUserModel.Name = SelectedModelUser.Name;
-                CloneUserModel.Username = SelectedModelUser.Username;
-                CloneUserModel.UserContainer_id = SelectedModelUser.Container_id;
-                CloneUserModel.Groups = new List<GroupModel>();
-                foreach (var groupid in groupids)
-                {
-                    CloneUserModel.Groups.Add(CommonResources.Groups.Where(x => x.Id == groupid.Parent_id).First());
-                }
-                    
-
-
-                Messenger.Default.Send(CloneUserModel, "AdminViewModel");
-            }
-         
-        }
-
-        private void _generateList()
-        {
-          
-                
-            //var users = CommonResources.User;
-            if (Domain != null)
-            {
-                //assign abstract user model list to users and assing it to the local userlist 
-                var userList = CommonResources.Users.Where(d => d.Domain_name == Domain.Domain).ToList();
-                var groupList = CommonResources.Groups.Where(d => d.Domain_name == Domain.Domain).ToList();
-                UserList = new ObservableCollection<UserModel>(userList);
-                GroupList = new ObservableCollection<GroupModel>(groupList);
-            }
+            if (Domain == null && (Search == null || Search == string.Empty))
+                UserList = new ObservableCollection<UserModel>(CommonResources.Users);
+            else if(Domain != null && (Search == null || Search == string.Empty))
+                UserList = new ObservableCollection<UserModel>(CommonResources.Users.Where(x => x.Domain.Name == _domain));
+            else if(Domain != null && (Search != null || Search != string.Empty))
+                UserList = new ObservableCollection<UserModel>(CommonResources.Users.Where(x => x.Name.ToLower().Contains(_search.ToLower())));
             else
-            {
-                UserList = CommonResources.Users;
-                GroupList = CommonResources.Groups;
-            }
+                UserList = new ObservableCollection<UserModel>(CommonResources.Users.Where(x => x.Name.ToLower().Contains(_search.ToLower()) && x.Domain.Name == Domain));
 
 
         }
@@ -253,7 +160,7 @@ namespace Broadsign_DOMS.ViewModel
         private void pushUserApi()
         {
             UserModel modeluser = new UserModel { Name = FullName, Username = UserName, Domain_id = this.DomainId, Container_id = this.ContainerId };
-            UserModel.AddUsers(Domain.Token, modeluser);
+            UserModel.AddUsers(modeluser.Domain, modeluser);
 
         }
         #endregion

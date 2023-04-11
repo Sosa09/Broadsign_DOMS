@@ -6,6 +6,9 @@ using System.Windows;
 using System.Threading.Tasks;
 using Broadsign_DOMS.Resource;
 using System.Diagnostics;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System;
 
 namespace Broadsign_DOMS.Model
 {
@@ -17,17 +20,18 @@ namespace Broadsign_DOMS.Model
         
         public bool Allow_auth_token { get; set; }
         
-        public int Domain_id { get; set; }
         public string Email { get; set; }
         public object Has_auth_token { get; set; }
-        
-       
+        public ObservableCollection<GroupModel> Groups { get; set; }
+        public ObservableCollection<ContainerScopeRelationModel> Group_ids { get; set; }
+        public ObservableCollection<ContainerScopeModel> ScopingRelation { get; set; }
+
         public string Passwd { get; set; }
         public string Pending_single_sign_on_email { get; set; }
         public string Public_key_fingerprint { get; set; }
         public int Single_sign_on_id { get; set; }
         public string Username { get; set; }
-        public string Domain_name { get; set; }
+   
     
         #endregion
 
@@ -44,11 +48,11 @@ namespace Broadsign_DOMS.Model
 
         }
 
-        public static async Task GenerateUsers(string t)
+        public static async Task GenerateUsers(Domain domain)
         {
             await Task.Delay(1);
 
-            dynamic users = UserModel._getUsers(t);
+            dynamic users = UserModel._getUsers(domain.Token);
             //extract users
             if (users != null)
             {
@@ -56,8 +60,14 @@ namespace Broadsign_DOMS.Model
 
                 foreach (var user in users["user"])
                 {
+
                     if (user.active == true)
                     {
+                        ObservableCollection<ContainerScopeRelationModel> ids = ids = new ObservableCollection<ContainerScopeRelationModel>(CommonResources.Container_Scope_Relations.Where(u => u.User_id == (int)user.id));
+
+                        ObservableCollection<GroupModel> groupItems = new ObservableCollection<GroupModel>();
+                        foreach (var id in ids)
+                            groupItems.Add(CommonResources.Groups.Where(x => x.Id == id.Parent_id).First());
                         CommonResources.Users.Add(new UserModel
                         {
                             Active = user.active,
@@ -73,9 +83,12 @@ namespace Broadsign_DOMS.Model
                             Public_key_fingerprint = user.public_key_fingerprint,
                             Single_sign_on_id = user.single_sign_on_id,
                             Username = user.username,
-                            Domain_name = t
+                            Domain = domain,
+                            Groups = groupItems,
+                            ScopingRelation = new ObservableCollection<ContainerScopeModel>(CommonResources.Container_Scopes.Where(x => x.Parent_id == (int)user.id))
 
-                        });
+                            });
+
                     }
 
 
@@ -83,7 +96,7 @@ namespace Broadsign_DOMS.Model
             }
         }
 
-        public static void AddUsers(string token,UserModel user = null, List<UserModel> users = null)
+        public static void AddUsers(Domain domain,UserModel user = null, List<UserModel> users = null)
         {
             if(user == null && users == null)
             {
@@ -104,8 +117,8 @@ namespace Broadsign_DOMS.Model
                 "\"group\": " +
                     "[ { \"id\":0  } ] }, " +
                 "\"username\": \"" + user.Username + "\"}";
-
-            Requests.SendRequest(path, token, Method.POST, requestBody);
+            
+            Requests.SendRequest(path, domain.Token, Method.POST, requestBody);
             MessageBox.Show(Requests.Response.ResponseStatus.ToString());
         }
         #endregion

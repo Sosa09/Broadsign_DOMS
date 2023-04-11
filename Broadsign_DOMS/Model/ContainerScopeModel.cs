@@ -8,35 +8,23 @@ using System.Threading.Tasks;
 
 namespace Broadsign_DOMS.Model
 {
-    public class ContainerScopeModel
+    public class ContainerScopeModel : BroadsignAPIModel
     {
-        private bool active;
-        private bool can_see_above;
-        private int domain_id;
-        private int id;
-        private int parent_id;
-        private int scope_container_group_id;
-        private int scope_container_id;
-        private string scope_resource_type;
 
-        public bool Active { get => active; set => active = value; }
-        public bool Can_see_above { get => can_see_above; set => can_see_above = value; }
-        public int Domain_id { get => domain_id; set => domain_id = value; }
-        public int Id { get => id; set => id = value; }
-        public int Parent_id { get => parent_id; set => parent_id = value; }
-        public int Scope_container_group_id { get => scope_container_group_id; set => scope_container_group_id = value; }
-        public int Scope_container_id { get => scope_container_id; set => scope_container_id = value; }
-        public string Scope_resource_type { get => scope_resource_type; set => scope_resource_type = value; }
+        public bool Can_see_above { get; set; }
+        public int Scope_container_group_id { get;  set; }
+        public int Scope_container_id { get; set; }
+        public string Scope_resource_type { get; set; }
 
         private static dynamic _getContainerScopes(string token, int scope_id = 0)
         {
             Requests.SendRequest("/container_scope/v1", token, RestSharp.Method.GET);
             return JsonConvert.DeserializeObject(Requests.Response.Content);
         }
-        public static async Task GeneratContainerScopes(string t)
+        public static async Task GeneratContainerScopes(Domain domain)
         {
             await Task.Delay(1);
-            dynamic scopes = _getContainerScopes(t);
+            dynamic scopes = _getContainerScopes(domain.Token);
 
             if (scopes != null)
             {
@@ -54,6 +42,7 @@ namespace Broadsign_DOMS.Model
                             Scope_container_group_id = container_scope.scope_container_group_id,
                             Scope_container_id = container_scope.scope_container_id,
                             Scope_resource_type = container_scope.scope_resource_type,
+                            Domain = domain
                         });
                     }
                 }

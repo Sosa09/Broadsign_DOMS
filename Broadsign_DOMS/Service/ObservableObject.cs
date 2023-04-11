@@ -9,5 +9,7 @@ namespace Broadsign_DOMS.Service
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
+
+
     }
 }

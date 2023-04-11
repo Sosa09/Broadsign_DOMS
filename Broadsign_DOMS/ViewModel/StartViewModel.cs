@@ -14,7 +14,7 @@ namespace Broadsign_DOMS.ViewModel
     {
         #region Fields
         private IPageViewModel _currentTemplate;
-        private ObservableCollection<Domains> _listDomains;
+        private ObservableCollection<Domain> _listDomains;
         private bool _successfullLogin;
         #endregion
 
@@ -36,12 +36,12 @@ namespace Broadsign_DOMS.ViewModel
                 OnPropertyChanged(nameof(CurrentTemplate));
             }
         }
-        public ObservableCollection<Domains> ListDomains 
+        public ObservableCollection<Domain> ListDomains 
         { 
             get
             {
                 if (_listDomains == null )
-                    _listDomains = new Domains().DomainList;
+                    _listDomains = new Domain().DomainList;
                 return _listDomains;
             }
             set

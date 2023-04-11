@@ -14,5 +14,7 @@ namespace Broadsign_DOMS.Model
         public int Id { get; set; }
         public string Name { get; set; }
         public int Parent_id { get; set; }
+
+        public Domain Domain { get; set; }
     }
 }
