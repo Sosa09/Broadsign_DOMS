@@ -23,11 +23,12 @@ namespace Broadsign_DOMS.ViewModel
         private PlayerModel _selectedPlayer;
         private ObservableCollection<PlayerModel> _playerList;
         private ObservableCollection<SshOptions> _activeSessions;
+        private ObservableCollection<string> _logFiles;
 
         private IEnumerable<string> _domainList;
 
-        private string _hostName;
         private bool _isConnected;
+        private string _hostName;
         private string _status;
         private string _result;
         private string _selectedDomain;
@@ -151,6 +152,18 @@ namespace Broadsign_DOMS.ViewModel
                 PlayerList = new ObservableCollection<PlayerModel>(CommonResources.Players.Where(x => x.AssignedDomain.Name == _selectedDomain));
             }
         }
+        public ObservableCollection<string> LogFiles 
+        {
+            get
+            {
+               return _logFiles ?? new ObservableCollection<string>();
+            }
+            set
+            {
+                _logFiles = value;
+                OnPropertyChanged("LogFiles");
+            }
+        }
 
 
         public IEnumerable<string> DomainList
@@ -179,13 +192,12 @@ namespace Broadsign_DOMS.ViewModel
             }
         }
 
+
         private void _scpConnection()
         {
-            if (_checkHostNameIsValid())
-            {
-                _sshSession.StartScpSession();
-            }
 
+
+            LogFiles = _sshSession.GetLogList();
         }
 
         private void _executeRemoteCommand(object param)

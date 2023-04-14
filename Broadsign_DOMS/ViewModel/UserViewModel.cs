@@ -14,20 +14,20 @@ namespace Broadsign_DOMS.ViewModel
     public class UserViewModel : ObservableObject, IPageViewModel
     {
         #region Fields
-        private string _domain;
-        private bool _cloneUserIsChecked;
+        private ObservableCollection<ContainerScopeModel> _scopingRelation;
+        private ObservableCollection<GroupModel> _groups;
         private ObservableCollection<UserModel> _userList;
         private ObservableCollection<GroupModel> _groupList;
+
         private UserModel _selectedModelUser;
 
-
+        private string _domain;
         private string _userName;
         private string _fullName;
         private string _search;
-        private string _domain_Id;
-        private string _container_Id;
-        private ObservableCollection<ContainerScopeModel> _scopingRelation;
-        private ObservableCollection<GroupModel> _groups;
+
+        private int _domain_Id;
+        private int _container_Id;
 
         private ICommand _pushUser;
         private ICommand _clearModelUserInfo;
@@ -35,40 +35,27 @@ namespace Broadsign_DOMS.ViewModel
 
         #endregion
         #region Properties
-        public string Domain
-        {
-
-            get => _domain;
-            set
-            {
-                _domain = value;
-                OnPropertyChanged("Domain");
-                _updateUserList();
-
-            }
-        }
-        public string Search
-        {
-            get => _search;
-            set
-            {
-                _search = value;
-                OnPropertyChanged("Search");
-                _updateUserList();
-            }
-        }
-
-        public ICommand ClearModelUserInfo
+        public ObservableCollection<GroupModel> Groups
         {
             get
-            { 
-                if(_clearModelUserInfo == null)
-                    _clearModelUserInfo = new RelayCommand(_clearFields);
-                return _clearModelUserInfo;
-            } 
+            {
+                return _groups ?? new ObservableCollection<GroupModel>();
+            }
+            set
+            {
+                _groups = value;
+                OnPropertyChanged("Groups");
+            }
         }
-        public ICommand FillModelUserInfo => _fillModelUserInfo ??= new RelayCommand(_fillFields);
-
+        public ObservableCollection<ContainerScopeModel> ScopingRelation
+        {
+            get => _scopingRelation;
+            set
+            {
+                _scopingRelation = value;
+                OnPropertyChanged("ScopingRelation");
+            }
+        }
         public ObservableCollection<UserModel> UserList
         {
             get
@@ -93,31 +80,39 @@ namespace Broadsign_DOMS.ViewModel
             }
         }
 
-        public ICommand PushUser
+        public string Domain
         {
-            get
-            {
 
-                if (_pushUser == null)
-                {
-                    _pushUser = new RelayCommand(x => pushUserApi());
-                }
-                return _pushUser;
+            get => _domain;
+            set
+            {
+                _domain = value;
+                OnPropertyChanged("Domain");
+                _updateUserList();
+
             }
         }
-
-
-        public string UserName 
-        { 
+        public string Search
+        {
+            get => _search;
+            set
+            {
+                _search = value;
+                OnPropertyChanged("Search");
+                _updateUserList();
+            }
+        }
+        public string UserName
+        {
             get => _userName;
             set
             {
                 _userName = value;
                 OnPropertyChanged(UserName);
-            } 
+            }
         }
-        public string FullName 
-        { 
+        public string FullName
+        {
             get => _fullName;
             set
             {
@@ -125,8 +120,8 @@ namespace Broadsign_DOMS.ViewModel
                 OnPropertyChanged(FullName);
             }
         }
-        public string DomainId 
-        { 
+        public int DomainId
+        {
             get => _domain_Id;
             set
             {
@@ -134,50 +129,47 @@ namespace Broadsign_DOMS.ViewModel
                 OnPropertyChanged("DomainId");
             }
         }
-        public string ContainerId 
-        { 
+        public int ContainerId
+        {
             get => _container_Id;
             set
             {
                 _container_Id = value;
                 OnPropertyChanged("ContainerId");
-     
-                    
+
+
             }
         }
 
-
-        public ObservableCollection<GroupModel> Groups 
+        public ICommand PushUser
         {
             get
             {
-                return _groups ?? new ObservableCollection<GroupModel>();
-            }
-            set
-            {
-                _groups = value;
-                OnPropertyChanged("Groups");
-            }
-        }
-        public ObservableCollection<ContainerScopeModel> ScopingRelation 
-        { 
-            get => _scopingRelation;
-            set
-            {
-                _scopingRelation = value;
-                OnPropertyChanged("ScopingRelation");
+
+                if (_pushUser == null)
+                {
+                    _pushUser = new RelayCommand(x => _pushUserApi());
+                }
+                return _pushUser;
             }
         }
+        public ICommand ClearModelUserInfo
+        {
+            get
+            { 
+                if(_clearModelUserInfo == null)
+                    _clearModelUserInfo = new RelayCommand(_clearFields);
+                return _clearModelUserInfo;
+            } 
+        }
+        public ICommand FillModelUserInfo => _fillModelUserInfo ??= new RelayCommand(_fillFields);
 
         #endregion
         #region Constructors
         public UserViewModel()
         {
-            
             Messenger.Default.Register<string>(this, "DomainUserViewModel", message => Domain = message );
             Messenger.Default.Register<string>(this, "SearchUserViewModel", message => Search = message );
-
-
         }
         #endregion
         #region Methods
@@ -194,23 +186,21 @@ namespace Broadsign_DOMS.ViewModel
 
 
         }
-
-        private void pushUserApi()
+        private void _pushUserApi()
         {
-            UserModel modeluser = new UserModel { Name = FullName, Username = UserName, Domain_id = Convert.ToInt32(this.DomainId), Container_id = Convert.ToInt32(this.ContainerId)};
-            UserModel.AddUsers(modeluser.AssignedDomain, modeluser);
+            UserModel modeluser = new UserModel { Name = FullName, Username = UserName, Domain_id = Convert.ToInt32(this.DomainId), Container_id = Convert.ToInt32(this.ContainerId), Groups = SelectedModelUser.Groups};
+            UserModel.AddUsers(SelectedModelUser.AssignedDomain, modeluser);
 
         }
         private void _clearFields(object obj)
         {
 
             UserName = "";
-            ContainerId = "";
-            DomainId = "";
+            ContainerId = 0;
+            DomainId = 0;
             ScopingRelation?.Clear();
             Groups?.Clear();
         }
-
         private void _fillFields(object obj)
         {
             if (SelectedModelUser == null)
@@ -219,8 +209,8 @@ namespace Broadsign_DOMS.ViewModel
                 return;
             }
        
-            ContainerId = "123456";
-            //DomainId = SelectedModelUser.Domain_id;
+            ContainerId = SelectedModelUser.Container_id;
+            DomainId = SelectedModelUser.Domain_id;
             ScopingRelation = new ObservableCollection<ContainerScopeModel>(SelectedModelUser.ScopingRelation);
             Groups = new ObservableCollection<GroupModel>(SelectedModelUser.Groups);
         }

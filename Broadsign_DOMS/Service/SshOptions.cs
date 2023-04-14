@@ -1,9 +1,11 @@
 ﻿using Microsoft.Win32;
 using Renci.SshNet;
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
+
 
 
 namespace Broadsign_DOMS.Service
@@ -19,6 +21,7 @@ namespace Broadsign_DOMS.Service
         PrivateKeyFile privateKeyFile;
         ConnectionInfo _connectionInfo;
         ForwardedPortLocal _forwardedPortLocal;
+        ForwardedPortLocal _forwardedPortLocalScp;
         ForwardedPortLocal _forwardedPortLocalVnc;
         ScpClient scpClient;
         SshClient sshClient;
@@ -108,10 +111,7 @@ namespace Broadsign_DOMS.Service
             return result;
         }
 
-
-
-
-        public void StartScpSession()
+        private void _startScpSession()
         {
             //// Create an SSH client for the jump host
             //var jumpHostConnectionInfo = new ConnectionInfo("wireguard.ccuk.io", 22, "ubuntu", new PrivateKeyAuthenticationMethod("ubuntu", privateKeyFile));
@@ -122,41 +122,28 @@ namespace Broadsign_DOMS.Service
 
             // Create a forwarded port tunnel on the jump host
 
-            _forwardedPortLocal = new ForwardedPortLocal("localhost", HostName, 22);
+
+            _forwardedPortLocalScp = new ForwardedPortLocal("localhost", HostName, 22);
             sshJump.AddForwardedPort(_forwardedPortLocal);
-            _forwardedPortLocal.Start();
+            _forwardedPortLocalScp.Start();
 
             // Create an SSH client for the remote host
             var remoteHostConnectionInfo = new ConnectionInfo("localhost", (int)_forwardedPortLocal.BoundPort, _username, new PasswordAuthenticationMethod(_username, _password));
-            using var remoteHostClient = new SshClient(remoteHostConnectionInfo);
+            sshClient = new SshClient(remoteHostConnectionInfo);
 
             // Connect to the remote host using the forwarded port
-            remoteHostClient.Connect();
-
+            sshClient.Connect();
+            
             // SCP client for transferring files
             scpClient = new ScpClient(remoteHostConnectionInfo);
-
+        
             // Connect SCP client
             scpClient.Connect();
-
-            // Download a remote file
-            string remoteFilePath = "/opt/broadsign/suite/bsp/share/bsp/bsp.log";
-            var fileDialog = new OpenFileDialog();
-            fileDialog.ShowDialog();
-            var localFilePath = fileDialog.FileName;
+        
             
-            using (var fileStream = new FileStream(localFilePath + $"{HostName}-bsp.log", FileMode.Create))
-            {
-                scpClient.Download(remoteFilePath, fileStream);
-            }
-
-            Console.WriteLine("File downloaded successfully!");
-
-            // Disconnect and clean up
-            scpClient.Disconnect();
-            remoteHostClient.Disconnect();
-            _forwardedPortLocal.Stop();
         }
+
+
         public void StartVncSession()
         {
   
@@ -183,6 +170,54 @@ namespace Broadsign_DOMS.Service
                 
             }
         }
+        public ObservableCollection<string> GetLogList()
+        {
+            _startScpSession();
+            var collection = new ObservableCollection<string>
+            {
+                "bsp.log",
+                "chromium.log",
+                "bsp.db"
 
+            };
+            StreamReader streamReader = new StreamReader(ExecuteCommand("ls /opt/broadsign/suite/bsp/share/bsp/logs/"));
+            while (!streamReader.EndOfStream)
+                collection.Add(streamReader.ReadLine());
+            return collection;
+        }
+        public void DownloadFiles(ObservableCollection<string> files)
+        {
+            var localFilePath = "";
+            using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
+            {
+                System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+                if (result == System.Windows.Forms.DialogResult.OK)
+                {
+                    localFilePath = dialog.SelectedPath;
+                }
+            }
+            foreach (var file in files)
+            {
+                // Download a remote file
+                string remoteFilePath = "/opt/broadsign/suite/bsp/share/bsp/";
+                if (file != "bsp.log" || file != "bsp.db")
+                    remoteFilePath = remoteFilePath + "logs/" + file;
+                else
+                    remoteFilePath = remoteFilePath + file;
+
+
+                using (var fileStream = new FileStream(localFilePath + $"{HostName}-bsp.log", FileMode.Create))
+                {
+                    scpClient.Download(file, fileStream);
+                }
+
+             
+            }
+
+
+            // Disconnect and clean up
+            scpClient.Disconnect();
+            _forwardedPortLocalScp.Stop();
+        }
     }
 }

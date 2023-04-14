@@ -67,7 +67,7 @@ namespace Broadsign_DOMS.Model
 
                         ObservableCollection<GroupModel> groupItems = new ObservableCollection<GroupModel>();
                         foreach (var id in ids)
-                            groupItems.Add(CommonResources.Groups.Where(x => x.Id == id.Parent_id).First());
+                            groupItems = new ObservableCollection<GroupModel>(CommonResources.Groups.Where(x => x.Id == id.Parent_id));
                         CommonResources.Users.Add(new UserModel
                         {
                             Active = user.active,
@@ -85,9 +85,9 @@ namespace Broadsign_DOMS.Model
                             Username = user.username,
                             AssignedDomain = domain,
                             Groups = groupItems,
-                            ScopingRelation = new ObservableCollection<ContainerScopeModel>(CommonResources.Container_Scopes.Where(x => x.Parent_id == (int)user.id))
+                            ScopingRelation = new ObservableCollection<ContainerScopeModel>(CommonResources.Container_Scopes.Where(x => x.Parent_id == (int)user.id)),
 
-                            });
+                        }); ;
 
                     }
 
@@ -115,9 +115,16 @@ namespace Broadsign_DOMS.Model
                         "\"scope_container_group_id\": 0, " +
                         "\"scope_container_id\": 0 } ], " +
                 "\"group\": " +
-                    "[ { \"id\":0  } ] }, " +
+                    "[ { \"id\":" + user.Groups[0].Id + "} ] }, " +
                 "\"username\": \"" + user.Username + "\"}";
-            
+            dynamic requestBodyDeserialized = new
+            {
+                container_id = user.Container_id,
+                domain_id = user.Domain_id,
+                name = user.Name,
+                passwd = "",
+                sub_elements = user.Container_id,
+            };
             Requests.SendRequest(path, domain.Token, Method.POST, requestBody);
             MessageBox.Show(Requests.Response.ResponseStatus.ToString());
         }

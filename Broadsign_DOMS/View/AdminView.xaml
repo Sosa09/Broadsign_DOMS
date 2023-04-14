@@ -81,6 +81,7 @@
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Id" Binding="{Binding Id}"/>
                                         <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                                        <DataGridTextColumn Header="SSOID" Binding="{Binding Single_sign_on_id}"/>
                                         <DataGridTextColumn Header="Domain" Binding="{Binding AssignedDomain.Name}"/>
                                     </DataGrid.Columns>
 
@@ -100,10 +101,10 @@
                                     <TextBox Text="{Binding FullName}"/>
                                     
                                     <Label>Domain ID</Label>
-                                    <TextBox Text="{Binding DomainID, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"/>
+                                    <TextBox Text="{Binding DomainId}"/>
                                     
                                     <Label>Container ID</Label>
-                                    <TextBox Text="{Binding ContainerID, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"/>
+                                    <TextBox Text="{Binding ContainerId}"/>
                                     
                                     <Label>Sub Elements</Label>
                                     <ListBox ItemsSource="{Binding ScopingRelation}" DisplayMemberPath="Scope_resource_type"/>

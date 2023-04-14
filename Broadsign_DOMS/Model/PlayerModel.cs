@@ -122,10 +122,8 @@ namespace Broadsign_DOMS.Model
                                 AssignedDomain = domain
                             });
                         }
-
                     }
                 }
-
             }
             catch (Exception e)
             {

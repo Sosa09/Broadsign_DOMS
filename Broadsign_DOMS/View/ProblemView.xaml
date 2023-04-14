@@ -8,7 +8,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="5*"/>
         </Grid.ColumnDefinitions>
         <StackPanel>
@@ -20,8 +20,8 @@
             <TextBox Text="{Binding HostName, UpdateSourceTrigger=PropertyChanged}"/>
            
             <Button Content="SSH Connection" Command="{Binding ConnectSshCommand}"/>
-            <Button Content="Copy File(s)" Command="{Binding ConnectScpCommand}"/>
 
+            <Button Content="Get Log Files" Command="{Binding ConnectScpCommand}"/>
             <Button Content="Xrandr Get" Style="{DynamicResource BtnCommands}" CommandParameter="xrandr get"/>
             <Button Content="Xrandr Set" Style="{DynamicResource BtnCommands}" CommandParameter="xrandr set"/>
             <Button Content="Remove Files" Style="{DynamicResource BtnCommands}" CommandParameter="rm"/>
@@ -31,7 +31,7 @@
             
         </StackPanel>
         <StackPanel VerticalAlignment="Bottom">
-            <DataGrid ItemsSource="{Binding ActiveSessions}">
+            <DataGrid ItemsSource="{Binding ActiveSessions}" SelectedItem="{Binding SelectedSession}" AutoGenerateColumns="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Name" Binding="{Binding HostName}"/>
                     <DataGridTextColumn Header="Alive" Binding="{Binding IsConnected}"/>
@@ -39,18 +39,19 @@
                 </DataGrid.Columns>
             </DataGrid>
         </StackPanel>
-        <StackPanel VerticalAlignment="Bottom">
-            <TextBlock FontSize="8" TextWrapping="Wrap" Text="{Binding Status, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
-        </StackPanel>
         <StackPanel Grid.Column="2">
             <TextBlock Margin="10" FontSize="16">Select a player or players</TextBlock>
-            <ComboBox ItemsSource="{Binding DomainList}" SelectedItem="{Binding SelectedDomain, Mode=OneWayToSource}"></ComboBox>
-            <DataGrid ItemsSource="{Binding PlayerList}" SelectedItem="{Binding SelectedPlayer, Mode=TwoWay}" AutoGenerateColumns="False">
+            <ComboBox ItemsSource="{Binding DomainList}" SelectedItem="{Binding SelectedDomain}"></ComboBox>
+            <DataGrid ItemsSource="{Binding PlayerList}" SelectedItem="{Binding SelectedPlayer}" AutoGenerateColumns="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="ID" Binding="{Binding Id}"/>
                     <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
                 </DataGrid.Columns>
             </DataGrid>
+            <DataGrid ItemsSource="{Binding LogFiles}">
+                
+            </DataGrid>
+            <TextBlock Text="{Binding SelectedSession.HostName}"/>
             <TextBlock Text="{Binding Result}"></TextBlock>
         </StackPanel>
 
