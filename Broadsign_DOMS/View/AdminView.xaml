@@ -51,18 +51,29 @@
             <Setter Property="Foreground" Value="white"/>
             <Setter Property="Command" Value="{Binding CheckedRadioButton}"/>
             <Style.Triggers>
-                
+
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="{StaticResource GradientBrush}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
-        
+
         <!--User -Modifier-->
         <DataTemplate DataType="{x:Type vm:UserViewModel}">
             <Grid>
                 <StackPanel>
-
+                    <StackPanel.Resources>
+                        <Style x:Key="MyKey" TargetType="CheckBox">
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter Property="Command" Value="{Binding FillModelUserInfo}"/>
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="False">
+                                    <Setter Property="Command" Value="{Binding ClearModelUserInfo}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Resources>
                     <DockPanel>
                         <TabControl>
                             <TabItem Header="List" Name="ListUsers">
@@ -70,37 +81,38 @@
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Id" Binding="{Binding Id}"/>
                                         <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
-                                        <DataGridTextColumn Header="Domain" Binding="{Binding Domain.Name}"/>
+                                        <DataGridTextColumn Header="Domain" Binding="{Binding AssignedDomain.Name}"/>
                                     </DataGrid.Columns>
-
 
                                 </DataGrid>
                             </TabItem>
-                            <TabItem Header="Create" Name="CloneUsers">
+                            <TabItem Header="Add" Name="CloneUsers">
                                 <StackPanel>
-                                    <CheckBox Content="Base on selected model user in tab List" Command="{Binding CloneUser}"/>
-                                    <CheckBox Content="Clone in all domains" Command="{Binding CloneUserInAllDomains}"/>
+
+                                    <CheckBox Content="Based on Model User" Style="{StaticResource MyKey}"/>
+
+                                    <CheckBox Content="Create in all domains" Command="{Binding CloneUserInAllDomains}"/>
+                                    
                                     <Label>Username</Label>
                                     <TextBox Text="{Binding UserName}"/>
+                                    
                                     <Label>Name</Label>
                                     <TextBox Text="{Binding FullName}"/>
+                                    
                                     <Label>Domain ID</Label>
-                                    <TextBox Text="{Binding DomainID}"/>
+                                    <TextBox Text="{Binding DomainID, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"/>
+                                    
                                     <Label>Container ID</Label>
-                                    <TextBox Text="{Binding ContainerID}"/>
+                                    <TextBox Text="{Binding ContainerID, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"/>
+                                    
                                     <Label>Sub Elements</Label>
-                                    <ListBox>
-
-                                    </ListBox>
+                                    <ListBox ItemsSource="{Binding ScopingRelation}" DisplayMemberPath="Scope_resource_type"/>
+                                    
                                     <Label>Groups</Label>
-                                    <ListBox>
-
-                                    </ListBox>
-
-
-
-                                    <Button VerticalAlignment="Bottom" Content="clone" Template="{StaticResource MainButtons}" Command="{Binding PushUser}" />
-
+                                    <ListBox ItemsSource="{Binding Groups}" DisplayMemberPath="Name"/>
+                                    
+                                    <Button VerticalAlignment="Bottom" Content="Create" Command="{Binding PushUser}" />
+                                
                                 </StackPanel>
                             </TabItem>
 

@@ -4,6 +4,7 @@ using Broadsign_DOMS.Service;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -18,10 +19,10 @@ namespace Broadsign_DOMS.ViewModel
         private ICommand _connectSshCommand;
         private ICommand _connectScpCommand;
 
-        private SshOptions _sshOptions;
+        private SshOptions _sshSession;
         private PlayerModel _selectedPlayer;
         private ObservableCollection<PlayerModel> _playerList;
-        private ObservableCollection<object> _players;
+        private ObservableCollection<SshOptions> _activeSessions;
 
         private IEnumerable<string> _domainList;
 
@@ -32,16 +33,22 @@ namespace Broadsign_DOMS.ViewModel
         private string _selectedDomain;
 
 
-        private ObservableCollection<object> Players
+        public ObservableCollection<SshOptions> ActiveSessions
         {
             get 
             {
-                return _players ?? new ObservableCollection<object>();
+                if(_activeSessions == null)
+                {
+                    _activeSessions = new ObservableCollection<SshOptions>();
+                    _activeSessions.Add(_sshSession = new SshOptions() { HostName = "hello" });
+
+                }
+                return _activeSessions;
             }
             set
             {
-                _players = value;
-                OnPropertyChanged("Players");
+                _activeSessions = value;
+                OnPropertyChanged("ActiveSessions");
             }
         }
         public string HostName
@@ -54,7 +61,7 @@ namespace Broadsign_DOMS.ViewModel
             {
                 _hostName = value;
                 OnPropertyChanged("HostName");
-                PlayerList = new ObservableCollection<PlayerModel>(CommonResources.Players.Where(x => x.Name.Contains(_hostName) && x.Domain.Name == SelectedDomain));
+                //PlayerList = new ObservableCollection<PlayerModel>(CommonResources.Players.Where(x => x.Name.Contains(_hostName) && x.Domain.Name == SelectedDomain));
             }
 
         }
@@ -92,12 +99,6 @@ namespace Broadsign_DOMS.ViewModel
                 _result = value;
                 OnPropertyChanged("Result");
             }
-        }
-
-        public ProblemViewModel()
-        {
-            _sshOptions = new SshOptions();
-
         }
 
         public ICommand RemoteOptionsCommand
@@ -147,7 +148,7 @@ namespace Broadsign_DOMS.ViewModel
             {
                 _selectedDomain = value;
                 OnPropertyChanged("SelectedDomain");
-                PlayerList = new ObservableCollection<PlayerModel>(CommonResources.Players.Where(x => x.Domain.Name == _selectedDomain));
+                PlayerList = new ObservableCollection<PlayerModel>(CommonResources.Players.Where(x => x.AssignedDomain.Name == _selectedDomain));
             }
         }
 
@@ -157,7 +158,7 @@ namespace Broadsign_DOMS.ViewModel
             get
             {
                 if (_domainList == null)
-                    _domainList = CommonResources.Players.Select(x => x.Domain.Name).Distinct();
+                    _domainList = CommonResources.Players.Select(x => x.AssignedDomain.Name).Distinct();
                 return _domainList;
             }
             set
@@ -175,20 +176,6 @@ namespace Broadsign_DOMS.ViewModel
                 //TODO: set a maximum of 5 selected players and connecitons
                 _selectedPlayer = value;
                 OnPropertyChanged("SelectedPlayer");
-                var name = _selectedPlayer.Name.Substring(0, 14);
-                if (Players.Contains(name))
-                    return;
-                else
-                {
-                    if (Players.Count() == 5)
-                    {
-                        MessageBox.Show("Limit of player to select is 5 please unselect players to select new ones");
-                        return;
-                    }
-
-                    if (_checkHostNameIsValid(name))
-                        Players.Add(new {Name = _selectedPlayer, Connected = IsConnected, Vnc = _sshOptions.GetVncPort() });
-                }
             }
         }
 
@@ -196,8 +183,7 @@ namespace Broadsign_DOMS.ViewModel
         {
             if (_checkHostNameIsValid())
             {
-
-                _sshOptions.StartScpSession();
+                _sshSession.StartScpSession();
             }
 
         }
@@ -216,23 +202,23 @@ namespace Broadsign_DOMS.ViewModel
                 cmd = "ps -aux";
             else if ((string)param == "consul")
                 cmd = "sudo /opt/configuration/converge.sh checknow";
-            Result = _sshOptions.ExecuteCommand(cmd);
+            Result = _sshSession.ExecuteCommand(cmd);
         }
 
         private void _sshConnection()
         {
-            //if (!_checkHostNameIsValid())
-            //    return;
 
-            ////try a ssh connection
-            //_sshOptions.Host = HostName;
-            _sshOptions.StartSshSession();
-            IsConnected = _sshOptions._isConnected;
-            if (IsConnected == true)
-                Status = $"{HostName}. VNC Port 5999";
+            //show ssh connections into the ldatagrid
 
-
-
+            _sshSession = new SshOptions
+            {
+                HostName = HostName
+            };
+            _sshSession.StartSshSession();
+            
+            ActiveSessions.Add(_sshSession);
+     
+            
         }
         private bool _checkHostNameIsValid(string selected = "")
         {
@@ -243,7 +229,7 @@ namespace Broadsign_DOMS.ViewModel
                 return false;
             }
             //assign hostname to local host var in sshoptions
-            _sshOptions.Host = selected;
+            _sshSession.HostName = selected;
             return true;
         }
     }

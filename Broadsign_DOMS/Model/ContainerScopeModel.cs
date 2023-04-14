@@ -42,7 +42,7 @@ namespace Broadsign_DOMS.Model
                             Scope_container_group_id = container_scope.scope_container_group_id,
                             Scope_container_id = container_scope.scope_container_id,
                             Scope_resource_type = container_scope.scope_resource_type,
-                            Domain = domain
+                            AssignedDomain = domain
                         });
                     }
                 }

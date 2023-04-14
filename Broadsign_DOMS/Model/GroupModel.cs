@@ -49,7 +49,7 @@ namespace Broadsign_DOMS.Model
                         Container_id = group.container_id,
                         Id = group.id,
                         Name = group.name,
-                        Domain = domain
+                        AssignedDomain = domain
                     });
                 }
 

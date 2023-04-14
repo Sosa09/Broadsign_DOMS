@@ -8,26 +8,39 @@ using System.Windows;
 
 namespace Broadsign_DOMS.Service
 {
-    public class SshOptions
+    public class SshOptions : ObservableObject
     {
-        public string Host;
-        private string _jumpHost = "wireguard.ccuk.io";
-        private string _jumpUsername = "ubuntu";
-        private string _username = "ccplayer";
-        private string _password = "test1234";
-        private PrivateKeyFile privateKeyFile;
-        private ConnectionInfo _connectionInfo;
-        private ForwardedPortLocal _forwardedPortLocal;
-        private ForwardedPortLocal _forwardedPortLocalVnc;
+        string _jumpHost = "wireguard.ccuk.io";
+        string _jumpUsername = "ubuntu";
+        string _username = "ccplayer";
+        string _password = "test1234";
+        bool _isConnected;
+        string _hostName;
+        PrivateKeyFile privateKeyFile;
+        ConnectionInfo _connectionInfo;
+        ForwardedPortLocal _forwardedPortLocal;
+        ForwardedPortLocal _forwardedPortLocalVnc;
         ScpClient scpClient;
         SshClient sshClient;
         SshClient sshJump;
-        public bool _isConnected;
-
-        public SshOptions(string host)
+        public bool IsConnected
         {
-            Host = host;
+            get => _isConnected;
+            set
+            {
+                _isConnected = value;
+                OnPropertyChanged("IsConnected");
+            }
         }
+        public int VncPort { get; set; }
+        public string HostName { get; set; }
+
+        int[] port = new int[] { 5999, 6000, 6001, 6002, 6003, 6004, 6005, 6006, 6007, 6008, 6009, 6010, 60200, 60201, 60202 };
+        int index = 0;
+
+        
+
+
         public SshOptions()
         {
             try
@@ -50,7 +63,7 @@ namespace Broadsign_DOMS.Service
             {
                 if(!sshJump.IsConnected)
                     sshJump.Connect();
-                _forwardedPortLocal = new ForwardedPortLocal("localhost", Host, 22);
+                _forwardedPortLocal = new ForwardedPortLocal("localhost", HostName, 22);
                 sshJump.AddForwardedPort(_forwardedPortLocal);
                 _forwardedPortLocal.Start();
 
@@ -58,9 +71,8 @@ namespace Broadsign_DOMS.Service
                 try
                 {
                     sshClient = new SshClient(_connectionInfo);
-                    sshClient.Connect();
-                    MessageBox.Show("connected ! opening VNC");
-                    _isConnected = true;
+                    sshClient.Connect();               
+                    IsConnected = true;
                     StartVncSession();
                 }
                 catch(Exception e)
@@ -110,7 +122,7 @@ namespace Broadsign_DOMS.Service
 
             // Create a forwarded port tunnel on the jump host
 
-            _forwardedPortLocal = new ForwardedPortLocal("localhost", Host, 22);
+            _forwardedPortLocal = new ForwardedPortLocal("localhost", HostName, 22);
             sshJump.AddForwardedPort(_forwardedPortLocal);
             _forwardedPortLocal.Start();
 
@@ -133,7 +145,7 @@ namespace Broadsign_DOMS.Service
             fileDialog.ShowDialog();
             var localFilePath = fileDialog.FileName;
             
-            using (var fileStream = new FileStream(localFilePath + $"{Host}-bsp.log", FileMode.Create))
+            using (var fileStream = new FileStream(localFilePath + $"{HostName}-bsp.log", FileMode.Create))
             {
                 scpClient.Download(remoteFilePath, fileStream);
             }
@@ -145,33 +157,32 @@ namespace Broadsign_DOMS.Service
             remoteHostClient.Disconnect();
             _forwardedPortLocal.Stop();
         }
-
         public void StartVncSession()
         {
   
             var _connectionInfo = new ConnectionInfo(_jumpHost, 22, _jumpUsername, new PrivateKeyAuthenticationMethod(_jumpUsername, privateKeyFile));
+
             try
             {
                 var sshJump = new SshClient(_connectionInfo);
                 sshJump.Connect();
                 //return jump connection true
-                _forwardedPortLocalVnc = new ForwardedPortLocal("localhost", 5999, Host, 5900);
-                sshJump.AddForwardedPort(_forwardedPortLocal);
-                _forwardedPortLocal.Start();
+                
+                _forwardedPortLocalVnc = new ForwardedPortLocal("localhost", (uint)port[index], HostName, 5900);
+                sshJump.AddForwardedPort(_forwardedPortLocalVnc);
+                _forwardedPortLocalVnc.Start();
+                VncPort = (int)_forwardedPortLocalVnc.BoundPort;
 
             }
             catch (Exception e)
             {
                 //problem with jump connection
                 MessageBox.Show(e.Message);
+                index++;
+                StartVncSession();
+                
             }
         }
 
-        public int GetVncPort()
-        {
-            //return vnc port (int)_forwardedPortLocalVnc.BoundPort;
-            return 5999;
-
-        }
     }
 }

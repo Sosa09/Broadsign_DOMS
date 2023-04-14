@@ -115,7 +115,7 @@ namespace Broadsign_DOMS.ViewModel
                 DisplayUnitModel.UpdateDisplayUnits(Domain, ResourceList);
 
             else
-                PlayerModel.UpdatePlayers(Domain.Token, ResourceList);
+                PlayerModel.UpdatePlayers(Domain, ResourceList);
 
         }
 

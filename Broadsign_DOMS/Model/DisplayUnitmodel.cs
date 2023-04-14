@@ -71,7 +71,7 @@ namespace Broadsign_DOMS.Model
                     Virtual_host_screen_count = du.virtual_host_screen_count,
                     Virtual_id = du.virtual_id,
                     Zipcode = du.zipcode,
-                    Domain = domain
+                    AssignedDomain = domain
                 });
 
             }

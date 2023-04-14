@@ -64,7 +64,7 @@ namespace Broadsign_DOMS.Model
                                 X = frame.x,
                                 Y = frame.y,
                                 Z = frame.z,
-                                Domain = domain
+                                AssignedDomain = domain
                             }) ;
                         }
 

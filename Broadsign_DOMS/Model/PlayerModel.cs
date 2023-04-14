@@ -36,10 +36,11 @@ namespace Broadsign_DOMS.Model
         public static dynamic GetPlayers(string token, int id = 0)
         {
             string path = "/host/v17";
+            
             Requests.SendRequest(path, token, Method.GET);
             return JsonConvert.DeserializeObject(Requests.Response.Content) ;
         }
-        public static void UpdatePlayers(string token, ObservableCollection<object> players = null)
+        public static void UpdatePlayers(Domain token, ObservableCollection<object> players = null)
         {
             if(players == null)
             {
@@ -60,7 +61,7 @@ namespace Broadsign_DOMS.Model
                     domain_id = p.Domain_id,
                     geolocation = p.Geolocation,
                     id = p.Id,
-                    name = p.NewName,
+                    name = $"{p.NewName}",
                     nscreens = p.Nscreens,
                     public_key_fingerprint = p.Public_key_fingerprint,
                     remote_clear_db_tm_utc = p.Remote_clear_db_tm_utc,
@@ -68,9 +69,12 @@ namespace Broadsign_DOMS.Model
 
                     volume = p.Volume
                 });
-  
 
-                Requests.SendRequest(path, token, Method.PUT, requestBody);
+                
+                Requests.SendRequest(path,
+                                     t: p.AssignedDomain.Token,
+                                     Method.PUT,
+                                     requestBody);;
                 p.Name = p.NewName;
                 p.NewName = "";
             }
@@ -84,7 +88,7 @@ namespace Broadsign_DOMS.Model
 
         public static async Task GeneratePlayers(Domain domain)
         {
-        
+   
             await Task.Delay(1);
             try
             {
@@ -115,7 +119,7 @@ namespace Broadsign_DOMS.Model
                                 Remote_reboot_tm_utc = player.remote_reboot_tm_utc,
                                 Secondary_mac_address = player.secondary_mac_address,
                                 Volume = player.volume,
-                                Domain = domain
+                                AssignedDomain = domain
                             });
                         }
 

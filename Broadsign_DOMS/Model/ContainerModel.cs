@@ -42,7 +42,7 @@ namespace Broadsign_DOMS.Model
                             Name = container.name,
                             Parent_id = container.parent_id,
                             Parent_resource_type = container.parent_resource_type,
-                            Domain = domain
+                            AssignedDomain = domain
 
                         });
                     }

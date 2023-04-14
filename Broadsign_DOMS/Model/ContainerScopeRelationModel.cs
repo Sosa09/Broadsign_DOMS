@@ -39,7 +39,7 @@ namespace Broadsign_DOMS.Model
                             Id = ugsRelation.id,
                             Parent_id = ugsRelation.parent_id,
                             User_id = ugsRelation.user_id,
-                            Domain = domain
+                            AssignedDomain = domain
                         });
                     }
                 }

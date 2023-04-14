@@ -83,7 +83,7 @@ namespace Broadsign_DOMS.Model
                             Public_key_fingerprint = user.public_key_fingerprint,
                             Single_sign_on_id = user.single_sign_on_id,
                             Username = user.username,
-                            Domain = domain,
+                            AssignedDomain = domain,
                             Groups = groupItems,
                             ScopingRelation = new ObservableCollection<ContainerScopeModel>(CommonResources.Container_Scopes.Where(x => x.Parent_id == (int)user.id))
 

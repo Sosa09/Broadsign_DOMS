@@ -31,9 +31,11 @@
             
         </StackPanel>
         <StackPanel VerticalAlignment="Bottom">
-            <DataGrid ItemsSource="{Binding Players, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="True" Height="119" >
+            <DataGrid ItemsSource="{Binding ActiveSessions}">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="Name" Binding="{Binding HostName}"/>
+                    <DataGridTextColumn Header="Alive" Binding="{Binding IsConnected}"/>
+                    <DataGridTextColumn Header="Vnc" Binding="{Binding VncPort}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </StackPanel>
