@@ -2,6 +2,7 @@
 using Renci.SshNet;
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -18,6 +19,7 @@ namespace Broadsign_DOMS.Service
         string _password = "test1234";
         bool _isConnected;
         string _hostName;
+
         PrivateKeyFile privateKeyFile;
         ConnectionInfo _connectionInfo;
         ForwardedPortLocal _forwardedPortLocal;
@@ -48,7 +50,10 @@ namespace Broadsign_DOMS.Service
         {
             try
             {
-                privateKeyFile = new PrivateKeyFile("C:\\Users\\BECCO1SAR\\.ssh\\id_rsa");
+                //TODO: Make it selectable so that the user can establish a valid connectoin
+                string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                string sshKey = userProfile + "\\.ssh\\id_rsa";
+                privateKeyFile = new PrivateKeyFile(sshKey);
                 _connectionInfo = new ConnectionInfo(_jumpHost, 22, _jumpUsername, new PrivateKeyAuthenticationMethod(_jumpUsername, privateKeyFile));
                 sshJump = new SshClient(_connectionInfo);
             }
@@ -66,8 +71,15 @@ namespace Broadsign_DOMS.Service
             {
                 if(!sshJump.IsConnected)
                     sshJump.Connect();
-                _forwardedPortLocal = new ForwardedPortLocal("localhost", HostName, 22);
+                _forwardedPortLocal     = new ForwardedPortLocal("localhost", HostName, 22);
+                _forwardedPortLocalScp  = new ForwardedPortLocal("localhost", HostName, 54022);
+                _forwardedPortLocalVnc  = new ForwardedPortLocal("localhost", (uint)port[index], HostName, 5900);
+                
+                sshJump.AddForwardedPort(_forwardedPortLocalVnc);
                 sshJump.AddForwardedPort(_forwardedPortLocal);
+                sshJump.AddForwardedPort(_forwardedPortLocalScp);
+
+                _forwardedPortLocalVnc.Start();
                 _forwardedPortLocal.Start();
 
                 _connectionInfo = new ConnectionInfo(_forwardedPortLocal.BoundHost,(int)_forwardedPortLocal.BoundPort,_username, new PasswordAuthenticationMethod(_username, _password));
@@ -76,18 +88,21 @@ namespace Broadsign_DOMS.Service
                     sshClient = new SshClient(_connectionInfo);
                     sshClient.Connect();               
                     IsConnected = true;
-                    StartVncSession();
+                    _startVncSession();
+                    _startScpSession();
+
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
-                    MessageBox.Show(e.Message);
+                    Debug.WriteLine(e.Message);
                 }
 
 
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message);
+                Debug.WriteLine(e.Message);
+
             }
 
 
@@ -110,7 +125,6 @@ namespace Broadsign_DOMS.Service
 
             return result;
         }
-
         private void _startScpSession()
         {
             //// Create an SSH client for the jump host
@@ -123,9 +137,9 @@ namespace Broadsign_DOMS.Service
             // Create a forwarded port tunnel on the jump host
 
 
-            _forwardedPortLocalScp = new ForwardedPortLocal("localhost", HostName, 22);
-            sshJump.AddForwardedPort(_forwardedPortLocal);
-            _forwardedPortLocalScp.Start();
+            //_forwardedPortLocalScp = new ForwardedPortLocal("localhost", HostName, 22);
+            //sshJump.AddForwardedPort(_forwardedPortLocalScp);
+            //_forwardedPortLocalScp.Start();
 
             // Create an SSH client for the remote host
             var remoteHostConnectionInfo = new ConnectionInfo("localhost", (int)_forwardedPortLocal.BoundPort, _username, new PasswordAuthenticationMethod(_username, _password));
@@ -142,22 +156,20 @@ namespace Broadsign_DOMS.Service
         
             
         }
-
-
-        public void StartVncSession()
+        private void _startVncSession()
         {
   
             var _connectionInfo = new ConnectionInfo(_jumpHost, 22, _jumpUsername, new PrivateKeyAuthenticationMethod(_jumpUsername, privateKeyFile));
 
             try
             {
-                var sshJump = new SshClient(_connectionInfo);
-                sshJump.Connect();
+                //var sshJump = new SshClient(_connectionInfo);
+                //sshJump.Connect();
                 //return jump connection true
                 
-                _forwardedPortLocalVnc = new ForwardedPortLocal("localhost", (uint)port[index], HostName, 5900);
-                sshJump.AddForwardedPort(_forwardedPortLocalVnc);
-                _forwardedPortLocalVnc.Start();
+                //_forwardedPortLocalVnc = new ForwardedPortLocal("localhost", (uint)port[index], HostName, 5900);
+                //sshJump.AddForwardedPort(_forwardedPortLocalVnc);
+                //_forwardedPortLocalVnc.Start();
                 VncPort = (int)_forwardedPortLocalVnc.BoundPort;
 
             }
@@ -166,13 +178,12 @@ namespace Broadsign_DOMS.Service
                 //problem with jump connection
                 MessageBox.Show(e.Message);
                 index++;
-                StartVncSession();
+                _startVncSession();
                 
             }
         }
         public ObservableCollection<string> GetLogList()
         {
-            _startScpSession();
             var collection = new ObservableCollection<string>
             {
                 "bsp.log",

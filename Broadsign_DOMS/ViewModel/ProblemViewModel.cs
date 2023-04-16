@@ -17,15 +17,17 @@ namespace Broadsign_DOMS.ViewModel
     {
         private ICommand _remoteOptionsCommand;
         private ICommand _connectSshCommand;
-        private ICommand _connectScpCommand;
 
         private SshOptions _sshSession;
         private PlayerModel _selectedPlayer;
         private ObservableCollection<PlayerModel> _playerList;
         private ObservableCollection<SshOptions> _activeSessions;
         private ObservableCollection<string> _logFiles;
+        private ObservableCollection<string> _selectedFile;
 
         private IEnumerable<string> _domainList;
+
+        private Visibility _logFileGridVisibility;
 
         private bool _isConnected;
         private string _hostName;
@@ -33,12 +35,52 @@ namespace Broadsign_DOMS.ViewModel
         private string _result;
         private string _selectedDomain;
 
+        public ICommand RemoteOptionsCommand
+        {
+            get
+            {
+                return _remoteOptionsCommand ?? (new RelayCommand(
+                    _executeRemoteCommand,
+                    param => IsConnected
+                    ));
+            }
+        }
+        public ICommand ConnectSshCommand
+        {
+            get
+            {
+                return _connectSshCommand ?? (new RelayCommand(param => _sshConnection()));
+            }
+        }
 
+        public PlayerModel SelectedPlayer
+        {
+            get => _selectedPlayer;
+            set
+            {
+                //TODO: set a maximum of 5 selected players and connecitons
+                _selectedPlayer = value;
+                OnPropertyChanged("SelectedPlayer");
+            }
+        }
+        public ObservableCollection<PlayerModel> PlayerList
+        {
+            get
+            {
+
+                return _playerList ?? new ObservableCollection<PlayerModel>();
+            }
+            set
+            {
+                _playerList = value;
+                OnPropertyChanged("PlayerList");
+            }
+        }
         public ObservableCollection<SshOptions> ActiveSessions
         {
-            get 
+            get
             {
-                if(_activeSessions == null)
+                if (_activeSessions == null)
                 {
                     _activeSessions = new ObservableCollection<SshOptions>();
                     _activeSessions.Add(_sshSession = new SshOptions() { HostName = "hello" });
@@ -52,6 +94,53 @@ namespace Broadsign_DOMS.ViewModel
                 OnPropertyChanged("ActiveSessions");
             }
         }
+        public ObservableCollection<string> LogFiles 
+        {
+            get
+            {
+               return _logFiles ?? new ObservableCollection<string>();
+            }
+            set
+            {
+                _logFiles = value;
+                OnPropertyChanged("LogFiles");
+            }
+        }
+        public ObservableCollection<string> SelectedFile 
+        { 
+            get => _selectedFile;
+            set
+            {
+                _selectedFile = value;
+                OnPropertyChanged("SelectedFile");
+            }
+        }
+
+
+        public IEnumerable<string> DomainList
+        {
+            get
+            {
+                if (_domainList == null)
+                    _domainList = CommonResources.Players.Select(x => x.AssignedDomain.Name).Distinct();
+                return _domainList;
+            }
+            set
+            {
+                _domainList = value;
+                OnPropertyChanged("DomainList");
+            }
+        }
+        public Visibility LogFileGridVisibility 
+        { 
+            get => _logFileGridVisibility;
+            set
+            {
+                _logFileGridVisibility = value;
+                OnPropertyChanged("LogFileGridVisibility");
+            }
+        }
+
         public string HostName
         {
             get
@@ -62,7 +151,8 @@ namespace Broadsign_DOMS.ViewModel
             {
                 _hostName = value;
                 OnPropertyChanged("HostName");
-                //PlayerList = new ObservableCollection<PlayerModel>(CommonResources.Players.Where(x => x.Name.Contains(_hostName) && x.Domain.Name == SelectedDomain));
+                if(PlayerList != null)
+                    PlayerList = new ObservableCollection<PlayerModel>(CommonResources.Players.Where(x => x.Name.Contains(_hostName) && x.Domain.Name == SelectedDomain));
             }
 
         }
@@ -101,47 +191,6 @@ namespace Broadsign_DOMS.ViewModel
                 OnPropertyChanged("Result");
             }
         }
-
-        public ICommand RemoteOptionsCommand
-        {
-            get
-            {
-                return _remoteOptionsCommand ?? (new RelayCommand(
-                    _executeRemoteCommand,
-                    param => IsConnected
-                    ));
-            }
-        }
-
-        public ICommand ConnectSshCommand
-        {
-            get
-            {
-                return _connectSshCommand ?? (new RelayCommand(param => _sshConnection()));
-            }
-        }
-
-        public ICommand ConnectScpCommand
-        {
-            get
-            {
-                return _connectScpCommand ?? (new RelayCommand(param => _scpConnection()));
-            }
-        }
-
-        public ObservableCollection<PlayerModel> PlayerList
-        {
-            get
-            {
-
-                return _playerList ?? new ObservableCollection<PlayerModel>();
-            }
-            set
-            {
-                _playerList = value;
-                OnPropertyChanged("PlayerList");
-            }
-        }
         public string SelectedDomain
         {
             get => _selectedDomain;
@@ -152,64 +201,24 @@ namespace Broadsign_DOMS.ViewModel
                 PlayerList = new ObservableCollection<PlayerModel>(CommonResources.Players.Where(x => x.AssignedDomain.Name == _selectedDomain));
             }
         }
-        public ObservableCollection<string> LogFiles 
-        {
-            get
-            {
-               return _logFiles ?? new ObservableCollection<string>();
-            }
-            set
-            {
-                _logFiles = value;
-                OnPropertyChanged("LogFiles");
-            }
-        }
 
 
-        public IEnumerable<string> DomainList
-        {
-            get
-            {
-                if (_domainList == null)
-                    _domainList = CommonResources.Players.Select(x => x.AssignedDomain.Name).Distinct();
-                return _domainList;
-            }
-            set
-            {
-                _domainList = value;
-                OnPropertyChanged("DomainList");
-            }
-        }
 
-        public PlayerModel SelectedPlayer
-        {
-            get => _selectedPlayer;
-            set
-            {
-                //TODO: set a maximum of 5 selected players and connecitons
-                _selectedPlayer = value;
-                OnPropertyChanged("SelectedPlayer");
-            }
-        }
-
-
-        private void _scpConnection()
-        {
-
-
-            LogFiles = _sshSession.GetLogList();
-        }
 
         private void _executeRemoteCommand(object param)
         {
-            //declare a command var
+            if((string)param == "files")
+            {
+                LogFiles = _sshSession.GetLogList();
+                return;
+            }
             string cmd = "";
             if ((string)param == "reboot")
                 cmd = "sudo reboot";
             else if ((string)param == "xrandr get")
-                cmd = "xrandr --verbose";
-            else if ((string)param == "Remove Selected Files")
-                cmd = "";//will be selected files from a list
+                cmd = "xrandr";
+            else if ((string)param == "documents")
+                cmd = "ls -l /opt/broadsign/";//will be selected files from a list
             else if ((string)param == "process")
                 cmd = "ps -aux";
             else if ((string)param == "consul")
@@ -221,16 +230,21 @@ namespace Broadsign_DOMS.ViewModel
         {
 
             //show ssh connections into the ldatagrid
-
-            _sshSession = new SshOptions
+            if (_checkHostNameIsValid()) 
             {
-                HostName = HostName
-            };
-            _sshSession.StartSshSession();
-            
-            ActiveSessions.Add(_sshSession);
-     
-            
+                string name = HostName;
+                if (SelectedPlayer != null)
+                    name = SelectedPlayer.Name.Substring(0, 14);
+
+                _sshSession = new SshOptions
+                {
+                    HostName = name
+                };
+
+                _sshSession.StartSshSession();
+
+                ActiveSessions.Add(_sshSession);
+            } 
         }
         private bool _checkHostNameIsValid(string selected = "")
         {
