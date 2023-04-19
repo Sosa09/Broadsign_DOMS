@@ -75,9 +75,9 @@ namespace Broadsign_DOMS.ViewModel
         private async Task _loadAllBaseResources(Domain domain)
         {
             //TODO check if not better to put this in tasks
-            //LoadingMessage += $"\n\nLoading broadsign 'PLAYERS' for domain {domain.Name}";
-            //await PlayerModel.GeneratePlayers(domain);
-            //LoadingMessage += $"\n{CommonResources.Players.Count} 'PLAYERS' for domain {domain.Name} loaded";
+            LoadingMessage += $"\n\nLoading broadsign 'PLAYERS' for domain {domain.Name}";
+            await PlayerModel.GeneratePlayers(domain);
+            LoadingMessage += $"\n{CommonResources.Players.Count} 'PLAYERS' for domain {domain.Name} loaded";
 
             //LoadingMessage += $"\n\nLoading broadsign 'FRAMES' for domain {domain.Name}";
             //await FrameModel.GenerateFrames(domain);
@@ -111,9 +111,6 @@ namespace Broadsign_DOMS.ViewModel
             //$"\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
 
         }
-
-
-
         private async Task _loadingSync()
         {
             List<Task> tasks = new List<Task>();

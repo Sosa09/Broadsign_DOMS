@@ -15,34 +15,39 @@ namespace Broadsign_DOMS.ViewModel
     //TODO: how to establish a connection with HOSTNAME TYPED OR Selected HOSTNAME
     public class ProblemViewModel : ObservableObject, IPageViewModel
     {
+        #region Fields
         private ICommand _remoteOptionsCommand;
         private ICommand _connectSshCommand;
+        private ICommand _downloadFilesCommand;
 
         private SshOptions _sshSession;
         private PlayerModel _selectedPlayer;
+        private SshOptions _selectedSession;
         private ObservableCollection<PlayerModel> _playerList;
         private ObservableCollection<SshOptions> _activeSessions;
         private ObservableCollection<string> _logFiles;
-        private ObservableCollection<string> _selectedFile;
+        private ObservableCollection<string> _selectedFiles = new ObservableCollection<string>();
 
         private IEnumerable<string> _domainList;
 
         private Visibility _logFileGridVisibility;
 
-        private bool _isConnected;
-        private string _hostName;
-        private string _status;
-        private string _result;
-        private string _selectedDomain;
-
+        private bool    _isConnected;
+        private string  _hostName;
+        private string  _status;
+        private string  _result;
+        private string  _selectedDomain;
+        private string _selectedFile;
+        #endregion
+        #region Properties
         public ICommand RemoteOptionsCommand
         {
             get
             {
                 return _remoteOptionsCommand ?? (new RelayCommand(
                     _executeRemoteCommand,
-                    param => IsConnected
-                    ));
+                    param => SelectedSession != null
+                    )) ;
             }
         }
         public ICommand ConnectSshCommand
@@ -51,6 +56,14 @@ namespace Broadsign_DOMS.ViewModel
             {
                 return _connectSshCommand ?? (new RelayCommand(param => _sshConnection()));
             }
+        }
+        public ICommand DownloadFilesCommand
+        {
+            get
+            {
+                return _downloadFilesCommand ?? new RelayCommand(param => SelectedSession.DownloadFiles(_selectedFiles));
+            }
+         
         }
 
         public PlayerModel SelectedPlayer
@@ -63,6 +76,16 @@ namespace Broadsign_DOMS.ViewModel
                 OnPropertyChanged("SelectedPlayer");
             }
         }
+        public SshOptions SelectedSession
+        {
+            get => _selectedSession;
+            set
+            {
+                _selectedSession = value;
+                OnPropertyChanged("SelectedSession");
+            }
+        }
+
         public ObservableCollection<PlayerModel> PlayerList
         {
             get
@@ -83,8 +106,7 @@ namespace Broadsign_DOMS.ViewModel
                 if (_activeSessions == null)
                 {
                     _activeSessions = new ObservableCollection<SshOptions>();
-                    _activeSessions.Add(_sshSession = new SshOptions() { HostName = "hello" });
-
+                    
                 }
                 return _activeSessions;
             }
@@ -98,7 +120,7 @@ namespace Broadsign_DOMS.ViewModel
         {
             get
             {
-               return _logFiles ?? new ObservableCollection<string>();
+               return _logFiles ?? new ObservableCollection<string> { "Hello world"};
             }
             set
             {
@@ -106,16 +128,6 @@ namespace Broadsign_DOMS.ViewModel
                 OnPropertyChanged("LogFiles");
             }
         }
-        public ObservableCollection<string> SelectedFile 
-        { 
-            get => _selectedFile;
-            set
-            {
-                _selectedFile = value;
-                OnPropertyChanged("SelectedFile");
-            }
-        }
-
 
         public IEnumerable<string> DomainList
         {
@@ -152,7 +164,7 @@ namespace Broadsign_DOMS.ViewModel
                 _hostName = value;
                 OnPropertyChanged("HostName");
                 if(PlayerList != null)
-                    PlayerList = new ObservableCollection<PlayerModel>(CommonResources.Players.Where(x => x.Name.Contains(_hostName) && x.Domain.Name == SelectedDomain));
+                    PlayerList = new ObservableCollection<PlayerModel>(CommonResources.Players.Where(x => x.Name.Contains(_hostName) && x.AssignedDomain.Name == SelectedDomain));
             }
 
         }
@@ -160,7 +172,6 @@ namespace Broadsign_DOMS.ViewModel
         {
             get
             {
-
                 return _status;
             }
             set
@@ -201,22 +212,35 @@ namespace Broadsign_DOMS.ViewModel
                 PlayerList = new ObservableCollection<PlayerModel>(CommonResources.Players.Where(x => x.AssignedDomain.Name == _selectedDomain));
             }
         }
-
-
-
-
+        public string SelectedFile 
+        {
+            get => _selectedFile;
+            set
+            {
+                _selectedFile = value;
+                OnPropertyChanged("SelectedFile");
+                if (_selectedFiles.Contains(_selectedFile))
+                    _selectedFiles.Remove(_selectedFile);
+                else
+                    _selectedFiles.Add(_selectedFile);
+            }
+        }
+        #endregion
+        #region Contructors
+        #endregion
+        #region Methods
         private void _executeRemoteCommand(object param)
         {
             if((string)param == "files")
             {
-                LogFiles = _sshSession.GetLogList();
+                LogFiles = new ObservableCollection<string>(_sshSession.GetLogList());
                 return;
             }
             string cmd = "";
             if ((string)param == "reboot")
                 cmd = "sudo reboot";
             else if ((string)param == "xrandr get")
-                cmd = "xrandr";
+                cmd = "xrandr --current";
             else if ((string)param == "documents")
                 cmd = "ls -l /opt/broadsign/";//will be selected files from a list
             else if ((string)param == "process")
@@ -228,14 +252,13 @@ namespace Broadsign_DOMS.ViewModel
 
         private void _sshConnection()
         {
-
+            
+            string name = HostName;
+            if (SelectedPlayer != null)
+                name = SelectedPlayer.Name.Substring(0, 14);
             //show ssh connections into the ldatagrid
-            if (_checkHostNameIsValid()) 
+            if (_checkHostNameIsValid(name)) 
             {
-                string name = HostName;
-                if (SelectedPlayer != null)
-                    name = SelectedPlayer.Name.Substring(0, 14);
-
                 _sshSession = new SshOptions
                 {
                     HostName = name
@@ -248,15 +271,18 @@ namespace Broadsign_DOMS.ViewModel
         }
         private bool _checkHostNameIsValid(string selected = "")
         {
-        
-            if (!Regex.IsMatch(selected.Trim(), "^[A-Za-z]{2}-[A-Za-z]{2}-[A-Za-z]{3}-[A-Za-z0-9]{4}$"))
+            try
             {
-                MessageBox.Show("please enter a valid hostname e.g: UK-OT-LON-P001");
+                Regex.IsMatch(selected.Trim(), "^[A-Za-z]{2}-[A-Za-z]{2}-[A-Za-z]{3}-[A-Za-z0-9]{4}$");
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message + "\n EXAMPLE: UK-RO-LON-P001");
                 return false;
             }
-            //assign hostname to local host var in sshoptions
-            _sshSession.HostName = selected;
+ 
             return true;
         }
+        #endregion
     }
 }

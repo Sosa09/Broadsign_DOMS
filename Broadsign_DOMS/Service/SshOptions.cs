@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using Renci.SshNet;
+using Renci.SshNet.Common;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -48,38 +49,53 @@ namespace Broadsign_DOMS.Service
 
         public SshOptions()
         {
+            //TODO: Make it selectable so that the user can establish a valid connectoin
+            string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            string sshKey = userProfile + "\\.ssh\\id_rs";
+
+            _connectSshJump(sshKey);
+       
+        }
+        private void _connectSshJump(string sshKey = "")
+        {
+            if(sshKey == "")
+            {
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.ShowDialog();
+                sshKey = openFileDialog.FileName;
+            }
             try
             {
-                //TODO: Make it selectable so that the user can establish a valid connectoin
-                string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-                string sshKey = userProfile + "\\.ssh\\id_rsa";
                 privateKeyFile = new PrivateKeyFile(sshKey);
                 _connectionInfo = new ConnectionInfo(_jumpHost, 22, _jumpUsername, new PrivateKeyAuthenticationMethod(_jumpUsername, privateKeyFile));
                 sshJump = new SshClient(_connectionInfo);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 MessageBox.Show(e.Message);
+    
             }
-       
         }
         public void StartSshSession()
         {
   
-            
+            if(sshJump == null)
+            {
+                MessageBox.Show("ssh key was not found, select an valid ssh key to continue");
+                _connectSshJump();
+                StartSshSession();
+
+            }
             try
             {
+
                 if(!sshJump.IsConnected)
                     sshJump.Connect();
-                _forwardedPortLocal     = new ForwardedPortLocal("localhost", HostName, 22);
-                _forwardedPortLocalScp  = new ForwardedPortLocal("localhost", HostName, 54022);
-                _forwardedPortLocalVnc  = new ForwardedPortLocal("localhost", (uint)port[index], HostName, 5900);
-                
-                sshJump.AddForwardedPort(_forwardedPortLocalVnc);
-                sshJump.AddForwardedPort(_forwardedPortLocal);
-                sshJump.AddForwardedPort(_forwardedPortLocalScp);
 
-                _forwardedPortLocalVnc.Start();
+                _forwardedPortLocal     = new ForwardedPortLocal("localhost", HostName, 22);
+                
+                sshJump.AddForwardedPort(_forwardedPortLocal);
+                
                 _forwardedPortLocal.Start();
 
                 _connectionInfo = new ConnectionInfo(_forwardedPortLocal.BoundHost,(int)_forwardedPortLocal.BoundPort,_username, new PasswordAuthenticationMethod(_username, _password));
@@ -89,19 +105,19 @@ namespace Broadsign_DOMS.Service
                     sshClient.Connect();               
                     IsConnected = true;
                     _startVncSession();
-                    _startScpSession();
+             
 
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(e.Message);
+                   MessageBox.Show(e.Message);
                 }
 
 
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e.Message);
+                MessageBox.Show(e.Message);
 
             }
 
@@ -127,26 +143,26 @@ namespace Broadsign_DOMS.Service
         }
         private void _startScpSession()
         {
-            //// Create an SSH client for the jump host
-            //var jumpHostConnectionInfo = new ConnectionInfo("wireguard.ccuk.io", 22, "ubuntu", new PrivateKeyAuthenticationMethod("ubuntu", privateKeyFile));
-            //using var jumpHostClient = new SshClient(jumpHostConnectionInfo);
+            // Create an SSH client for the jump host
+            var jumpHostConnectionInfo = new ConnectionInfo("wireguard.ccuk.io", 22, "ubuntu", new PrivateKeyAuthenticationMethod("ubuntu", privateKeyFile));
+            using var jumpHostClient = new SshClient(jumpHostConnectionInfo);
 
-            //// Connect to the jump host
-            //jumpHostClient.Connect();
+            // Connect to the jump host
+            jumpHostClient.Connect();
 
-            // Create a forwarded port tunnel on the jump host
+            //Create a forwarded port tunnel on the jump host
 
 
-            //_forwardedPortLocalScp = new ForwardedPortLocal("localhost", HostName, 22);
-            //sshJump.AddForwardedPort(_forwardedPortLocalScp);
-            //_forwardedPortLocalScp.Start();
+           _forwardedPortLocalScp = new ForwardedPortLocal("localhost", HostName, 22);
+            sshJump.AddForwardedPort(_forwardedPortLocalScp);
+            _forwardedPortLocalScp.Start();
 
             // Create an SSH client for the remote host
-            var remoteHostConnectionInfo = new ConnectionInfo("localhost", (int)_forwardedPortLocal.BoundPort, _username, new PasswordAuthenticationMethod(_username, _password));
-            sshClient = new SshClient(remoteHostConnectionInfo);
+            var remoteHostConnectionInfo = new ConnectionInfo("localhost", (int)_forwardedPortLocalScp.BoundPort, _username, new PasswordAuthenticationMethod(_username, _password));
+            //sshClient = new SshClient(remoteHostConnectionInfo);
 
-            // Connect to the remote host using the forwarded port
-            sshClient.Connect();
+            //// Connect to the remote host using the forwarded port
+            //sshClient.Connect();
             
             // SCP client for transferring files
             scpClient = new ScpClient(remoteHostConnectionInfo);
@@ -163,20 +179,21 @@ namespace Broadsign_DOMS.Service
 
             try
             {
-                //var sshJump = new SshClient(_connectionInfo);
-                //sshJump.Connect();
+                var sshJump = new SshClient(_connectionInfo);
+                sshJump.Connect();
                 //return jump connection true
-                
-                //_forwardedPortLocalVnc = new ForwardedPortLocal("localhost", (uint)port[index], HostName, 5900);
-                //sshJump.AddForwardedPort(_forwardedPortLocalVnc);
-                //_forwardedPortLocalVnc.Start();
+
+
+                _forwardedPortLocalVnc = new ForwardedPortLocal("localhost", (uint)port[index], HostName, 5900);
+                sshJump.AddForwardedPort(_forwardedPortLocalVnc);
+                _forwardedPortLocalVnc.Start();
                 VncPort = (int)_forwardedPortLocalVnc.BoundPort;
 
             }
             catch (Exception e)
             {
                 //problem with jump connection
-                MessageBox.Show(e.Message);
+                Debug.WriteLine(e.Message);
                 index++;
                 _startVncSession();
                 
@@ -184,20 +201,36 @@ namespace Broadsign_DOMS.Service
         }
         public ObservableCollection<string> GetLogList()
         {
-            var collection = new ObservableCollection<string>
+            ObservableCollection<string> collection = new ObservableCollection<string>
             {
                 "bsp.log",
                 "chromium.log",
                 "bsp.db"
-
             };
-            StreamReader streamReader = new StreamReader(ExecuteCommand("ls /opt/broadsign/suite/bsp/share/bsp/logs/"));
-            while (!streamReader.EndOfStream)
-                collection.Add(streamReader.ReadLine());
+            string[] cmd = ExecuteCommand("ls /opt/broadsign/suite/bsp/share/bsp/logs/").Split('\n');
+            foreach(string line in cmd)
+            {
+                collection.Add(line);
+
+            }
+            return collection;
+        }
+        public ObservableCollection<string> GetAdCopies()
+        {
+            ObservableCollection<string> collection = new ObservableCollection<string>();
+            
+            string[] cmd = ExecuteCommand("sudo ls /opt/broadsign/suite/bsp/share/bsp/logs/").Split('\n');
+
+            foreach(string line in cmd)
+            {
+                collection.Add(line);
+            }
             return collection;
         }
         public void DownloadFiles(ObservableCollection<string> files)
         {
+            //TODO: Add a boolean to see if the files a downloadable or not only log files should be !
+            _startScpSession();
             var localFilePath = "";
             using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
             {
@@ -207,28 +240,32 @@ namespace Broadsign_DOMS.Service
                     localFilePath = dialog.SelectedPath;
                 }
             }
-            foreach (var file in files)
+            foreach(string file in files)
             {
                 // Download a remote file
-                string remoteFilePath = "/opt/broadsign/suite/bsp/share/bsp/";
-                if (file != "bsp.log" || file != "bsp.db")
-                    remoteFilePath = remoteFilePath + "logs/" + file;
-                else
-                    remoteFilePath = remoteFilePath + file;
+                string initialPath = "/opt/broadsign/suite/bsp/share/bsp/";
+                string remoteFilePath = initialPath + file;
+                if (file.Trim().ToLower() != "bsp.log" || file != "bsp.db")
+                    remoteFilePath = initialPath + "logs/" + file;
+       
 
+                string fileName = $"{localFilePath}\\{file}";
 
-                using (var fileStream = new FileStream(localFilePath + $"{HostName}-bsp.log", FileMode.Create))
+                var fileStream = new FileStream(fileName, FileMode.Create);
+
+                try
                 {
-                    scpClient.Download(file, fileStream);
-                }
+                    scpClient.Download(remoteFilePath, fileStream);
 
-             
+
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                }
             }
 
-
-            // Disconnect and clean up
-            scpClient.Disconnect();
-            _forwardedPortLocalScp.Stop();
         }
+
     }
 }
