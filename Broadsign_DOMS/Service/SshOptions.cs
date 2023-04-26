@@ -123,7 +123,14 @@ namespace Broadsign_DOMS.Service
 
 
         }
+        public void DisconnectSshSession()
+        {
+            sshClient.Disconnect();
+            _forwardedPortLocal.Stop();
+            _forwardedPortLocalVnc.Stop();
 
+            sshJump.Disconnect();
+        }
         public string ExecuteCommand(string cmd)
         {
             var result = "";
@@ -203,14 +210,13 @@ namespace Broadsign_DOMS.Service
         {
             ObservableCollection<string> collection = new ObservableCollection<string>
             {
-                "bsp.log",
-                "chromium.log",
-                "bsp.db"
+                "/opt/broadsign/suite/bsp/share/bsp/bsp.log",
+                "/opt/broadsign/suite/bsp/share/bsp/bsp.db"
             };
             string[] cmd = ExecuteCommand("ls /opt/broadsign/suite/bsp/share/bsp/logs/").Split('\n');
             foreach(string line in cmd)
             {
-                collection.Add(line);
+                collection.Add($"/opt/broadsign/suite/bsp/share/bsp/logs/{line}");
 
             }
             return collection;
@@ -219,11 +225,11 @@ namespace Broadsign_DOMS.Service
         {
             ObservableCollection<string> collection = new ObservableCollection<string>();
             
-            string[] cmd = ExecuteCommand("sudo ls /opt/broadsign/suite/bsp/share/bsp/logs/").Split('\n');
+            string[] cmd = ExecuteCommand("sudo ls /opt/broadsign/suite/bsp/share/documents/").Split('\n');
 
-            foreach(string line in cmd)
+            foreach (string line in cmd)
             {
-                collection.Add(line);
+                collection.Add($"/opt/broadsign/suite/bsp/share/documents/{line}");
             }
             return collection;
         }
@@ -243,13 +249,10 @@ namespace Broadsign_DOMS.Service
             foreach(string file in files)
             {
                 // Download a remote file
-                string initialPath = "/opt/broadsign/suite/bsp/share/bsp/";
-                string remoteFilePath = initialPath + file;
-                if (file.Trim().ToLower() != "bsp.log" || file != "bsp.db")
-                    remoteFilePath = initialPath + "logs/" + file;
-       
+                string remoteFilePath = file;
 
-                string fileName = $"{localFilePath}\\{file}";
+
+                string fileName = $"{localFilePath}\\{file.Substring(file.LastIndexOf('/'))}";
 
                 var fileStream = new FileStream(fileName, FileMode.Create);
 

@@ -7,17 +7,38 @@
              xmlns:vm="clr-namespace:Broadsign_DOMS.ViewModel"
              xmlns:v="clr-namespace:Broadsign_DOMS.View"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800" Background="{StaticResource GradientBrush}">
     <UserControl.Resources>
         <DataTemplate DataType="{x:Type vm:LoginViewModel}">
             <Grid>
-                <StackPanel VerticalAlignment="Center">
-                    <DockPanel LastChildFill="False" HorizontalAlignment="Center" VerticalAlignment="Bottom">
-                        <Label Content="Username:       "/>
-                        <TextBox x:Name="Hello" Text="{Binding Username}" Width="300"/>
-                    </DockPanel>
-                    <Button Margin="0,5,0,0" Content="Login" Template="{StaticResource MainButtons}" HorizontalAlignment="Center" Width="390" Height="50" Command="{Binding LoginButtonCommand}"/>
-                </StackPanel>
+                <Grid.Resources>
+    
+                    <Style TargetType="Button">
+                        <Setter Property="Foreground" Value="Gray"/>
+                        <Setter Property="FontSize" Value="16"/>
+                    </Style>
+                    <ControlTemplate x:Key="lgnButton" TargetType="Button">
+
+                        <Border x:Name="bdr" CornerRadius="5" Background="Ivory" Margin="15">
+                            <ContentPresenter Margin="10" HorizontalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Grid.Resources>
+                <Grid VerticalAlignment="Center" Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="1">
+                        <DockPanel LastChildFill="False" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                            <Label Content="Username:       " Foreground="White" FontWeight="Bold" FontSize="16"/>
+                            <TextBox x:Name="Hello" Text="{Binding Username}" Width="300"/>
+                        </DockPanel>
+                        <Button Content="Login" Template="{DynamicResource lgnButton}" Command="{Binding LoginButtonCommand}"/>
+                    </StackPanel>
+               
+                </Grid>
             </Grid>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:LoadingViewModel}">
