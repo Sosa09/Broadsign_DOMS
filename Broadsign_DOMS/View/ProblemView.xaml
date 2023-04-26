@@ -5,8 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Broadsign_DOMS.View"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="1400">
+             d:DesignHeight="700" d:DesignWidth="1400">
 
+    <!--TODO Border create a common style with corner margin and borderthickness-->
     <Grid>
         <Grid.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -28,14 +29,14 @@
             <ColumnDefinition Width="5*"/>
         </Grid.ColumnDefinitions>
         <!--player list, filter, output-->
-        <Grid>
+        <Grid Background="#254D32" Margin="10">
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="3*"/>
 
                     <RowDefinition Height="3*"/>
                 </Grid.RowDefinitions>
-            <Border Margin="20" Grid.Row="0" Background="#254D32" BorderBrush="Transparent" BorderThickness="0" CornerRadius="5">
+            <Border Margin="20" Grid.Row="0" Background="#35605A" BorderBrush="Transparent" BorderThickness="0" CornerRadius="5">
 
                 <Grid >
                     <Grid.RowDefinitions>
@@ -61,20 +62,23 @@
                 </Grid>
 
             </Border>
-            <DataGrid Grid.Row="2" ItemsSource="{Binding PlayerList}" IsReadOnly="True" SelectedItem="{Binding SelectedPlayer}" VerticalScrollBarVisibility="Visible" AutoGenerateColumns="False">
+            <Border  Grid.Row="2" Margin="15" CornerRadius="5" BorderThickness="5">
+                <DataGrid Margin="15" ItemsSource="{Binding PlayerList}" IsReadOnly="True" SelectedItem="{Binding SelectedPlayer}" VerticalScrollBarVisibility="Visible" AutoGenerateColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" Binding="{Binding Id}"/>
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
                     </DataGrid.Columns>
                 </DataGrid>
+            </Border>
+  
             </Grid>
        
         <!--middle section-->
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="3*"/>
-                <RowDefinition Height="2*"/>
-                <RowDefinition Height="1*"/>
+                <RowDefinition Height="5*"/>
+                <RowDefinition Height="5*"/>
+  
             </Grid.RowDefinitions>
             <!--ssh remote functionalities-->
             <Border Margin="15" Background="#1B4965" BorderBrush="Transparent" BorderThickness="5" CornerRadius="5">
@@ -138,19 +142,21 @@
             </Border>
             
             <!--active sessions-->
-            <StackPanel Grid.Row="1" VerticalAlignment="Top">
-                <DataGrid ItemsSource="{Binding ActiveSessions}" VerticalAlignment="Top" SelectedItem="{Binding SelectedSession}" AutoGenerateColumns="False">
+            <!--TODO: set colors on active or inacte-->
+            <Border Grid.Row="1" Margin="15" CornerRadius="5" BorderThickness="5" Background="#171738">
+                <DataGrid Margin="15" ItemsSource="{Binding ActiveSessions}" VerticalAlignment="Top" SelectedItem="{Binding SelectedSession}" AutoGenerateColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Name" Binding="{Binding HostName}"/>
                         <DataGridTextColumn Header="Alive" Binding="{Binding IsConnected}"/>
                         <DataGridTextColumn Header="Vnc" Binding="{Binding VncPort}"/>
+                        <DataGridTextColumn Header="Open Vnc" Binding="{Binding VncConnection}"/>
                     </DataGrid.Columns>
                 </DataGrid>
-            </StackPanel>
-           
+            </Border>
         </Grid>
 
-
+        <!--result player info screen-->
+        <!--TODO: add player information like player id, xrandr, last time reboot, bs version-->
         <Grid Grid.Column="2">
             <Grid.RowDefinitions>
                 
@@ -171,30 +177,32 @@
                 </Grid>
             </Border>
 
-            <Grid Grid.Row="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="9*"/>
-                    <RowDefinition Height="1*"/>
-                </Grid.RowDefinitions>
-                <DataGrid  VerticalScrollBarVisibility="Visible" ItemsSource="{Binding LogFiles, Mode=TwoWay}" SelectedItem="{Binding SelectedFile}" AutoGenerateColumns="False">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Available Files" Binding="{Binding}"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-                <DataGrid Grid.Column="1" VerticalScrollBarVisibility="Visible" ItemsSource="{Binding SelectedFiles}" AutoGenerateColumns="False">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Selected Files" Binding="{Binding}"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-                <Button Grid.Row="1" Content="Download Files" Command="{Binding DownloadFilesCommand}"/>
-                <Button Grid.Row="1" Grid.Column="1" Content="Remove Files" Command="{Binding RemoveFilesCommand}"/>
-            </Grid>
+            <Border Grid.Row="2"  Background="#8B2635" BorderThickness="5" CornerRadius="5" Margin="15">
+                <Grid >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="9*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
 
-            
+
+                    <DataGrid Grid.ColumnSpan="2" Margin="15" BorderBrush="Transparent" Background="Transparent" VerticalScrollBarVisibility="Visible" ItemsSource="{Binding LogFiles, Mode=TwoWay}" SelectedItem="{Binding SelectedFile}" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Available Files" Binding="{Binding}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+
+
+                    <Button Grid.Row="1" Content="Download Files" Command="{Binding DownloadFilesCommand}"/>
+                    <Button Grid.Row="1" Grid.Column="1" Content="Remove Files" Command="{Binding RemoveFilesCommand}"/>
+                </Grid>
+            </Border>
+
+
 
 
         </Grid>

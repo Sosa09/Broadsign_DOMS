@@ -45,16 +45,16 @@ namespace Broadsign_DOMS.Service
         int index = 0;
 
         
-
+        //TODO find a way to detect when a ssh connection has been disconnected and return value to the value
 
         public SshOptions()
         {
             //TODO: Make it selectable so that the user can establish a valid connectoin
             string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            string sshKey = userProfile + "\\.ssh\\id_rs";
+            string sshKey = userProfile + "\\.ssh\\id_rsa";
 
             _connectSshJump(sshKey);
-       
+
         }
         private void _connectSshJump(string sshKey = "")
         {
