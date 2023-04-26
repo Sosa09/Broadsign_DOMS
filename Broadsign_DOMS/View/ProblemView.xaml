@@ -5,198 +5,232 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Broadsign_DOMS.View"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="1400">
+             d:DesignHeight="750" d:DesignWidth="1400">
 
-    <Grid>
-        <Grid.Background>
-            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Offset="0" Color="#181D27"/>
-                <GradientStop Offset="10" Color="#BDBDBD"/>
-            </LinearGradientBrush>
-        </Grid.Background>
-        <Grid.Resources>
-            <Style TargetType="DataGrid">
-                <Setter Property="Background" Value="#D3D3D3"/>
-            </Style>
-            <Style TargetType="DataGridRow">
-                    <Setter Property="Background" Value="#D3D3D3"/>
-            </Style>
-        </Grid.Resources>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="4*"/>
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="5*"/>
-        </Grid.ColumnDefinitions>
-        <!--player list, filter, output-->
+    <UserControl.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Offset="0" Color="#181D27"/>
+            <GradientStop Offset="10" Color="#BDBDBD"/>
+        </LinearGradientBrush>
+    </UserControl.Background>
+
+    <Border Margin="15" CornerRadius="5" BorderThickness="5" BorderBrush="AliceBlue">
         <Grid>
-
+            <Grid.Resources>
+                <Style TargetType="DataGrid">
+                    <Setter Property="Background" Value="#D3D3D3"/>
+                </Style>
+                <Style x:Key="dh" TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="Transparent"/>
+                </Style>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Background" Value="#D3D3D3"/>
+                </Style>
+            </Grid.Resources>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="5*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!--player list, filter, output-->
+            <Grid Background="#2A2D34">
+                <Grid.Resources>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#101E2F"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Resources>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="3*"/>
 
                     <RowDefinition Height="3*"/>
                 </Grid.RowDefinitions>
-            <Border Margin="20" Grid.Row="0" Background="#254D32" BorderBrush="Transparent" BorderThickness="0" CornerRadius="5">
+                <Border Margin="20" Grid.Row="0" Background="#363B44" BorderBrush="Transparent" BorderThickness="0" CornerRadius="5">
 
-                <Grid >
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="3*"/>
-                        <RowDefinition Height="1*"/>
-                        <RowDefinition Height="3*"/>
-             
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="1*"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Margin="30,0"  Grid.ColumnSpan="2">
-                        <Label FontWeight="Bold" Foreground="White" FontSize="18" Content="Enter hostname: (UK-RO-LON-P001)"/>
-                        <TextBox Height="25" Text="{Binding HostName, UpdateSourceTrigger=PropertyChanged}" Background="Transparent" BorderBrush="White" BorderThickness="2"/>
-                        <Label FontWeight="Bold" Foreground="White" FontSize="18" Content="Select domain:"/>
-                        <ComboBox ItemsSource="{Binding DomainList}" SelectedItem="{Binding SelectedDomain}"></ComboBox>
-                    </StackPanel>
+                    <Grid >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="2*"/>
+                            <RowDefinition Height="2*"/>
+                            <RowDefinition Height="3*"/>
 
-                    <Button Grid.Row="1" Grid.ColumnSpan="2" Margin="30,5" Content="Clear fields" Background="#3A7D44" FontWeight="ExtraBold" Foreground="White"/>
-                    <Button FontWeight="Bold" Grid.Row="2" Content="Connect"     Margin="30" Command="{Binding ConnectSshCommand}" Background="#69B578" Foreground="White"/>
-                    <Button FontWeight="Bold" Grid.Row="2" Content="Disconnect"  Margin="30" Command="{Binding ConnectSshCommand}" Background="#69B578" Foreground="White"  Grid.Column="1"/>
-                </Grid>
-
-            </Border>
-            <DataGrid Grid.Row="2" ItemsSource="{Binding PlayerList}" IsReadOnly="True" SelectedItem="{Binding SelectedPlayer}" VerticalScrollBarVisibility="Visible" AutoGenerateColumns="False">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID" Binding="{Binding Id}"/>
-                        <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </Grid>
-       
-        <!--middle section-->
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="3*"/>
-                <RowDefinition Height="2*"/>
-                <RowDefinition Height="1*"/>
-            </Grid.RowDefinitions>
-            <!--ssh remote functionalities-->
-            <Border Margin="15" Background="#1B4965" BorderBrush="Transparent" BorderThickness="5" CornerRadius="5">
-                <StackPanel Margin="10">
-                    <StackPanel.Resources>
-                        <Style TargetType="Button" x:Key="BtnCommands">
-                            <Setter Property="Command" Value="{Binding RemoteOptionsCommand}"/>
-                            <Setter Property="Foreground" Value="White"/>
-               
-          
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border x:Name="borderButton" BorderThickness="2" CornerRadius="2" Background="#1b4965">
-                                            <ContentPresenter x:Name="mycontent"  Margin="10"/>
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background" Value="#cae9ff" TargetName="borderButton"/>
-                                  
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-
-                                </Setter.Value>
-                            </Setter>
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Foreground" Value="Black"/>
-                                </Trigger>
-                            </Style.Triggers>
-           
-                        </Style>
-
-                    </StackPanel.Resources>
-
-                    <!--IDEA: get the files and let the user read them in the tool or download them-->
-                    <Button Content="Log Files"         Style="{DynamicResource BtnCommands}" CommandParameter="files"      />
-
-
-
-                    <!--IDEA: get the ad copies by display unit and show the names-->
-                    <Button Content="Ad Copies Files"   Style="{DynamicResource BtnCommands}" CommandParameter="documents"  />
-
-                    <Button Content="Xrandr Get"        Style="{DynamicResource BtnCommands}" CommandParameter="xrandr get" />
-                    <Button Content="Get Process"       Style="{DynamicResource BtnCommands}" CommandParameter="process"    />
-                    <Button Content="Consul update"     Style="{DynamicResource BtnCommands}" CommandParameter="consul"     />
-                    <Button Content="Reboot"            Style="{DynamicResource BtnCommands}" CommandParameter="reboot"     />
-                    <Grid>
-
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="1*"/>
                             <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBox VerticalContentAlignment="Center" FontSize="15" Grid.Column="0" Text="{Binding CustomCommand}"/>
+                        <StackPanel Margin="30,0"  Grid.ColumnSpan="2">
+                            <Label FontWeight="Bold" Foreground="White" FontSize="18" Content="Enter hostname: (UK-RO-LON-P001)"/>
+                            <TextBox Height="25" Text="{Binding HostName, UpdateSourceTrigger=PropertyChanged}" Background="Transparent" MinHeight="30" BorderBrush="White" BorderThickness="2" FontSize="18" Foreground="White"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Margin="30,0" Grid.ColumnSpan="2">
+                            <Label FontWeight="Bold" Foreground="White" FontSize="18" Content="Select domain:"/>
+                            <ComboBox ItemsSource="{Binding DomainList}" SelectedItem="{Binding SelectedDomain}" MinHeight="30"/>
+                        </StackPanel>
 
-                        <Button Grid.Column="1" Content="Execute" Style="{DynamicResource BtnCommands}"/>
+
+
+                        <Button FontWeight="ExtraBold"  Grid.Row="2" Grid.Column="1"   Content="Clear fields"  Margin="30"   Command="{Binding ClearFieldsCommand}"      Background="#121417"    Foreground="White" />
+                        <Button FontWeight="Bold"       Grid.Row="2"    Content="Connect"       Margin="30"     Command="{Binding ConnectSshCommand}"       Background="#121417"    Foreground="White"/>
                     </Grid>
 
-                </StackPanel>
-            </Border>
-            
-            <!--active sessions-->
-            <StackPanel Grid.Row="1" VerticalAlignment="Top">
-                <DataGrid ItemsSource="{Binding ActiveSessions}" VerticalAlignment="Top" SelectedItem="{Binding SelectedSession}" AutoGenerateColumns="False">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Name" Binding="{Binding HostName}"/>
-                        <DataGridTextColumn Header="Alive" Binding="{Binding IsConnected}"/>
-                        <DataGridTextColumn Header="Vnc" Binding="{Binding VncPort}"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </StackPanel>
-           
-        </Grid>
+                </Border>
+                <Border Grid.Row="2" Margin="20">
+                    <DataGrid ItemsSource="{Binding PlayerList}" IsReadOnly="True" Background="Transparent" SelectedItem="{Binding SelectedPlayer}" VerticalScrollBarVisibility="Visible" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn HeaderStyle="{DynamicResource dh}" Header="ID" Binding="{Binding Id}"/>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                        </DataGrid.Columns>
+                        <DataGrid.Resources>
+                     
+                        </DataGrid.Resources>
+                    </DataGrid>
+                </Border>
 
-
-        <Grid Grid.Column="2">
-            <Grid.RowDefinitions>
-                
-                <RowDefinition Height="5*"/>
-                <RowDefinition Height="5*"/>
-            </Grid.RowDefinitions>
-            <Border Margin="15" Background="#BA3B46" BorderThickness="5" CornerRadius="5">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="1*"/>
-                        <RowDefinition Height="7*"/>
-                    </Grid.RowDefinitions>
-                    <Border BorderBrush="White" BorderThickness="0,0,0,5">
-                        <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding SelectedSession.HostName}" FontWeight="ExtraBold" Foreground="White" FontSize="20"/>
-                    </Border>
-                    <TextBlock Text="{Binding Result}"></TextBlock>
-
-                </Grid>
-            </Border>
-
-            <Grid Grid.Row="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="9*"/>
-                    <RowDefinition Height="1*"/>
-                </Grid.RowDefinitions>
-                <DataGrid  VerticalScrollBarVisibility="Visible" ItemsSource="{Binding LogFiles, Mode=TwoWay}" SelectedItem="{Binding SelectedFile}" AutoGenerateColumns="False">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Available Files" Binding="{Binding}"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-                <DataGrid Grid.Column="1" VerticalScrollBarVisibility="Visible" ItemsSource="{Binding SelectedFiles}" AutoGenerateColumns="False">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Selected Files" Binding="{Binding}"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-                <Button Grid.Row="1" Content="Download Files" Command="{Binding DownloadFilesCommand}"/>
-                <Button Grid.Row="1" Grid.Column="1" Content="Remove Files" Command="{Binding RemoveFilesCommand}"/>
             </Grid>
 
-            
+            <!--middle section-->
+            <Grid Grid.Column="1" Background="#121417">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*"/>
+                    <RowDefinition Height="3*"/>
+   
+                </Grid.RowDefinitions>
+                <!--ssh remote functionalities-->
+                <Border Margin="15" Background="#24282E" BorderBrush="Transparent" BorderThickness="5" CornerRadius="5">
+                    <StackPanel Margin="10">
+                        <StackPanel.Resources>
+                            <Style TargetType="Button" x:Key="BtnCommands">
+                                <Setter Property="Command" Value="{Binding RemoteOptionsCommand}"/>
+                                <Setter Property="Foreground" Value="White"/>
 
 
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="borderButton" BorderThickness="2" CornerRadius="2" Background="#24282E">
+                                                <ContentPresenter x:Name="mycontent"  Margin="10"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Background" Value="#363B44" TargetName="borderButton"/>
+
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Foreground" Value="Black"/>
+                                    </Trigger>
+                                </Style.Triggers>
+
+                            </Style>
+
+                        </StackPanel.Resources>
+
+                        <!--IDEA: get the files and let the user read them in the tool or download them-->
+                        <Button Content="Log Files"         Style="{DynamicResource BtnCommands}" CommandParameter="files"      />
+
+
+
+                        <!--IDEA: get the ad copies by display unit and show the names-->
+                        <Button Content="Ad Copies Files"   Style="{DynamicResource BtnCommands}" CommandParameter="documents"  />
+
+                        <Button Content="Xrandr Get"        Style="{DynamicResource BtnCommands}" CommandParameter="xrandr get" />
+                        <Button Content="Get Process"       Style="{DynamicResource BtnCommands}" CommandParameter="process"    />
+                        <Button Content="Consul update"     Style="{DynamicResource BtnCommands}" CommandParameter="consul"     />
+                        <Button Content="Reboot"            Style="{DynamicResource BtnCommands}" CommandParameter="reboot"     />
+                        <Grid>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox VerticalContentAlignment="Center" FontSize="15" Grid.Column="0" Text="{Binding CustomCommand}"/>
+
+                            <Button Grid.Column="1" Content="Execute" Style="{DynamicResource BtnCommands}"/>
+                        </Grid>
+
+                    </StackPanel>
+                </Border>
+
+                <!--active sessions-->
+                <Border Grid.Row="1" Margin="15" BorderThickness="5">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="3*"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+                        <DataGrid Grid.Row="0" ItemsSource="{Binding ActiveSessions}" VerticalAlignment="Top" SelectedItem="{Binding SelectedSession}" AutoGenerateColumns="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Name" Binding="{Binding HostName}"/>
+                                <DataGridTextColumn Header="Alive" Binding="{Binding IsConnected}"/>
+                                <DataGridTextColumn Header="Vnc" Binding="{Binding VncPort}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <Button FontWeight="Bold"       Grid.Row="1"    Content="Disconnect"   Command="{Binding DisconnectSshCommand}"       Background="Red"    Foreground="White"/>
+
+                    </Grid>
+
+
+                </Border>
+
+            </Grid>
+
+
+            <Grid Grid.Column="2" Background="#121417">
+                <Grid.RowDefinitions>
+
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="5*"/>
+                </Grid.RowDefinitions>
+                <Border Margin="15" Background="#363B44" BorderThickness="5" CornerRadius="5">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="7*"/>
+                        </Grid.RowDefinitions>
+                        <Border BorderBrush="White" BorderThickness="0,0,0,5">
+                            <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding SelectedSession.HostName}" FontWeight="ExtraBold" Foreground="White" FontSize="20"/>
+                        </Border>
+                        <ScrollViewer  Grid.Row="2" VerticalScrollBarVisibility="Hidden">
+                            <TextBlock Margin="10" Foreground="Black" Text="{Binding Result}"/>
+
+
+                        </ScrollViewer>
+
+                    </Grid>
+                </Border>
+                <Border Grid.Row="2" Margin="15">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="9*"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+                        <DataGrid Grid.ColumnSpan="2" VerticalScrollBarVisibility="Visible" ItemsSource="{Binding Files, Mode=TwoWay}" SelectedItem="{Binding SelectedFile}" AutoGenerateColumns="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Available Files" Binding="{Binding}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <Button Grid.Row="1" Content="Download Files" Command="{Binding DownloadFilesCommand}"/>
+                        <Button Grid.Row="1" Grid.Column="1" Content="Remove Files" Command="{Binding RemoveFilesCommand}"/>
+                    </Grid>
+
+                </Border>
+
+            </Grid>
         </Grid>
-    </Grid>
+    </Border>
 </UserControl>

@@ -21,7 +21,11 @@
         </DataTemplate>
 
         <!--style buttons-->
-        
+        <LinearGradientBrush x:Key="GradientBrush" StartPoint="1,1" EndPoint="0,0">
+            <GradientStop Color="#141E30" Offset="0.5" />
+            <GradientStop Color="#0e1521" Offset="0" />
+        </LinearGradientBrush>
+
         <Style x:Key="MyButtonStyles" TargetType="Button">
             <Setter Property="Foreground" Value="White"></Setter>
         </Style>

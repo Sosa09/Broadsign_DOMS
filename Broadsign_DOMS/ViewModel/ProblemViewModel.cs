@@ -18,6 +18,7 @@ namespace Broadsign_DOMS.ViewModel
         #region Fields
         private ICommand _remoteOptionsCommand;
         private ICommand _connectSshCommand;
+        private ICommand _disconnectSshCommand;
         private ICommand _downloadFilesCommand;
 
         private SshOptions _sshSession;
@@ -25,19 +26,19 @@ namespace Broadsign_DOMS.ViewModel
         private SshOptions _selectedSession;
         private ObservableCollection<PlayerModel> _playerList;
         private ObservableCollection<SshOptions> _activeSessions;
-        private ObservableCollection<string> _logFiles;
+        private ObservableCollection<string> _files;
         private ObservableCollection<string> _selectedFiles = new ObservableCollection<string>();
 
         private IEnumerable<string> _domainList;
 
         private Visibility _logFileGridVisibility;
 
-        private bool    _isConnected;
         private string  _hostName;
         private string  _status;
         private string  _result;
         private string  _selectedDomain;
         private string _selectedFile;
+        private RelayCommand? _clearFieldsCommand;
         #endregion
         #region Properties
         public ICommand RemoteOptionsCommand
@@ -57,6 +58,13 @@ namespace Broadsign_DOMS.ViewModel
                 return _connectSshCommand ?? (new RelayCommand(param => _sshConnection()));
             }
         }
+        public ICommand DisconnectSshCommand
+        {
+            get
+            {
+                return _disconnectSshCommand ?? (new RelayCommand(_sshDisconnection));
+            }
+        }
         public ICommand DownloadFilesCommand
         {
             get
@@ -64,6 +72,13 @@ namespace Broadsign_DOMS.ViewModel
                 return _downloadFilesCommand ?? new RelayCommand(param => SelectedSession.DownloadFiles(_selectedFiles));
             }
          
+        }
+        public ICommand ClearFieldsCommand
+        {
+            get
+            {
+                return _clearFieldsCommand ?? (new RelayCommand(_clearAllFields));
+            }
         }
 
         public PlayerModel SelectedPlayer
@@ -85,7 +100,6 @@ namespace Broadsign_DOMS.ViewModel
                 OnPropertyChanged("SelectedSession");
             }
         }
-
         public ObservableCollection<PlayerModel> PlayerList
         {
             get
@@ -116,16 +130,16 @@ namespace Broadsign_DOMS.ViewModel
                 OnPropertyChanged("ActiveSessions");
             }
         }
-        public ObservableCollection<string> LogFiles 
+        public ObservableCollection<string> Files 
         {
             get
             {
-               return _logFiles ?? new ObservableCollection<string> { "Hello world"};
+               return _files ?? new ObservableCollection<string>();
             }
             set
             {
-                _logFiles = value;
-                OnPropertyChanged("LogFiles");
+                _files = value;
+                OnPropertyChanged("Files");
             }
         }
 
@@ -180,26 +194,14 @@ namespace Broadsign_DOMS.ViewModel
                 OnPropertyChanged("Status");
             }
         }
-        public bool IsConnected
-        {
-            get
-            {
-                return _isConnected;
-            }
-            set
-            {
-                _isConnected = value;
-                OnPropertyChanged(nameof(IsConnected));
 
-            }
-        }
         public string Result
         {
             get => _result;
             set
             {
                 _result = value;
-                OnPropertyChanged("Result");
+                OnPropertyChanged(Result);
             }
         }
         public string SelectedDomain
@@ -233,23 +235,35 @@ namespace Broadsign_DOMS.ViewModel
         {
             if((string)param == "files")
             {
-                LogFiles = new ObservableCollection<string>(_sshSession.GetLogList());
+
+                Files = new ObservableCollection<string>(_sshSession.GetLogList());
+                return;
+            }
+            else if((string)param == "documents")
+            {
+                Files = new ObservableCollection<string>(_sshSession.GetAdCopies());
                 return;
             }
             string cmd = "";
             if ((string)param == "reboot")
                 cmd = "sudo reboot";
-            else if ((string)param == "xrandr get")
-                cmd = "xrandr --current";
-            else if ((string)param == "documents")
-                cmd = "ls -l /opt/broadsign/";//will be selected files from a list
+            else if ((string)param == "xrandr monitors")
+                cmd = "xrandr --listmonitors";
             else if ((string)param == "process")
                 cmd = "ps -aux";
             else if ((string)param == "consul")
                 cmd = "sudo /opt/configuration/converge.sh checknow";
+
             Result = _sshSession.ExecuteCommand(cmd);
         }
-
+        private void _sshDisconnection(object obj)
+        {
+            if (SelectedSession != null)
+            {
+                SelectedSession.DisconnectSshSession();
+                ActiveSessions.Remove(ActiveSessions.Where(x => x == SelectedSession).First());
+            }
+        }
         private void _sshConnection()
         {
             
@@ -265,8 +279,10 @@ namespace Broadsign_DOMS.ViewModel
                 };
 
                 _sshSession.StartSshSession();
-
-                ActiveSessions.Add(_sshSession);
+                if (_sshSession.IsConnected)
+                    ActiveSessions.Add(_sshSession);
+                else
+                    MessageBox.Show($"Could not connect to {HostName}, try again or try to ping");
             } 
         }
         private bool _checkHostNameIsValid(string selected = "")
@@ -282,6 +298,15 @@ namespace Broadsign_DOMS.ViewModel
             }
  
             return true;
+        }
+        private void _clearAllFields(object obj)
+        {
+            SelectedSession = null;
+            SelectedPlayer = null;
+            HostName = string.Empty;
+            SelectedDomain = null;
+            Files.Clear();
+            
         }
         #endregion
     }

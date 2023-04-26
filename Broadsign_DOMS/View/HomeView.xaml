@@ -5,16 +5,20 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Broadsign_DOMS.View"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800" Background="{StaticResource GradientBrush}">
     <UserControl.Resources>
-      
-        <LinearGradientBrush x:Key="GradientBrushBG" StartPoint="1,1" EndPoint="0,0">
+
+        <LinearGradientBrush x:Key="GB" StartPoint="1,1" EndPoint="0,0" Opacity="0.2">
+            <GradientStop Color="#3E3F65" Offset="5"/>
+            <GradientStop Color="#474973" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="GradientBrushBG" StartPoint="1,1" EndPoint="0,0" Opacity="0.2">
 
             <GradientStop Color="#FF0C0B17" Offset="10" />
             <GradientStop Color="DarkGray" Offset="10" />
 
         </LinearGradientBrush>
-        <LinearGradientBrush x:Key="GradientBrushGB" StartPoint="1,1" EndPoint="0,0">
+        <LinearGradientBrush x:Key="GradientBrushGB" StartPoint="1,1" EndPoint="0,0" Opacity="0.2">
             <GradientStop Color="#FF0C0B17" Offset="0" />
             <GradientStop Color="White" Offset="5" />
 
@@ -24,16 +28,11 @@
             <GradientStop Color="Gray" Offset="0" />
 
         </LinearGradientBrush>
-   
-        <ControlTemplate TargetType="Button" x:Key="BtnStyle">
-            <Border Background="{StaticResource GradientBrushGB}" BorderThickness="2" CornerRadius="5" Margin="5">
-                <ContentPresenter Name="MyBtn" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="1"  Margin="5"/>
-            </Border>
-            
-            
-        </ControlTemplate>
+
+
+        
     </UserControl.Resources>
-    <Grid Background="{StaticResource GradientBrushBG}">
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="3*"/>
@@ -42,75 +41,86 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
+        <Border VerticalAlignment="Stretch" Grid.RowSpan="2" Background="#0d0c1d" Margin="25" CornerRadius="5" BorderThickness="5" BorderBrush="#0d0c1d">
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock  Text="To begin click on one of the elements" TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" Foreground="White" Margin="0,5"/>
+                <Button     Content="Problem Assistant" Margin="20" VerticalAlignment="Center"  Command="{Binding ProblemView}" Background="#a69cac"/>
+                <Button     Content="BS Administration" Margin="20"  Command="{Binding AdminView}" />
+            </StackPanel>
+ 
 
-        <Button Content="Problem Assistant" Command="{Binding ProblemView}" Template="{DynamicResource BtnStyle}" Foreground="white"/>
-        <Button Grid.Row="1" Content="BS Administration" Template="{DynamicResource BtnStyle}" Command="{Binding AdminView}" Foreground="white"/>
+        </Border>
+        <Border Background="{StaticResource GB}" Grid.Column="1"  BorderThickness="0" Grid.RowSpan="4"  Margin="20">
+            <GroupBox Header="Network Status" Foreground="White">
+                <!--this is just a demo-->
+                <DockPanel>
+                    <DockPanel.Resources>
+                        <LinearGradientBrush x:Key="myBorder" StartPoint="5,1" EndPoint="0,0">
+                            <GradientStop Color="Green" Offset="0"/>
+                            <GradientStop Color="Transparent" Offset="1"/>
+                        </LinearGradientBrush>
+                        <Style TargetType="Border">
+                            <Setter Property="Background" Value="{StaticResource myBorder}"/>
+                            <Setter Property="VerticalAlignment" Value="Stretch"/>
+                            <Setter Property="Opacity" Value="1"/>
+                            <Setter Property="Margin" Value="25"/>
+                            <Setter Property="Width" Value="60"/>
+                            <!--verify if it is possible to put a condition based on another element !-->
+                        </Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="Black"/>
 
-        <GroupBox Background="{StaticResource GradientBrushGB}" Grid.Column="1" Header="Network Status" BorderThickness="0" Grid.RowSpan="2" Foreground="White" Margin="5">
-            <!--this is just a demo-->
-            <DockPanel>
-                <DockPanel.Resources>
-                    <LinearGradientBrush x:Key="myBorder" StartPoint="5,1" EndPoint="0,0">
-                        <GradientStop Color="Green" Offset="0"/>
-                        <GradientStop Color="Transparent" Offset="1"/>
-                    </LinearGradientBrush>
-                    <Style TargetType="Border">
-                        <Setter Property="Background" Value="{StaticResource myBorder}"/>
-                        <Setter Property="VerticalAlignment" Value="Stretch"/>
-                        <Setter Property="Margin" Value="5"/>
-                        <Setter Property="Opacity" Value="1"/>
-                        <!--verify if it is possible to put a condition based on another element !-->
-                    </Style>
-                    <Style TargetType="TextBlock">
-                        <Setter Property="Foreground" Value="Black"/>
-                        
-                    </Style>
-                </DockPanel.Resources>
-                <Border>
-                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <TextBlock Text="UK" Foreground="#FF0C0B17"/>
-                        <TextBlock Text="80/100" Foreground="#FF0C0B17"/>
-                    </StackPanel>
-                </Border>
-                <Border>
-                    <StackPanel>
-                        <TextBlock Text="Belgium"/>
-                        <TextBlock Text="100/100"/>
-                    </StackPanel>
-                </Border>
-                <Border>
-                    <StackPanel>
-                        <TextBlock Text="Country"/>
-                        <TextBlock Text="100/100"/>
-                    </StackPanel>
-                </Border>
-                <Border >
-                    <StackPanel>
-                        <TextBlock Text="Country"/>
-                        <TextBlock Text="100/100"/>
-                    </StackPanel>
-                </Border>
-                <Border >
-                    <StackPanel>
-                        <TextBlock Text="Country"/>
-                        <TextBlock Text="100/100"/>
-                    </StackPanel>
-                </Border>
-                <Border >
-                    <StackPanel>
-                        <TextBlock Text="Country"/>
-                        <TextBlock Text="100/100"/>
-                    </StackPanel>
-                </Border>
-                <Border>
-                    <StackPanel>
-                        <TextBlock Text="Country"/>
-                        <TextBlock Text="100/100"/>
-                    </StackPanel>
-                </Border>
-            </DockPanel>
+                        </Style>
+                    </DockPanel.Resources>
+                    <Border>
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock Text="UK" Foreground="#FF0C0B17"/>
+                            <TextBlock Text="80/100" Foreground="#FF0C0B17"/>
+                        </StackPanel>
+                    </Border>
+                    <Border>
+                        <StackPanel>
+                            <TextBlock Text="Belgium"/>
+                            <TextBlock Text="100/100"/>
+                        </StackPanel>
+                    </Border>
+                    <Border>
+                        <StackPanel>
+                            <TextBlock Text="Country"/>
+                            <TextBlock Text="100/100"/>
+                        </StackPanel>
+                    </Border>
+                    <Border >
+                        <StackPanel>
+                            <TextBlock Text="Country"/>
+                            <TextBlock Text="100/100"/>
+                        </StackPanel>
+                    </Border>
+                    <Border >
+                        <StackPanel>
+                            <TextBlock Text="Country"/>
+                            <TextBlock Text="100/100"/>
+                        </StackPanel>
+                    </Border>
+                    <Border >
+                        <StackPanel>
+                            <TextBlock Text="Country"/>
+                            <TextBlock Text="100/100"/>
+                        </StackPanel>
+                    </Border>
+                    <Border>
+                        <StackPanel>
+                            <TextBlock Text="Country"/>
+                            <TextBlock Text="100/100"/>
+                        </StackPanel>
+                    </Border>
+                </DockPanel>
 
-        </GroupBox>
+            </GroupBox>
+
+        </Border>
     </Grid>
 </UserControl>
