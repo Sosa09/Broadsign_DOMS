@@ -20,6 +20,8 @@ namespace Broadsign_DOMS.ViewModel
         private ICommand _connectSshCommand;
         private ICommand _disconnectSshCommand;
         private ICommand _downloadFilesCommand;
+        private IEnumerable<string> _domainList;
+        private Visibility _logFileGridVisibility;
 
         private SshOptions _sshSession;
         private PlayerModel _selectedPlayer;
@@ -29,9 +31,7 @@ namespace Broadsign_DOMS.ViewModel
         private ObservableCollection<string> _files;
         private ObservableCollection<string> _selectedFiles = new ObservableCollection<string>();
 
-        private IEnumerable<string> _domainList;
 
-        private Visibility _logFileGridVisibility;
 
         private string  _hostName;
         private string  _status;
@@ -78,6 +78,29 @@ namespace Broadsign_DOMS.ViewModel
             get
             {
                 return _clearFieldsCommand ?? (new RelayCommand(_clearAllFields));
+            }
+        }
+        public IEnumerable<string> DomainList
+        {
+            get
+            {
+                if (_domainList == null)
+                    _domainList = CommonResources.Players.Select(x => x.AssignedDomain.Name).Distinct();
+                return _domainList;
+            }
+            set
+            {
+                _domainList = value;
+                OnPropertyChanged("DomainList");
+            }
+        }
+        public Visibility LogFileGridVisibility
+        {
+            get => _logFileGridVisibility;
+            set
+            {
+                _logFileGridVisibility = value;
+                OnPropertyChanged("LogFileGridVisibility");
             }
         }
 
@@ -143,29 +166,7 @@ namespace Broadsign_DOMS.ViewModel
             }
         }
 
-        public IEnumerable<string> DomainList
-        {
-            get
-            {
-                if (_domainList == null)
-                    _domainList = CommonResources.Players.Select(x => x.AssignedDomain.Name).Distinct();
-                return _domainList;
-            }
-            set
-            {
-                _domainList = value;
-                OnPropertyChanged("DomainList");
-            }
-        }
-        public Visibility LogFileGridVisibility 
-        { 
-            get => _logFileGridVisibility;
-            set
-            {
-                _logFileGridVisibility = value;
-                OnPropertyChanged("LogFileGridVisibility");
-            }
-        }
+
 
         public string HostName
         {
@@ -288,7 +289,7 @@ namespace Broadsign_DOMS.ViewModel
         private bool _checkHostNameIsValid(string selected = "")
         {
             try
-            {
+            {                
                 Regex.IsMatch(selected.Trim(), "^[A-Za-z]{2}-[A-Za-z]{2}-[A-Za-z]{3}-[A-Za-z0-9]{4}$");
             }
             catch(Exception e)
