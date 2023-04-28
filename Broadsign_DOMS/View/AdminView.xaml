@@ -168,13 +168,73 @@
                         <DataGridTextColumn Header="ID" Binding="{Binding Path=Id}"/>
                         <DataGridTextColumn Header="Current Name" Binding="{Binding Path=Name}"/>
                         <DataGridTextColumn Header="Futur Name" Binding="{Binding Path=NewName}"/>
-                        <DataGridTextColumn Header="domain" Binding="{Binding Path=Domain.Name}"/>
+                        <DataGridTextColumn Header="domain" Binding="{Binding Path=Domain.Token}"/>
                     </DataGrid.Columns>
              
                 </DataGrid>
             </Grid>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:OpeningHoursViewModel}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0.5*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                        
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{Binding Total, UpdateSourceTrigger=PropertyChanged}" Foreground="White" Height="50" HorizontalAlignment="Center" Grid.Row="0" Grid.ColumnSpan="3" FontSize="28"/>
 
+                    <ProgressBar Grid.Row="1" Grid.ColumnSpan="3" IsIndeterminate="{Binding IsBusy}" Visibility="{Binding Visibility}" Name="pbStatus" Height="25" />
+                    
+                    <Button Grid.Column="0" Grid.Row="2" Content="Start" Command="{Binding Path=UpdateOH}" />
+                    <Button Grid.Column="1" Grid.Row="2" Content="Stop" Command="{Binding Path=UpdateOH}" IsEnabled="False" />
+                    
+
+                </Grid>
+                <Grid Grid.Column="1" Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <!--TO REMOVE-->
+                    <DockPanel Grid.ColumnSpan="2" >
+                        <Label Content="Enter Token: " FontWeight="Bold" Foreground="White"/>
+                        <TextBox Text="{Binding BSCToken}" />
+                    </DockPanel>
+                    <StackPanel Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Bottom">
+                        <DockPanel>
+                            <Button Content="Select file" Command="{Binding SelectFile}"/>
+                            <Label Content="Here comes the selected file" Foreground="White"/>
+                        </DockPanel>
+               
+                        <Button Content="Export Report" Command="{Binding ExportCommand}" />
+                    </StackPanel>
+
+                </Grid>
+                <DataGrid Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Path=LogModels, UpdateSourceTrigger=PropertyChanged}" Margin="5" AutoGenerateColumns="True">
+
+                </DataGrid>
+            </Grid>
+
+        </DataTemplate>
+        
     </UserControl.Resources>
     <!--Admin view model menu-->
     <Grid Background="{StaticResource GradientBrush}">

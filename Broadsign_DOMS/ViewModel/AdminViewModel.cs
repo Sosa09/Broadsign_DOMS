@@ -130,7 +130,7 @@ namespace Broadsign_DOMS.ViewModel
             else if (cmdParam == "ResourceViewModel")
                 CurrentMenu = new ResourceViewModel();
             else if (cmdParam == "OpeningHoursModel")
-                CurrentMenu = new UserViewModel();
+                CurrentMenu = new OpeningHoursViewModel();
             else
                 MessageBox.Show("Problem");
             currentView = cmdParam;
