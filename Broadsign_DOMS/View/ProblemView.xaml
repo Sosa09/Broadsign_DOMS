@@ -9,10 +9,38 @@
 
     <UserControl.Background>
         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Offset="0" Color="#181D27"/>
-            <GradientStop Offset="10" Color="#BDBDBD"/>
+            <GradientStop Offset="0" Color="#F5F5F5" />
+            <GradientStop Offset="1" Color="#FFFFFF" />
         </LinearGradientBrush>
+
     </UserControl.Background>
+    <UserControl.Resources>
+        
+        <Style TargetType="DataGridRow">
+            <Setter Property="Background" Value="#D3D3D3"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#101E2F"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <ControlTemplate x:Key="DefaultBtn" TargetType="Button">
+            <Border x:Name="mbBdr" CornerRadius="5" BorderThickness="5" Background="#4169E1" Margin="5">
+                <ContentPresenter ContentSource="Content" Margin="20" Width="100" Height="100"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#36454F" TargetName="mbBdr"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <Style TargetType="Button">
+            <Setter Property="Foreground" Value="White"/>
+
+        </Style>
+
+    </UserControl.Resources>
 
     <Border Margin="15" CornerRadius="5" BorderThickness="5" BorderBrush="AliceBlue">
         <Grid>
@@ -34,26 +62,27 @@
             </Grid.ColumnDefinitions>
             
             <!--player list, filter, output-->
-            <Grid Background="#2A2D34">
-                <Grid.Resources>
-                    <Style TargetType="DataGridRow">
-                        <Setter Property="Background" Value="Transparent"/>
-                        <Setter Property="Foreground" Value="White"/>
-                        <Style.Triggers>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="Background" Value="#101E2F"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </Grid.Resources>
+            <Grid>
+
                 <Grid.RowDefinitions>
                     <RowDefinition Height="3*"/>
 
                     <RowDefinition Height="3*"/>
                 </Grid.RowDefinitions>
-                <Border Margin="20" Grid.Row="0" Background="#363B44" BorderBrush="Transparent" BorderThickness="0" CornerRadius="5">
-
-                    <Grid >
+                <Border Margin="20" Grid.Row="0"  BorderThickness="5" CornerRadius="5">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Offset="0" Color="#1E90FF"/>
+                            <GradientStop Offset="1" Color="#ADD8E6"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Border.BorderBrush>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Offset="0" Color="#1E90FF"/>
+                            <GradientStop Offset="1" Color="#ADD8E6"/>
+                        </LinearGradientBrush>
+                    </Border.BorderBrush>
+                    <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="2*"/>
                             <RowDefinition Height="2*"/>
@@ -75,8 +104,8 @@
 
 
 
-                        <Button FontWeight="ExtraBold"  Grid.Row="2" Grid.Column="1"   Content="Clear fields"  Margin="30"   Command="{Binding ClearFieldsCommand}"      Background="#121417"    Foreground="White" />
-                        <Button FontWeight="Bold"       Grid.Row="2"    Content="Connect"       Margin="30"     Command="{Binding ConnectSshCommand}"       Background="#121417"    Foreground="White"/>
+                        <Button Grid.Row="2" Grid.Column="1" Template="{DynamicResource DefaultBtn}"  Content="Clear fields"   Command="{Binding ClearFieldsCommand}"  />
+                        <Button Grid.Row="2" Content="Connect"  Template="{StaticResource MainButtons}"  Command="{Binding ConnectSshCommand}"  />
                     </Grid>
 
                 </Border>
@@ -95,14 +124,26 @@
             </Grid>
 
             <!--middle section-->
-            <Grid Grid.Column="1" Background="#121417">
+            <Grid Grid.Column="1" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="3*"/>
                     <RowDefinition Height="3*"/>
    
                 </Grid.RowDefinitions>
                 <!--ssh remote functionalities-->
-                <Border Margin="15" Background="#24282E" BorderBrush="Transparent" BorderThickness="5" CornerRadius="5">
+                <Border Margin="15" BorderThickness="5" CornerRadius="5">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1" >
+                            <GradientStop Color="Black" Offset="1"/>
+                            <GradientStop Color="#24282E" Offset="0"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Border.BorderBrush>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1" >
+                            <GradientStop Color="#24282F" Offset="1"/>
+                            <GradientStop Color="#24282E" Offset="0"/>
+                        </LinearGradientBrush>
+                    </Border.BorderBrush>
                     <StackPanel Margin="10">
                         <StackPanel.Resources>
                             <Style TargetType="Button" x:Key="BtnCommands">
@@ -113,7 +154,7 @@
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="Button">
-                                            <Border x:Name="borderButton" BorderThickness="2" CornerRadius="2" Background="#24282E">
+                                            <Border x:Name="borderButton" BorderThickness="2" CornerRadius="2">
                                                 <ContentPresenter x:Name="mycontent"  Margin="10"/>
                                             </Border>
                                             <ControlTemplate.Triggers>
@@ -176,7 +217,9 @@
                                 <DataGridTextColumn Header="Vnc" Binding="{Binding VncPort}"/>
                             </DataGrid.Columns>
                         </DataGrid>
-                        <Button FontWeight="Bold"       Grid.Row="1"    Content="Disconnect"   Command="{Binding DisconnectSshCommand}"       Background="Red"    Foreground="White"/>
+                        <Button FontWeight="Bold"       Grid.Row="1"    Content="Disconnect"   Command="{Binding DisconnectSshCommand}"       Background="Red"    Foreground="White">
+        
+                        </Button>
 
                     </Grid>
 
@@ -186,7 +229,7 @@
             </Grid>
 
 
-            <Grid Grid.Column="2" Background="#121417">
+            <Grid Grid.Column="2">
                 <Grid.RowDefinitions>
 
                     <RowDefinition Height="5*"/>
