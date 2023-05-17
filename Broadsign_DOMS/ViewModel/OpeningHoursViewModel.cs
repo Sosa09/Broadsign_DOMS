@@ -2,6 +2,7 @@
 using Broadsign_DOMS.Resource;
 using Broadsign_DOMS.Service;
 using BUOH.Model;
+using GalaSoft.MvvmLight.Messaging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ namespace Broadsign_DOMS.ViewModel
         string ConvertTimeToMinuteMaskCSV = String.Empty;
         bool isBusy;
         string total;
+
         ObservableCollection<TimeToMinuteMaskTable> ttmmTable = new ObservableCollection<TimeToMinuteMaskTable>();
         List<List<ConvertTimeToMinuteMask>> ttmmToConvert = new List<List<ConvertTimeToMinuteMask>>();
         //create a new instance of the class BSCMinuteMaskUpdateModel as a list to store your body to update the day part later in the program
@@ -32,14 +34,18 @@ namespace Broadsign_DOMS.ViewModel
         //create a new instance of the class display unit as a list to store your csv values
         ObservableCollection<DisplayUnits> dus;
         ObservableCollection<LogModel> logModels;
+
         Visibility visibility;
         ICommand updateOH;
         ICommand selectFile;
         ICommand exportCommand;
-        private string bSCToken;
+        string bSCToken;
+
 
         public OpeningHoursViewModel()
         {
+
+    
             //reads and stores the csv values into display units instance created earlier.
             using (StreamReader reader = new StreamReader(TimeToMinuteMaskTableCSV))
             {
@@ -112,8 +118,109 @@ namespace Broadsign_DOMS.ViewModel
                 return selectFile;
             }
         }
+        public Visibility Visibility
+        {
+            get
+            {
+                if (visibility.Equals(Visibility.Visible))
+                    visibility = Visibility.Hidden;
+                return visibility;
+            }
+            set
+            {
+                visibility = value;
+                OnPropertyChanged(nameof(Visibility));
+            }
+        }
+        public ICommand ExportCommand
+        {
+            get
+            {
+                if (exportCommand == null)
+                    exportCommand = new RelayCommand(Export);
+                return exportCommand;
+            }
+        }
 
-        private async void OpenFile(object obj)
+        public bool IsBusy
+        {
+            get => isBusy;
+            set
+            {
+                this.isBusy = value;
+                OnPropertyChanged(nameof(IsBusy));
+            }
+        }
+        public string Total
+        {
+            get => total;
+            set
+            {
+                total = value;
+                OnPropertyChanged(nameof(Total));
+            }
+        }
+        public string BSCToken
+        {
+            get
+            {
+                return bSCToken;
+            }
+            set
+            {
+                bSCToken = value;
+                OnPropertyChanged(nameof(BSCToken));
+            }
+        }
+        async void updateOHMethod(object obj)
+        {
+            if (BSCToken == null)
+            {
+                System.Windows.MessageBox.Show("Please enter a token first");
+                return;
+            }
+            var totalCompleted = 0;
+            IsBusy = true;
+            Visibility = Visibility.Visible;
+            foreach (var item in Dus)
+            {
+
+                if (item.DayPartID != null)
+                {
+
+                    DayPartModel daypart = list_bscMinuteMask.FirstOrDefault(x => x.Id.ToString() == item.DayPartID);
+                    daypart.Minute_mask = item.MinuteMask;
+                    var body = JsonConvert.SerializeObject(new
+                    {
+                        active = daypart.Active,
+                        day_mask= daypart.Day_mask,
+                        domain_id= daypart.Domain_id,
+                        end_date= daypart.End_date,
+                        end_time= daypart.End_time,
+                        id= daypart.Id,
+                        impressions_per_hour= daypart.Impressions_per_hour,
+                        minute_mask= daypart.Minute_mask,
+                        name= daypart.Name,
+                        start_date= daypart.Start_date,
+                        start_time= daypart.Start_time,
+                        virtual_end_date= daypart.Virtual_end_date,
+                        virtual_start_date= daypart.Virtual_start_date,
+                        weight= daypart.Weight
+                    });
+
+                    await Task.Run(() => Requests.SendRequest("/day_part/v5", BSCToken, RestSharp.Method.PUT, body));
+                    LogModels.Add(new LogModel { DisplayUnit = item.DisplayUnitID, StatusCode = Requests.Response.StatusCode.ToString(), MinuteMask = daypart.Minute_mask });
+
+                }
+                totalCompleted++;
+                Total = $"{totalCompleted}/{Dus.Count}";
+            }
+            IsBusy = false;
+            Visibility = Visibility.Hidden;
+            System.Windows.MessageBox.Show($"{totalCompleted} completed updates");
+
+        }
+        async void OpenFile(object obj)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.ShowDialog();
@@ -197,113 +304,6 @@ namespace Broadsign_DOMS.ViewModel
             }
 
         }
-
-        public bool IsBusy
-        {
-            get => isBusy;
-            set
-            {
-                this.isBusy = value;
-                OnPropertyChanged(nameof(IsBusy));
-            }
-        }
-
-        public string Total
-        {
-            get => total;
-            set
-            {
-                total = value;
-                OnPropertyChanged(nameof(Total));
-            }
-        }
-
-        public Visibility Visibility
-        {
-            get
-            {
-                if (visibility.Equals(Visibility.Visible))
-                    visibility = Visibility.Hidden;
-                return visibility;
-            }
-            set
-            {
-                visibility = value;
-                OnPropertyChanged(nameof(Visibility));
-            }
-        }
-
-        public string BSCToken
-        {
-            get
-            {
-                return bSCToken;
-            }
-            set
-            {
-                bSCToken = value;
-                OnPropertyChanged(nameof(BSCToken));
-            }
-        }
-
-        public ICommand ExportCommand
-        {
-            get
-            {
-                if (exportCommand == null)
-                    exportCommand = new RelayCommand(Export);
-                return exportCommand;
-            }
-        }
-
-        private async void updateOHMethod(object obj)
-        {
-            if (BSCToken == null)
-            {
-                System.Windows.MessageBox.Show("Please enter a token first");
-                return;
-            }
-            var totalCompleted = 0;
-            IsBusy = true;
-            Visibility = Visibility.Visible;
-            foreach (var item in Dus)
-            {
-
-                if (item.DayPartID != null)
-                {
-
-                    DayPartModel daypart = list_bscMinuteMask.FirstOrDefault(x => x.Id.ToString() == item.DayPartID);
-                    daypart.Minute_mask = item.MinuteMask;
-                    var body = JsonConvert.SerializeObject(new
-                    {
-                        active = daypart.Active,
-                        day_mask= daypart.Day_mask,
-                        domain_id= daypart.Domain_id,
-                        end_date= daypart.End_date,
-                        end_time= daypart.End_time,
-                        id= daypart.Id,
-                        impressions_per_hour= daypart.Impressions_per_hour,
-                        minute_mask= daypart.Minute_mask,
-                        name= daypart.Name,
-                        start_date= daypart.Start_date,
-                        start_time= daypart.Start_time,
-                        virtual_end_date= daypart.Virtual_end_date,
-                        virtual_start_date= daypart.Virtual_start_date,
-                        weight= daypart.Weight
-                    });
-
-                    await Task.Run(() => Requests.SendRequest("/day_part/v5", BSCToken, RestSharp.Method.PUT, body));
-                    LogModels.Add(new LogModel { DisplayUnit = item.DisplayUnitID, StatusCode = Requests.Response.StatusCode.ToString(), MinuteMask = daypart.Minute_mask });
-
-                }
-                totalCompleted++;
-                Total = $"{totalCompleted}/{Dus.Count}";
-            }
-            IsBusy = false;
-            Visibility = Visibility.Hidden;
-            System.Windows.MessageBox.Show($"{totalCompleted} completed updates");
-
-        }
         void ConvertToMinuteMask()
         {
             if (ttmmToConvert == null)
@@ -376,7 +376,6 @@ namespace Broadsign_DOMS.ViewModel
                     Dus.Add(new DisplayUnits { DisplayUnitID = lastDu, MinuteMask = mu });
             }
         }
-
         void Export(object obj)
         {
             FolderBrowserDialog fbd = new FolderBrowserDialog();

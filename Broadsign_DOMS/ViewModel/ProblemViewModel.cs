@@ -202,7 +202,7 @@ namespace Broadsign_DOMS.ViewModel
             set
             {
                 _result = value;
-                OnPropertyChanged(Result);
+                OnPropertyChanged("Result");
             }
         }
         public string SelectedDomain

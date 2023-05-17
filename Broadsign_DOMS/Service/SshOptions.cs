@@ -173,9 +173,15 @@ namespace Broadsign_DOMS.Service
             
             // SCP client for transferring files
             scpClient = new ScpClient(remoteHostConnectionInfo);
-        
-            // Connect SCP client
-            scpClient.Connect();
+            try
+            {
+                // Connect SCP client
+                scpClient.Connect();
+            } catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+
         
             
         }
@@ -248,16 +254,17 @@ namespace Broadsign_DOMS.Service
             }
             foreach(string file in files)
             {
-                // Download a remote file
-                string remoteFilePath = file;
-
-
-                string fileName = $"{localFilePath}\\{file.Substring(file.LastIndexOf('/'))}";
-
-                var fileStream = new FileStream(fileName, FileMode.Create);
+   
 
                 try
                 {
+                    // Download a remote file
+                    string remoteFilePath = file;
+
+
+                    string fileName = $"{localFilePath}\\{file.Substring(file.LastIndexOf('/'))}";
+
+                    var fileStream = new FileStream(fileName, FileMode.Create);
                     scpClient.Download(remoteFilePath, fileStream);
 
 

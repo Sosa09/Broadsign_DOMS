@@ -15,28 +15,26 @@ namespace Broadsign_DOMS.ViewModel
 {
     public class ResourceViewModel : ObservableObject, IPageViewModel
     {
-        private ICommand _selectCsvFileCommand;
-        private ICommand _checkedRadioButton;
-        private ICommand _renameResourceCommand;
-        private string _search;
-        Domain _domain;
-        private string _nameCheckedRadioButton;
-        private ObservableCollection<object> _resourceList;
+        #region Fields
+        ICommand _selectCsvFileCommand;
+        ICommand _checkedRadioButton;
+        ICommand _renameResourceCommand;
 
-        public ResourceViewModel()
-        {
-            Messenger.Default.Register<Domain>(this, "DomainResourceViewModel", x => Domain = x, true);
-            Messenger.Default.Register<string>(this, "SearchResourceViewModel", x => Search = x, true);
-        }
+        ObservableCollection<object> _resourceList;
+        Domain _selectedDomain;
 
-        public ICommand SelectCsvFileCommand 
+        string _search;        
+        string _nameCheckedRadioButton;
+        #endregion
+        #region Properties
+        public ICommand SelectCsvFileCommand
         {
-            get 
-            { 
-                if(_selectCsvFileCommand == null)
-                   _selectCsvFileCommand = new RelayCommand(_readCsvContent);
+            get
+            {
+                if (_selectCsvFileCommand == null)
+                    _selectCsvFileCommand = new RelayCommand(_readCsvContent);
                 return _selectCsvFileCommand;
-            } 
+            }
         }
         public ICommand CheckedRadioButton
         {
@@ -49,11 +47,11 @@ namespace Broadsign_DOMS.ViewModel
         }
         public ICommand RenameResourceCommand
         {
-            get 
+            get
             {
                 return _renameResourceCommand ?? (new RelayCommand(
                     param => _renameResources()
-                    )) ;
+                    ));
             }
         }
         public ObservableCollection<object> ResourceList
@@ -71,20 +69,20 @@ namespace Broadsign_DOMS.ViewModel
             }
         }
 
-        public Domain Domain 
+        public Domain SelectedDomain
         {
             get
             {
-                return _domain ?? new Domain();
-            } 
+                return _selectedDomain ?? new Domain();
+            }
             set
             {
-                _domain = value;
-                OnPropertyChanged(nameof(Domain));
+                _selectedDomain = value;
+                OnPropertyChanged(nameof(SelectedDomain));
+                _searchByDomain(SelectedDomain.Name);
             }
         }
-
-        public string Search 
+        public string Search
         {
             get { return _search; }
             set
@@ -92,9 +90,26 @@ namespace Broadsign_DOMS.ViewModel
                 _search = value;
                 OnPropertyChanged("Search");
                 _searchByName(value);
-            } 
+            }
         }
-
+        #endregion
+        #region Constructors
+        public ResourceViewModel()
+        {
+            Messenger.Default.Register<Domain>(this, "DomainResourceViewModel", x => SelectedDomain = x, true);
+            Messenger.Default.Register<string>(this, "SearchResourceViewModel", x => Search = x, true);
+        }
+        #endregion
+        #region Methods
+        private void _searchByDomain(string value)
+        {
+            if (_nameCheckedRadioButton == "Frame")
+                ResourceList = new ObservableCollection<object>(CommonResources.Frames.Where(x => x.AssignedDomain.Name == value));
+            else if (_nameCheckedRadioButton == "DisplayUnit")
+                ResourceList = new ObservableCollection<object>(CommonResources.DisplayUnits.Where(x => x.AssignedDomain.Name == value));
+            else if (_nameCheckedRadioButton == "Player")
+                ResourceList = new ObservableCollection<object>(CommonResources.Players.Where(x => x.AssignedDomain.Name == value));
+        }
         private void _searchByName(string value)
         {
             if (_nameCheckedRadioButton == "Frame")
@@ -104,21 +119,19 @@ namespace Broadsign_DOMS.ViewModel
             else if (_nameCheckedRadioButton == "Player")
                 ResourceList = new ObservableCollection<object>(CommonResources.Players.Where(x => x.Name.Contains(value)));
         }
-
         private void _renameResources()
         {
             if (_nameCheckedRadioButton == "Frame")
                 //FrameModel.UpdateFrame();
-                FrameModel.UpdateRename(Domain, ResourceList);
+                FrameModel.UpdateRename(SelectedDomain, ResourceList);
 
             else if (_nameCheckedRadioButton == "DisplayUnit")
-                DisplayUnitModel.UpdateDisplayUnits(Domain, ResourceList);
+                DisplayUnitModel.UpdateDisplayUnits(SelectedDomain, ResourceList);
 
             else
-                PlayerModel.UpdatePlayers(Domain, ResourceList);
+                PlayerModel.UpdatePlayers(SelectedDomain, ResourceList);
 
         }
-
         private void _storecheckedButtonName(object obj)
         {
             ResourceList.Clear();
@@ -142,7 +155,6 @@ namespace Broadsign_DOMS.ViewModel
 
             ResourceList = bsObjects;
         }
-
         private void _readCsvContent(object obj)
         {
             //open file location
@@ -195,5 +207,6 @@ namespace Broadsign_DOMS.ViewModel
             }
             
         }
+        #endregion
     }
 }

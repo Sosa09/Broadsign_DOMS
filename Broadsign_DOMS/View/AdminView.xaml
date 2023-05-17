@@ -168,7 +168,7 @@
                         <DataGridTextColumn Header="ID" Binding="{Binding Path=Id}"/>
                         <DataGridTextColumn Header="Current Name" Binding="{Binding Path=Name}"/>
                         <DataGridTextColumn Header="Futur Name" Binding="{Binding Path=NewName}"/>
-                        <DataGridTextColumn Header="domain" Binding="{Binding Path=Domain.Token}"/>
+                        <DataGridTextColumn Header="domain" Binding="{Binding Path=AssignedDomain.Name}"/>
                     </DataGrid.Columns>
              
                 </DataGrid>
@@ -264,17 +264,22 @@
             <RadioButton Content="Back" Command="{Binding BackButtonCommand}" Style="{StaticResource MenuButtonTheme}"/>
         </StackPanel>
         
-        <DockPanel Grid.Column="1" Grid.Row="0">
-            <StackPanel Margin="5">
+        <Grid Grid.Column="1" Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Margin="5">
                 <Label Content="Select Domain or leave blank to select all" Foreground="White"/>
                 <ComboBox ItemsSource="{Binding DomainList}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedDomain, UpdateSourceTrigger=PropertyChanged}"/>
             </StackPanel>
-            <StackPanel Margin="5">
+            <StackPanel Grid.Column="1" Margin="5">
                 <Label Content="Search: (only Name !)" Foreground="White"/>
                 <TextBox Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}"/>
             </StackPanel>
-            <Button Content="Clear" Margin="20"/>
-        </DockPanel>
+            <Button Grid.Column="2" Content="Clear" Margin="20" Command="{Binding ClearCommand}"/>
+        </Grid>
         <!--Result and content viewer-->
         <ContentControl Grid.Row="1" Grid.Column="1" Content="{Binding CurrentMenu}"/>
 

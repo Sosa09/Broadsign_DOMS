@@ -79,36 +79,34 @@ namespace Broadsign_DOMS.ViewModel
             await PlayerModel.GeneratePlayers(domain);
             LoadingMessage += $"\n{CommonResources.Players.Count} 'PLAYERS' for domain {domain.Name} loaded";
 
-            //LoadingMessage += $"\n\nLoading broadsign 'FRAMES' for domain {domain.Name}";
-            //await FrameModel.GenerateFrames(domain);
-            //LoadingMessage += $"\n{CommonResources.Frames.Count} 'FRAMES' for domain {domain.Name} loaded";
+            LoadingMessage += $"\n\nLoading broadsign 'FRAMES' for domain {domain.Name}";
+            await FrameModel.GenerateFrames(domain);
+            LoadingMessage += $"\n{CommonResources.Frames.Count} 'FRAMES' for domain {domain.Name} loaded";
 
-            //LoadingMessage += $"\n\nLoading broadsign 'DISPLAY UNITS' for domain {domain.Name}";
-            //await DisplayUnitModel.GenerateDisplayUnits(domain);
-            //LoadingMessage += $"\n{CommonResources.DisplayUnits.Count} 'DISPLAY UNITS' for domain {domain.Name} loaded";
+            LoadingMessage += $"\n\nLoading broadsign 'DISPLAY UNITS' for domain {domain.Name}";
+            await DisplayUnitModel.GenerateDisplayUnits(domain);
+            LoadingMessage += $"\n{CommonResources.DisplayUnits.Count} 'DISPLAY UNITS' for domain {domain.Name} loaded";
 
+            LoadingMessage += $"\n\n Loading broadsign 'GROUPS' resources for domain {domain.Name}";
+            await GroupModel.GenerateGroups(domain);
+            LoadingMessage += $"\n{CommonResources.Groups.Count} 'GROUPS' for domain {domain.Name} loaded";
 
+            LoadingMessage += $"\n\nLoading broadsign 'CONTAINERS' for Domain: {domain.Name}";
+            await ContainerModel.GenerateContainers(domain);
+            LoadingMessage += $"\n{CommonResources.Groups.Count} 'CONTAINERS' Loaded for domain {domain.Name}";
 
-            //LoadingMessage += $"\n\n Loading broadsign 'GROUPS' resources for domain {domain.Name}";
-            //await GroupModel.GenerateGroups(domain);
-            //LoadingMessage += $"\n{CommonResources.Groups.Count} 'GROUPS' for domain {domain.Name} loaded";
+            LoadingMessage += $"\n\nLoading broadsign 'CONTAINER SCOPE' for Domain: {domain.Name}";
+            await ContainerScopeModel.GeneratContainerScopes(domain);
+            LoadingMessage += $"\n'CONTAINER SCOPE' for domain {domain.Name} Successfully loaded";
 
-            //LoadingMessage += $"\n\nLoading broadsign 'CONTAINERS' for Domain: {domain.Name}";
-            //await ContainerModel.GenerateContainers(domain);
-            //LoadingMessage += $"\n{CommonResources.Groups.Count} 'CONTAINERS' Loaded for domain {domain.Name}";
+            LoadingMessage += $"\n Loading broadsdign 'CONTAINER SCOPE RELATIONS' for domain {domain.Name}";
+            await ContainerScopeRelationModel.GenerateScopingRelations(domain);
+            LoadingMessage += $"\n'CONTAINER SCOPE RELATIONS' for domain {domain.Name} Successfully loaded";
 
-            //LoadingMessage += $"\n\nLoading broadsign 'CONTAINER SCOPE' for Domain: {domain.Name}";
-            //await ContainerScopeModel.GeneratContainerScopes(domain);
-            //LoadingMessage += $"\n'CONTAINER SCOPE' for domain {domain.Name} Successfully loaded";
-
-            //LoadingMessage += $"\n Loading broadsdign 'CONTAINER SCOPE RELATIONS' for domain {domain.Name}";
-            //await ContainerScopeRelationModel.GenerateScopingRelations(domain);
-            //LoadingMessage += $"\n'CONTAINER SCOPE RELATIONS' for domain {domain.Name} Successfully loaded";
-
-            //LoadingMessage += $"\n\nLoading broadsign 'USERS' for domain {domain.Name}";
-            //await UserModel.GenerateUsers(domain);
-            //LoadingMessage += $"\n{CommonResources.Users.Count} 'USERS' for domain {domain.Name} loaded" +
-            //$"\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
+            LoadingMessage += $"\n\nLoading broadsign 'USERS' for domain {domain.Name}";
+            await UserModel.GenerateUsers(domain);
+            LoadingMessage += $"\n{CommonResources.Users.Count} 'USERS' for domain {domain.Name} loaded" +
+            $"\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
 
         }
         private async Task _loadingSync()

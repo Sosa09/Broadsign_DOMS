@@ -23,11 +23,9 @@ namespace Broadsign_DOMS.ViewModel
         string currentView;
         string _search;
         #endregion
-
         #region Contructors
    
         #endregion
-
         #region Properties
         public ObservableCollection<Domain> DomainList
         {
@@ -117,7 +115,6 @@ namespace Broadsign_DOMS.ViewModel
             } 
         }
         #endregion
-
         #region Methods
         private void _selectedViewModel(string cmdParam)
         {
@@ -133,10 +130,10 @@ namespace Broadsign_DOMS.ViewModel
                 CurrentMenu = new OpeningHoursViewModel();
             else
                 MessageBox.Show("Problem");
+
             currentView = cmdParam;
 
             _sendMsg();
-
         }
         private void _sendMsg(string d = null)
         {
